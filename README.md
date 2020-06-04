@@ -1,5 +1,5 @@
 # remverse (Version: 0.0)
-# A collection of open source R packages which are developed around the same data structure of a relational event history
+# A collection of open source R packages focussed on the analysis of relational event history data
 
 ### Table of contents
 * [About the package](#about-the-package)
