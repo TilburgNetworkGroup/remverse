@@ -29,7 +29,7 @@ The probabilistic model that is mainly considered is the Relational Event Model 
 
 ### Programming Languages 
 The package contains code written in:
-* R (>= 3.6.3)
+* R (>= 4.0.0)
 * Rcpp (>= 1.0.4.6) and RcppArmadillo (>= 0.9.860.2.0)
 * C++11 (Compiler Version: GCC-8.1.0)
 
