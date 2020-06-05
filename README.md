@@ -9,12 +9,6 @@
 
 ### About the package
 The `remverse` package loads an ensemble of R packages useful for several purposes in the analysis of a Relational Event History (REH). These packages are (at the moment):
-* a package for descriptives and plots of a REH;
-* a package to generate a REH;
-* `remstats` (for statistics computation);
-* `remstimate` (utils and estimation functions);
-* `bremory` (`remory`?) (inquiring about the presence of memory in a REH);
-*  [...]
 
 | Core package name | short description |
 | ------------- | ------------- |
