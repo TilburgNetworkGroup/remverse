@@ -2,11 +2,59 @@ Package: remverse
 Title: What the Package Does (One Line, Title Case)
 Version: 0.0.0.9000
 Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"),
-           comment = c(ORCID = "YOUR-ORCID-ID"))
+    c(
+        person(
+            given = "Joris",
+            family = "Mulder",
+            role = c("aut", "cre"),
+            email = "j.mulder3@tilburguniversity.edu"),
+        person(
+            given = "Giuseppe",
+            family = "Arena",
+            role = c("aut"),
+            email = "g.arena@tilburguniversity.edu"),
+        person(
+            given = "Marlyne",
+            family = "Meijerink-Bosman",
+            role = c("aut"),
+            email = "m.l.meijerink@tilburguniversity.edu"),
+        person(
+            given = "Diana",
+            family = "Karimova",
+            role = c("aut"),
+            email = "d.karimova@tilburguniversity.edu"),
+        person(
+            given = "Rumana",
+            family = "Lakdawala",
+            role = c("aut"),
+            email = "r.j.lakdawala@tilburguniversity.edu"),
+        person(
+            given = "Fabio",
+            family = "Generoso Vieira",
+            role = c("aut"),
+            email = "f.v.generosovieira@tilburguniversity.edu"),
+        person(
+            given = "Mahdi",
+            family = "Shafiee Kamalabad",
+            role = c("aut"),
+            email = "m.shafiee@tilburguniversity.edu"),
+        person(
+            given = "Roger",
+            family = "Leenders",
+            role = c("aut"),
+            email = "r.t.a.j.leenders@tilburguniversity.edu")
+    )
 Description: What the package does (one paragraph).
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+License: MIT + file LICENSE
+BugReports: https://github.com/TilburgNetworkGroup/remverse/issues
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
+Imports: 
+    remify,
+    remstats,
+    remstimate
+Remotes:
+    TilburgNetworkGroup/remify,
+    TilburgNetworkGroup/remstats,
+    TilburgNetworkGroup/remstimate
