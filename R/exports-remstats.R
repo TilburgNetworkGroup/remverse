@@ -22,6 +22,14 @@ NULL
 #' @export average
 NULL
 
+#' bind_remstats
+#'
+#' See \code{\link[remstats]{bind_remstats}}.
+#' @name bind_remstats
+#' @importFrom remstats bind_remstats
+#' @export bind_remstats
+NULL
+
 #' ccp
 #'
 #' See \code{\link[remstats]{ccp}}.

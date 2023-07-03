@@ -22,22 +22,6 @@ NULL
 #' @export bic
 NULL
 
-#' GDADAMAX
-#'
-#' See \code{\link[remstimate]{GDADAMAX}}.
-#' @name GDADAMAX
-#' @importFrom remstimate GDADAMAX
-#' @export GDADAMAX
-NULL
-
-#' logPostGradientHMC
-#'
-#' See \code{\link[remstimate]{logPostGradientHMC}}.
-#' @name logPostGradientHMC
-#' @importFrom remstimate logPostGradientHMC
-#' @export logPostGradientHMC
-NULL
-
 #' remstimate
 #'
 #' See \code{\link[remstimate]{remstimate}}.

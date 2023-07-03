@@ -1,8 +1,8 @@
 # Load the package
-library(remify)
+library(remstimate)
 
 # Get the exported functions
-exported_functions <- sort(getNamespaceExports("remify"))
+exported_functions <- sort(getNamespaceExports("remstimate"))
 
 # Write lines
 lapply(exported_functions, function(x) {
@@ -10,13 +10,13 @@ lapply(exported_functions, function(x) {
     c(
       paste("#'", x),
       "#'",
-      paste0("#' See \\code{\\link[remify]{", x,"}}."),
+      paste0("#' See \\code{\\link[remstimate]{", x,"}}."),
       paste("#' @name", x),
-      paste("#' @importFrom remify", x),
+      paste("#' @importFrom remstimate", x),
       paste0("#' @export ", x),
       "NULL",
       ""
-    ), "R/exports-remify.R", append = TRUE
+    ), "R/exports-remstimate.R", append = TRUE
   )
 })
 

@@ -1,5 +1,5 @@
 Package: remverse
-Title: What the Package Does (One Line, Title Case)
+Title: Comprehensive Tools for Relational Event History Data
 Version: 0.0.0.9000
 Authors@R: 
     c(
@@ -44,7 +44,7 @@ Authors@R:
             role = c("aut"),
             email = "r.t.a.j.leenders@tilburguniversity.edu")
     )
-Description: What the package does (one paragraph).
+Description: The 'remverse' package provides a comprehensive set of tools, functions, and utilities for working with relational event history data. It aims to facilitate the entire workflow, from data generation to analysis.
 License: MIT + file LICENSE
 BugReports: https://github.com/TilburgNetworkGroup/remverse/issues
 Encoding: UTF-8
