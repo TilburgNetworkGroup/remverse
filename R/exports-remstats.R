@@ -1,400 +1,532 @@
-#' actor_effects
-#'
-#' See \code{\link[remstats]{actor_effects}}.
-#' @name actor_effects
-#' @importFrom remstats actor_effects
-#' @export actor_effects
-NULL
+# Generated with R/update.R: do not edit by hand
 
-#' aomstats
+#' @title FEtype
 #'
-#' See \code{\link[remstats]{aomstats}}.
-#' @name aomstats
-#' @importFrom remstats aomstats
-#' @export aomstats
-NULL
-
-#' average
-#'
-#' See \code{\link[remstats]{average}}.
-#' @name average
-#' @importFrom remstats average
-#' @export average
-NULL
-
-#' bind_remstats
-#'
-#' See \code{\link[remstats]{bind_remstats}}.
-#' @name bind_remstats
-#' @importFrom remstats bind_remstats
-#' @export bind_remstats
-NULL
-
-#' ccp
-#'
-#' See \code{\link[remstats]{ccp}}.
-#' @name ccp
-#' @importFrom remstats ccp
-#' @export ccp
-NULL
-
-#' degreeDiff
-#'
-#' See \code{\link[remstats]{degreeDiff}}.
-#' @name degreeDiff
-#' @importFrom remstats degreeDiff
-#' @export degreeDiff
-NULL
-
-#' degreeMax
-#'
-#' See \code{\link[remstats]{degreeMax}}.
-#' @name degreeMax
-#' @importFrom remstats degreeMax
-#' @export degreeMax
-NULL
-
-#' degreeMin
-#'
-#' See \code{\link[remstats]{degreeMin}}.
-#' @name degreeMin
-#' @importFrom remstats degreeMin
-#' @export degreeMin
-NULL
-
-#' difference
-#'
-#' See \code{\link[remstats]{difference}}.
-#' @name difference
-#' @importFrom remstats difference
-#' @export difference
-NULL
-
-#' event
-#'
-#' See \code{\link[remstats]{event}}.
-#' @name event
-#' @importFrom remstats event
-#' @export event
-NULL
-
-#' FEtype
-#'
-#' See \code{\link[remstats]{FEtype}}.
 #' @name FEtype
 #' @importFrom remstats FEtype
+#' @inherit remstats::FEtype
 #' @export FEtype
-NULL
+FEtype <- function() {
+  remstats::FEtype()
+}
 
-#' indegreeReceiver
+#' @title actor_effects
 #'
-#' See \code{\link[remstats]{indegreeReceiver}}.
+#' @name actor_effects
+#' @importFrom remstats actor_effects
+#' @inherit remstats::actor_effects
+#' @export actor_effects
+actor_effects <- function(step = NULL) {
+  remstats::actor_effects(step = step)
+}
+
+#' @title aomstats
+#'
+#' @name aomstats
+#' @importFrom remstats aomstats
+#' @inherit remstats::aomstats
+#' @export aomstats
+aomstats <- function(reh, sender_effects = NULL, receiver_effects = NULL, attr_actors = NULL, attr_dyads = NULL, method = c("pt", "pe"), memory = c("full", "window", "decay", "interval"), memory_value = Inf, start = 1, stop = Inf, display_progress = FALSE, attr_data, attributes, edgelist) {
+  remstats::aomstats(reh = reh, sender_effects = sender_effects, receiver_effects = receiver_effects, attr_actors = attr_actors, attr_dyads = attr_dyads, method = method, memory = memory, memory_value = memory_value, start = start, stop = stop, display_progress = display_progress, attr_data = attr_data, attributes = attributes, edgelist = edgelist)
+}
+
+#' @title average
+#'
+#' @name average
+#' @importFrom remstats average
+#' @inherit remstats::average
+#' @export average
+average <- function(variable, attr_actors = NULL, scaling = c("none", "std"), attr_data) {
+  remstats::average(variable = variable, attr_actors = attr_actors, scaling = scaling, attr_data = attr_data)
+}
+
+#' @title bind_remstats
+#'
+#' @name bind_remstats
+#' @importFrom remstats bind_remstats
+#' @inherit remstats::bind_remstats
+#' @export bind_remstats
+bind_remstats <- function(...) {
+  remstats::bind_remstats(... = ...)
+}
+
+#' @title degreeDiff
+#'
+#' @name degreeDiff
+#' @importFrom remstats degreeDiff
+#' @inherit remstats::degreeDiff
+#' @export degreeDiff
+degreeDiff <- function(scaling = c("none", "std"), consider_type = TRUE) {
+  remstats::degreeDiff(scaling = scaling, consider_type = consider_type)
+}
+
+#' @title degreeMax
+#'
+#' @name degreeMax
+#' @importFrom remstats degreeMax
+#' @inherit remstats::degreeMax
+#' @export degreeMax
+degreeMax <- function(scaling = c("none", "prop", "std"), consider_type = TRUE) {
+  remstats::degreeMax(scaling = scaling, consider_type = consider_type)
+}
+
+#' @title degreeMin
+#'
+#' @name degreeMin
+#' @importFrom remstats degreeMin
+#' @inherit remstats::degreeMin
+#' @export degreeMin
+degreeMin <- function(scaling = c("none", "prop", "std"), consider_type = TRUE) {
+  remstats::degreeMin(scaling = scaling, consider_type = consider_type)
+}
+
+#' @title difference
+#'
+#' @name difference
+#' @importFrom remstats difference
+#' @inherit remstats::difference
+#' @export difference
+difference <- function(variable, attr_actors = NULL, scaling = c("none", "std"), absolute = TRUE, attr_data) {
+  remstats::difference(variable = variable, attr_actors = attr_actors, scaling = scaling, absolute = absolute, attr_data = attr_data)
+}
+
+#' @title dyad
+#'
+#' @name dyad
+#' @importFrom remstats dyad
+#' @inherit remstats::dyad
+#' @export dyad
+dyad <- function(variable, attr_dyads = NULL, scaling = c("none", "std"), x, variableName) {
+  remstats::dyad(variable = variable, attr_dyads = attr_dyads, scaling = scaling, x = x, variableName = variableName)
+}
+
+#' @title event
+#'
+#' @name event
+#' @importFrom remstats event
+#' @inherit remstats::event
+#' @export event
+event <- function(x, variableName = NULL) {
+  remstats::event(x = x, variableName = variableName)
+}
+
+#' @title indegreeReceiver
+#'
 #' @name indegreeReceiver
 #' @importFrom remstats indegreeReceiver
+#' @inherit remstats::indegreeReceiver
 #' @export indegreeReceiver
-NULL
+indegreeReceiver <- function(scaling = c("none", "prop", "std"), consider_type = TRUE) {
+  remstats::indegreeReceiver(scaling = scaling, consider_type = consider_type)
+}
 
-#' indegreeSender
+#' @title indegreeSender
 #'
-#' See \code{\link[remstats]{indegreeSender}}.
 #' @name indegreeSender
 #' @importFrom remstats indegreeSender
+#' @inherit remstats::indegreeSender
 #' @export indegreeSender
-NULL
+indegreeSender <- function(scaling = c("none", "prop", "std"), consider_type = TRUE) {
+  remstats::indegreeSender(scaling = scaling, consider_type = consider_type)
+}
 
-#' inertia
+#' @title inertia
 #'
-#' See \code{\link[remstats]{inertia}}.
 #' @name inertia
 #' @importFrom remstats inertia
+#' @inherit remstats::inertia
 #' @export inertia
-NULL
+inertia <- function(scaling = c("none", "prop", "std"), consider_type = TRUE) {
+  remstats::inertia(scaling = scaling, consider_type = consider_type)
+}
 
-#' isp
+#' @title isp
 #'
-#' See \code{\link[remstats]{isp}}.
 #' @name isp
 #' @importFrom remstats isp
+#' @inherit remstats::isp
 #' @export isp
-NULL
+isp <- function(unique = FALSE, scaling = c("none", "std"), consider_type = TRUE) {
+  remstats::isp(unique = unique, scaling = scaling, consider_type = consider_type)
+}
 
-#' itp
+#' @title itp
 #'
-#' See \code{\link[remstats]{itp}}.
 #' @name itp
 #' @importFrom remstats itp
+#' @inherit remstats::itp
 #' @export itp
-NULL
+itp <- function(unique = FALSE, scaling = c("none", "std"), consider_type = TRUE) {
+  remstats::itp(unique = unique, scaling = scaling, consider_type = consider_type)
+}
 
-#' maximum
+#' @title maximum
 #'
-#' See \code{\link[remstats]{maximum}}.
 #' @name maximum
 #' @importFrom remstats maximum
+#' @inherit remstats::maximum
 #' @export maximum
-NULL
+maximum <- function(variable, attr_actors = NULL, scaling = c("none", "std"), attr_data) {
+  remstats::maximum(variable = variable, attr_actors = attr_actors, scaling = scaling, attr_data = attr_data)
+}
 
-#' minimum
+#' @title minimum
 #'
-#' See \code{\link[remstats]{minimum}}.
 #' @name minimum
 #' @importFrom remstats minimum
+#' @inherit remstats::minimum
 #' @export minimum
-NULL
+minimum <- function(variable, attr_actors = NULL, scaling = c("none", "std"), attr_data) {
+  remstats::minimum(variable = variable, attr_actors = attr_actors, scaling = scaling, attr_data = attr_data)
+}
 
-#' osp
+#' @title osp
 #'
-#' See \code{\link[remstats]{osp}}.
 #' @name osp
 #' @importFrom remstats osp
+#' @inherit remstats::osp
 #' @export osp
-NULL
+osp <- function(unique = FALSE, scaling = c("none", "std"), consider_type = TRUE) {
+  remstats::osp(unique = unique, scaling = scaling, consider_type = consider_type)
+}
 
-#' otp
+#' @title otp
 #'
-#' See \code{\link[remstats]{otp}}.
 #' @name otp
 #' @importFrom remstats otp
+#' @inherit remstats::otp
 #' @export otp
-NULL
+otp <- function(unique = FALSE, scaling = c("none", "std"), consider_type = TRUE) {
+  remstats::otp(unique = unique, scaling = scaling, consider_type = consider_type)
+}
 
-#' outdegreeReceiver
+#' @title outdegreeReceiver
 #'
-#' See \code{\link[remstats]{outdegreeReceiver}}.
 #' @name outdegreeReceiver
 #' @importFrom remstats outdegreeReceiver
+#' @inherit remstats::outdegreeReceiver
 #' @export outdegreeReceiver
-NULL
+outdegreeReceiver <- function(scaling = c("none", "prop", "std"), consider_type = TRUE) {
+  remstats::outdegreeReceiver(scaling = scaling, consider_type = consider_type)
+}
 
-#' outdegreeSender
+#' @title outdegreeSender
 #'
-#' See \code{\link[remstats]{outdegreeSender}}.
 #' @name outdegreeSender
 #' @importFrom remstats outdegreeSender
+#' @inherit remstats::outdegreeSender
 #' @export outdegreeSender
-NULL
+outdegreeSender <- function(scaling = c("none", "prop", "std"), consider_type = TRUE) {
+  remstats::outdegreeSender(scaling = scaling, consider_type = consider_type)
+}
 
-#' psABAB
+#' @title psABA
 #'
-#' See \code{\link[remstats]{psABAB}}.
+#' @name psABA
+#' @importFrom remstats psABA
+#' @inherit remstats::psABA
+#' @export psABA
+psABA <- function() {
+  remstats::psABA()
+}
+
+#' @title psABAB
+#'
 #' @name psABAB
 #' @importFrom remstats psABAB
+#' @inherit remstats::psABAB
 #' @export psABAB
-NULL
+psABAB <- function(consider_type = TRUE) {
+  remstats::psABAB(consider_type = consider_type)
+}
 
-#' psABAY
+#' @title psABAY
 #'
-#' See \code{\link[remstats]{psABAY}}.
 #' @name psABAY
 #' @importFrom remstats psABAY
+#' @inherit remstats::psABAY
 #' @export psABAY
-NULL
+psABAY <- function(consider_type = TRUE) {
+  remstats::psABAY(consider_type = consider_type)
+}
 
-#' psABBA
+#' @title psABB
 #'
-#' See \code{\link[remstats]{psABBA}}.
+#' @name psABB
+#' @importFrom remstats psABB
+#' @inherit remstats::psABB
+#' @export psABB
+psABB <- function() {
+  remstats::psABB()
+}
+
+#' @title psABBA
+#'
 #' @name psABBA
 #' @importFrom remstats psABBA
+#' @inherit remstats::psABBA
 #' @export psABBA
-NULL
+psABBA <- function(consider_type = TRUE) {
+  remstats::psABBA(consider_type = consider_type)
+}
 
-#' psABBY
+#' @title psABBY
 #'
-#' See \code{\link[remstats]{psABBY}}.
 #' @name psABBY
 #' @importFrom remstats psABBY
+#' @inherit remstats::psABBY
 #' @export psABBY
-NULL
+psABBY <- function(consider_type = TRUE) {
+  remstats::psABBY(consider_type = consider_type)
+}
 
-#' psABXA
+#' @title psABX
 #'
-#' See \code{\link[remstats]{psABXA}}.
+#' @name psABX
+#' @importFrom remstats psABX
+#' @inherit remstats::psABX
+#' @export psABX
+psABX <- function() {
+  remstats::psABX()
+}
+
+#' @title psABXA
+#'
 #' @name psABXA
 #' @importFrom remstats psABXA
+#' @inherit remstats::psABXA
 #' @export psABXA
-NULL
+psABXA <- function(consider_type = TRUE) {
+  remstats::psABXA(consider_type = consider_type)
+}
 
-#' psABXB
+#' @title psABXB
 #'
-#' See \code{\link[remstats]{psABXB}}.
 #' @name psABXB
 #' @importFrom remstats psABXB
+#' @inherit remstats::psABXB
 #' @export psABXB
-NULL
+psABXB <- function(consider_type = TRUE) {
+  remstats::psABXB(consider_type = consider_type)
+}
 
-#' psABXY
+#' @title psABXY
 #'
-#' See \code{\link[remstats]{psABXY}}.
 #' @name psABXY
 #' @importFrom remstats psABXY
+#' @inherit remstats::psABXY
 #' @export psABXY
-NULL
+psABXY <- function(consider_type = TRUE) {
+  remstats::psABXY(consider_type = consider_type)
+}
 
-#' receive
+#' @title receive
 #'
-#' See \code{\link[remstats]{receive}}.
 #' @name receive
 #' @importFrom remstats receive
+#' @inherit remstats::receive
 #' @export receive
-NULL
+receive <- function(variable, attr_actors = NULL, scaling = c("none", "std"), attr_data) {
+  remstats::receive(variable = variable, attr_actors = attr_actors, scaling = scaling, attr_data = attr_data)
+}
 
-#' recencyContinue
+#' @title recencyContinue
 #'
-#' See \code{\link[remstats]{recencyContinue}}.
 #' @name recencyContinue
 #' @importFrom remstats recencyContinue
+#' @inherit remstats::recencyContinue
 #' @export recencyContinue
-NULL
+recencyContinue <- function(consider_type = TRUE) {
+  remstats::recencyContinue(consider_type = consider_type)
+}
 
-#' recencyReceiveReceiver
+#' @title recencyReceiveReceiver
 #'
-#' See \code{\link[remstats]{recencyReceiveReceiver}}.
 #' @name recencyReceiveReceiver
 #' @importFrom remstats recencyReceiveReceiver
+#' @inherit remstats::recencyReceiveReceiver
 #' @export recencyReceiveReceiver
-NULL
+recencyReceiveReceiver <- function(consider_type = TRUE) {
+  remstats::recencyReceiveReceiver(consider_type = consider_type)
+}
 
-#' recencyReceiveSender
+#' @title recencyReceiveSender
 #'
-#' See \code{\link[remstats]{recencyReceiveSender}}.
 #' @name recencyReceiveSender
 #' @importFrom remstats recencyReceiveSender
+#' @inherit remstats::recencyReceiveSender
 #' @export recencyReceiveSender
-NULL
+recencyReceiveSender <- function(consider_type = TRUE) {
+  remstats::recencyReceiveSender(consider_type = consider_type)
+}
 
-#' recencySendReceiver
+#' @title recencySendReceiver
 #'
-#' See \code{\link[remstats]{recencySendReceiver}}.
 #' @name recencySendReceiver
 #' @importFrom remstats recencySendReceiver
+#' @inherit remstats::recencySendReceiver
 #' @export recencySendReceiver
-NULL
+recencySendReceiver <- function(consider_type = TRUE) {
+  remstats::recencySendReceiver(consider_type = consider_type)
+}
 
-#' recencySendSender
+#' @title recencySendSender
 #'
-#' See \code{\link[remstats]{recencySendSender}}.
 #' @name recencySendSender
 #' @importFrom remstats recencySendSender
+#' @inherit remstats::recencySendSender
 #' @export recencySendSender
-NULL
+recencySendSender <- function(consider_type = TRUE) {
+  remstats::recencySendSender(consider_type = consider_type)
+}
 
-#' reciprocity
+#' @title reciprocity
 #'
-#' See \code{\link[remstats]{reciprocity}}.
 #' @name reciprocity
 #' @importFrom remstats reciprocity
+#' @inherit remstats::reciprocity
 #' @export reciprocity
-NULL
+reciprocity <- function(scaling = c("none", "prop", "std"), consider_type = TRUE) {
+  remstats::reciprocity(scaling = scaling, consider_type = consider_type)
+}
 
-#' remstats
+#' @title remstats
 #'
-#' See \code{\link[remstats]{remstats}}.
 #' @name remstats
 #' @importFrom remstats remstats
+#' @inherit remstats::remstats
 #' @export remstats
-NULL
+remstats <- function(reh, tie_effects = NULL, sender_effects = NULL, receiver_effects = NULL, attr_actors = NULL, attr_dyads = NULL, method = c("pt", "pe"), memory = c("full", "window", "decay", "interval"), memory_value = NA, start = 1, stop = Inf, display_progress = FALSE, adjmat = NULL, get_adjmat = FALSE, attr_data, attributes, edgelist) {
+  remstats::remstats(reh = reh, tie_effects = tie_effects, sender_effects = sender_effects, receiver_effects = receiver_effects, attr_actors = attr_actors, attr_dyads = attr_dyads, method = method, memory = memory, memory_value = memory_value, start = start, stop = stop, display_progress = display_progress, adjmat = adjmat, get_adjmat = get_adjmat, attr_data = attr_data, attributes = attributes, edgelist = edgelist)
+}
 
-#' rrankReceive
+#' @title rrankReceive
 #'
-#' See \code{\link[remstats]{rrankReceive}}.
 #' @name rrankReceive
 #' @importFrom remstats rrankReceive
+#' @inherit remstats::rrankReceive
 #' @export rrankReceive
-NULL
+rrankReceive <- function(consider_type = TRUE) {
+  remstats::rrankReceive(consider_type = consider_type)
+}
 
-#' rrankSend
+#' @title rrankSend
 #'
-#' See \code{\link[remstats]{rrankSend}}.
 #' @name rrankSend
 #' @importFrom remstats rrankSend
+#' @inherit remstats::rrankSend
 #' @export rrankSend
-NULL
+rrankSend <- function(consider_type = TRUE) {
+  remstats::rrankSend(consider_type = consider_type)
+}
 
-#' same
+#' @title same
 #'
-#' See \code{\link[remstats]{same}}.
 #' @name same
 #' @importFrom remstats same
+#' @inherit remstats::same
 #' @export same
-NULL
+same <- function(variable, attr_actors = NULL, attr_data) {
+  remstats::same(variable = variable, attr_actors = attr_actors, attr_data = attr_data)
+}
 
-#' send
+#' @title send
 #'
-#' See \code{\link[remstats]{send}}.
 #' @name send
 #' @importFrom remstats send
+#' @inherit remstats::send
 #' @export send
-NULL
+send <- function(variable, attr_actors = NULL, scaling = c("none", "std"), attr_data) {
+  remstats::send(variable = variable, attr_actors = attr_actors, scaling = scaling, attr_data = attr_data)
+}
 
-#' sp
+#' @title sp
 #'
-#' See \code{\link[remstats]{sp}}.
 #' @name sp
 #' @importFrom remstats sp
+#' @inherit remstats::sp
 #' @export sp
-NULL
+sp <- function(unique = FALSE, scaling = c("none", "std"), consider_type = TRUE) {
+  remstats::sp(unique = unique, scaling = scaling, consider_type = consider_type)
+}
 
-#' spUnique
+#' @title spUnique
 #'
-#' See \code{\link[remstats]{spUnique}}.
 #' @name spUnique
 #' @importFrom remstats spUnique
+#' @inherit remstats::spUnique
 #' @export spUnique
-NULL
+spUnique <- function() {
+  remstats::spUnique()
+}
 
-#' tie
+#' @title tie
 #'
-#' See \code{\link[remstats]{tie}}.
 #' @name tie
 #' @importFrom remstats tie
+#' @inherit remstats::tie
 #' @export tie
-NULL
+tie <- function(variable, attr_dyads = NULL, scaling = c("none", "std"), x, variableName) {
+  remstats::tie(variable = variable, attr_dyads = attr_dyads, scaling = scaling, x = x, variableName = variableName)
+}
 
-#' tie_effects
+#' @title tie_effects
 #'
-#' See \code{\link[remstats]{tie_effects}}.
 #' @name tie_effects
 #' @importFrom remstats tie_effects
+#' @inherit remstats::tie_effects
 #' @export tie_effects
-NULL
+tie_effects <- function(directed = NULL, endogenous = NULL) {
+  remstats::tie_effects(directed = directed, endogenous = endogenous)
+}
 
-#' tomstats
+#' @title tomstats
 #'
-#' See \code{\link[remstats]{tomstats}}.
 #' @name tomstats
 #' @importFrom remstats tomstats
+#' @inherit remstats::tomstats
 #' @export tomstats
-NULL
+tomstats <- function(effects, reh, attr_actors = NULL, attr_dyads = NULL, method = c("pt", "pe"), memory = c("full", "window", "decay", "interval"), memory_value = NA, start = 1, stop = Inf, display_progress = FALSE, adjmat = NULL, get_adjmat = FALSE, attr_data, attributes, edgelist) {
+  remstats::tomstats(effects = effects, reh = reh, attr_actors = attr_actors, attr_dyads = attr_dyads, method = method, memory = memory, memory_value = memory_value, start = start, stop = stop, display_progress = display_progress, adjmat = adjmat, get_adjmat = get_adjmat, attr_data = attr_data, attributes = attributes, edgelist = edgelist)
+}
 
-#' totaldegreeDyad
+#' @title totaldegreeDyad
 #'
-#' See \code{\link[remstats]{totaldegreeDyad}}.
 #' @name totaldegreeDyad
 #' @importFrom remstats totaldegreeDyad
+#' @inherit remstats::totaldegreeDyad
 #' @export totaldegreeDyad
-NULL
+totaldegreeDyad <- function(scaling = c("none", "prop", "std"), consider_type = TRUE) {
+  remstats::totaldegreeDyad(scaling = scaling, consider_type = consider_type)
+}
 
-#' totaldegreeReceiver
+#' @title totaldegreeReceiver
 #'
-#' See \code{\link[remstats]{totaldegreeReceiver}}.
 #' @name totaldegreeReceiver
 #' @importFrom remstats totaldegreeReceiver
+#' @inherit remstats::totaldegreeReceiver
 #' @export totaldegreeReceiver
-NULL
+totaldegreeReceiver <- function(scaling = c("none", "prop", "std"), consider_type = TRUE) {
+  remstats::totaldegreeReceiver(scaling = scaling, consider_type = consider_type)
+}
 
-#' totaldegreeSender
+#' @title totaldegreeSender
 #'
-#' See \code{\link[remstats]{totaldegreeSender}}.
 #' @name totaldegreeSender
 #' @importFrom remstats totaldegreeSender
+#' @inherit remstats::totaldegreeSender
 #' @export totaldegreeSender
-NULL
+totaldegreeSender <- function(scaling = c("none", "prop", "std"), consider_type = TRUE) {
+  remstats::totaldegreeSender(scaling = scaling, consider_type = consider_type)
+}
 
-#' userStat
+#' @title userStat
 #'
-#' See \code{\link[remstats]{userStat}}.
 #' @name userStat
 #' @importFrom remstats userStat
+#' @inherit remstats::userStat
 #' @export userStat
-NULL
+userStat <- function(x, variableName = NULL) {
+  remstats::userStat(x = x, variableName = variableName)
+}
 

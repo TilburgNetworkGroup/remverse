@@ -3,6 +3,40 @@
 \name{rrankReceive}
 \alias{rrankReceive}
 \title{rrankReceive}
+\usage{
+rrankReceive(consider_type = TRUE)
+}
+\arguments{
+\item{consider_type}{logical, indicates whether to discriminate between
+event types in determining the event rank (TRUE, default) or not (FALSE).}
+}
+\value{
+List with all information required by `remstats::remstats()` to 
+compute the statistic.
+}
 \description{
-See \code{\link[remstats]{rrankReceive}}.
+Specifies the statistic for a recency rank receive effect in the
+\code{effects} argument of \code{\link[remstats]{tomstats}} or the
+\code{receiver_effects} argument of \code{\link[remstats]{aomstats}}.
+}
+\details{
+The rrankSend effect refers to a rank-based recency effect, as described in
+section 2.2.5 of Butts (2008). For each timepoint t, for directed dyad (i,j)
+the statistic is equal to the inverse of the rank of receiver j among the
+actors from which sender i has most recently received past events. Note that
+the 'rrankReceive' effect is only defined for directed events.
+}
+\examples{
+reh_tie <- remify::remify(history, model = "tie")
+effects <- ~ rrankReceive()
+remstats(reh = reh_tie, tie_effects = effects)
+
+reh_actor <- remify::remify(history, model = "actor")
+remstats(receiver_effects = effects, reh = reh_actor)
+}
+\seealso{
+\code{\link[remstats]{rrankSend}}, \code{\link[remstats]{recencySendSender}},
+\code{\link[remstats]{recencySendReceiver}}, \code{\link[remstats]{recencyReceiveSender}},
+\code{\link[remstats]{recencyReceiveReceiver}} and \code{\link[remstats]{recencyContinue}} for
+other type of recency effects
 }

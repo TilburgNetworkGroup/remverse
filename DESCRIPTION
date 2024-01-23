@@ -1,6 +1,6 @@
 Package: remverse
 Title: Comprehensive Tools for Relational Event History Data
-Version: 0.0.0.9000
+Version: 1.0.0
 Authors@R: 
     c(
         person(
@@ -54,7 +54,3 @@ Imports:
     remify,
     remstats,
     remstimate
-Remotes:
-    TilburgNetworkGroup/remify,
-    TilburgNetworkGroup/remstats,
-    TilburgNetworkGroup/remstimate

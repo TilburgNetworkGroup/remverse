@@ -3,6 +3,37 @@
 \name{getTypeID}
 \alias{getTypeID}
 \title{getTypeID}
+\usage{
+getTypeID(x, typeName = NULL)
+}
+\arguments{
+\item{x}{a \code{remify} object.}
+
+\item{typeName}{a vector of type names. The same names in the input edgelist.}
+}
+\value{
+type ID as integer value.
+}
 \description{
-See \code{\link[remify]{getTypeID}}.
+A function that given a vector of type names returns the corresponding vector of ID's.
+}
+\section{Methods (by class)}{
+
+\itemize{
+\item \code{getTypeID(remify)}: return type's ID from type's name
+
+}
+}
+
+\examples{
+# processing the random network 'randomREH'
+library(remify)
+data(randomREH)
+reh <- remify(edgelist = randomREH$edgelist,
+              model = "tie",
+              riskset = "manual",
+              omit_dyad = randomREH$omit_dyad)
+
+# find type ID from the type name
+getTypeID(x = reh, typeName = c("conflict","cooperation"))
 }

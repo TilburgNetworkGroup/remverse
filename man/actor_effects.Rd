@@ -3,6 +3,76 @@
 \name{actor_effects}
 \alias{actor_effects}
 \title{actor_effects}
+\usage{
+actor_effects(step = NULL)
+}
+\arguments{
+\item{step}{outputs all statistics in the sender activity step (if `step =
+sender`) or receiver choice step (if `step = receiver`).}
+}
+\value{
+Returns a list of available effects and their corresponding statistics based 
+on the specified `step` (sender or receiver).
+}
 \description{
-See \code{\link[remstats]{actor_effects}}.
+Overview of statistics in the actor-oriented model, see Details.
+}
+\details{
+Overview of statistics in the actor-oriented model.
+
+A list of available effects and their corresponding statistics for the
+\emph{sender activity rate} step:
+\itemize{
+ \item \code{\link[remstats]{baseline}()}
+ \item \code{\link[remstats]{send}()}
+ \item \code{\link[remstats]{indegreeSender}()}
+ \item \code{\link[remstats]{outdegreeSender}()}
+ \item \code{\link[remstats]{totaldegreeSender}()}
+ \item \code{\link[remstats]{recencySendSender}()}
+ \item \code{\link[remstats]{recencyReceiveSender}()}
+ \item \code{\link[remstats]{psABA}()}
+ \item \code{\link[remstats]{psABB}()}
+ \item \code{\link[remstats]{psABX}()}
+}
+
+A list of available effects and their corresponding statistics for the
+\emph{receiver choice} step:
+\itemize{
+ \item \code{\link[remstats]{receive}()}
+ \item \code{\link[remstats]{tie}()}
+ \item \code{\link[remstats]{same}()}
+ \item \code{\link[remstats]{difference}()}
+ \item \code{\link[remstats]{average}()}
+ \item \code{\link[remstats]{indegreeReceiver}()}
+ \item \code{\link[remstats]{outdegreeReceiver}()}
+ \item \code{\link[remstats]{totaldegreeReceiver}()}
+ \item \code{\link[remstats]{inertia}()}
+ \item \code{\link[remstats]{reciprocity}()}
+ \item \code{\link[remstats]{otp}()}
+ \item \code{\link[remstats]{itp}()}
+ \item \code{\link[remstats]{osp}()}
+ \item \code{\link[remstats]{isp}()}
+ \item \code{\link[remstats]{rrankSend}()}
+ \item \code{\link[remstats]{rrankReceive}()}
+ \item \code{\link[remstats]{recencySendReceiver}()}
+ \item \code{\link[remstats]{recencyReceiveReceiver}()}
+ \item \code{\link[remstats]{recencyContinue}()}
+ \item \code{\link[remstats]{psABAB}()}
+ \item \code{\link[remstats]{psABBA}()}
+ \item \code{\link[remstats]{psABXA}()}
+ \item \code{\link[remstats]{psABXB}()}
+ \item \code{\link[remstats]{psABAY}()}
+ \item \code{\link[remstats]{psABBY}()}
+ \item \code{\link[remstats]{psABXY}()}
+}
+}
+\examples{
+# List of available effects for both the sender and receiver step
+actor_effects()
+
+# List of available effects for the sender step
+actor_effects(step = "sender")
+
+# List of available effects for the receiver step
+actor_effects(step = "receiver")
 }

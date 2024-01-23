@@ -3,6 +3,89 @@
 \name{tie_effects}
 \alias{tie_effects}
 \title{tie_effects}
+\usage{
+tie_effects(directed = NULL, endogenous = NULL)
+}
+\arguments{
+\item{directed}{logical value. The function outputs all statistics in the 
+tie-oriented model for directed events if true, or all statistics in the 
+tie-oriented model for undirected events if false.}
+
+\item{endogenous}{logical value. The function outputs all endogenous 
+statistics in the tie-oriented model if true, or all exogenous statistics if 
+false}
+}
+\value{
+Returns a list of available effects and their corresponding statistics.
+}
 \description{
-See \code{\link[remstats]{tie_effects}}.
+Overview of statistics in the tie-oriented model, see Details.
+}
+\details{
+Overview of statistics in the tie-oriented model.
+
+Baseline:
+\itemize{
+ \item \code{\link[remstats]{baseline}}
+}
+
+Exogenous statistics:
+\itemize{
+ \item \code{\link[remstats]{send}()}
+ \item \code{\link[remstats]{receive}()}
+ \item \code{\link[remstats]{tie}()}
+ \item \code{\link[remstats]{same}()}
+ \item \code{\link[remstats]{difference}()}
+ \item \code{\link[remstats]{average}()}
+ \item \code{\link[remstats]{minimum}()}
+ \item \code{\link[remstats]{maximum}()}
+ \item \code{\link[remstats]{event}()}
+ \item \code{\link[remstats]{userStat}()}
+}
+
+Endogenous statistics:
+\itemize{
+ \item \code{\link[remstats]{indegreeSender}()}
+ \item \code{\link[remstats]{indegreeReceiver}()}
+ \item \code{\link[remstats]{outdegreeSender}()}
+ \item \code{\link[remstats]{outdegreeReceiver}()}
+ \item \code{\link[remstats]{totaldegreeSender}()}
+ \item \code{\link[remstats]{totaldegreeReceiver}()}
+ \item \code{\link[remstats]{totaldegreeDyad}()}
+ \item \code{\link[remstats]{degreeMin}()}
+ \item \code{\link[remstats]{degreeMax}()}
+ \item \code{\link[remstats]{degreeDiff}()}
+ \item \code{\link[remstats]{inertia}()}
+ \item \code{\link[remstats]{reciprocity}()}
+ \item \code{\link[remstats]{otp}()}
+ \item \code{\link[remstats]{itp}()}
+ \item \code{\link[remstats]{osp}()}
+ \item \code{\link[remstats]{isp}()}
+ \item \code{\link[remstats]{sp}()}
+ \item \code{\link[remstats]{psABBA}()}
+ \item \code{\link[remstats]{psABBY}()}
+ \item \code{\link[remstats]{psABXA}()}
+ \item \code{\link[remstats]{psABXB}()}
+ \item \code{\link[remstats]{psABXY}()}
+ \item \code{\link[remstats]{psABAY}()}
+ \item \code{\link[remstats]{psABAB}()}
+ \item \code{\link[remstats]{rrankSend}()}
+ \item \code{\link[remstats]{rrankReceive}()}
+ \item \code{\link[remstats]{recencySendSender}()}
+ \item \code{\link[remstats]{recencySendReceiver}()}
+ \item \code{\link[remstats]{recencyReceiveSender}()}
+ \item \code{\link[remstats]{recencyReceiveReceiver}()}
+ \item \code{\link[remstats]{recencyContinue}()}
+ \item \code{\link[remstats]{FEtype}()}
+}
+}
+\examples{
+# List of available effects 
+tie_effects()
+
+# List of available effects for undirected networks
+tie_effects(directed = FALSE)
+
+# List of available endogenous effects for undirected networks
+tie_effects(directed = FALSE, endogenous = TRUE)
 }

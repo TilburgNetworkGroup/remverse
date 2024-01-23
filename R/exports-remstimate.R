@@ -1,40 +1,62 @@
-#' aic
+# Generated with R/update.R: do not edit by hand
+
+#' @title aic
 #'
-#' See \code{\link[remstimate]{aic}}.
 #' @name aic
 #' @importFrom remstimate aic
+#' @inherit remstimate::aic
 #' @export aic
-NULL
+aic <- function(object, ...) {
+  remstimate::aic(object = object, ... = ...)
+}
 
-#' aicc
+#' @title aicc
 #'
-#' See \code{\link[remstimate]{aicc}}.
 #' @name aicc
 #' @importFrom remstimate aicc
+#' @inherit remstimate::aicc
 #' @export aicc
-NULL
+aicc <- function(object, ...) {
+  remstimate::aicc(object = object, ... = ...)
+}
 
-#' bic
+#' @title bic
 #'
-#' See \code{\link[remstimate]{bic}}.
 #' @name bic
 #' @importFrom remstimate bic
+#' @inherit remstimate::bic
 #' @export bic
-NULL
+bic <- function(object, ...) {
+  remstimate::bic(object = object, ... = ...)
+}
 
-#' remstimate
+#' @title diagnostics
 #'
-#' See \code{\link[remstimate]{remstimate}}.
+#' @name diagnostics
+#' @importFrom remstimate diagnostics
+#' @inherit remstimate::diagnostics
+#' @export diagnostics
+diagnostics <- function(object, reh, stats, ...) {
+  remstimate::diagnostics(object = object, reh = reh, stats = stats, ... = ...)
+}
+
+#' @title remstimate
+#'
 #' @name remstimate
 #' @importFrom remstimate remstimate
+#' @inherit remstimate::remstimate
 #' @export remstimate
-NULL
+remstimate <- function(reh, stats, method = c("MLE", "GDADAMAX", "BSIR", "HMC"), ncores = attr(reh, "ncores"), prior = NULL, nsim = 1000L, nchains = 1L, burnin = 500L, thin = 10L, init = NULL, epochs = 1000L, L = 50L, epsilon = ifelse(method == "GDADAMAX", 0.001, 0.002), seed = NULL, WAIC = FALSE, silent = TRUE, ...) {
+  remstimate::remstimate(reh = reh, stats = stats, method = method, ncores = ncores, prior = prior, nsim = nsim, nchains = nchains, burnin = burnin, thin = thin, init = init, epochs = epochs, L = L, epsilon = epsilon, seed = seed, WAIC = WAIC, silent = silent, ... = ...)
+}
 
-#' waic
+#' @title waic
 #'
-#' See \code{\link[remstimate]{waic}}.
 #' @name waic
 #' @importFrom remstimate waic
+#' @inherit remstimate::waic
 #' @export waic
-NULL
+waic <- function(object, ...) {
+  remstimate::waic(object = object, ... = ...)
+}
 

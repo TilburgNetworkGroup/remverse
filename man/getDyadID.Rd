@@ -3,6 +3,41 @@
 \name{getDyadID}
 \alias{getDyadID}
 \title{getDyadID}
+\usage{
+getDyadID(x, actor1, actor2, type)
+}
+\arguments{
+\item{x}{a \code{remify} object.}
+
+\item{actor1}{[character] name of actor1.}
+
+\item{actor2}{[character] name of actor2.}
+
+\item{type}{[character] name of type.}
+}
+\value{
+dyad ID as integer value.
+}
 \description{
-See \code{\link[remify]{getDyadID}}.
+A function that given a vector of names as to actor1, actor2 and type returns the corresponding dyad ID. The names to supply are the original input names of the edgelist before the processing via the function \code{remify::remify()}.
+}
+\section{Methods (by class)}{
+
+\itemize{
+\item \code{getDyadID(remify)}: return dyad's ID from dyad's composition
+
+}
+}
+
+\examples{
+# processing the random network 'randomREH'
+library(remify)
+data(randomREH)
+reh <- remify(edgelist = randomREH$edgelist,
+              model = "tie",
+              riskset = "manual",
+              omit_dyad = randomREH$omit_dyad)
+
+# find dyad ID from dyad composition (names of actor1, actor2 and type)
+getDyadID(x = reh, actor1 = "Francesca", actor2 = "Kayla", type = "conflict")
 }

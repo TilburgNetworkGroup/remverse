@@ -3,6 +3,28 @@
 \name{waic}
 \alias{waic}
 \title{waic}
+\usage{
+waic(object, ...)
+}
+\arguments{
+\item{object}{is a \code{remstimate} object.}
+
+\item{...}{further arguments to be passed to the 'waic' method.}
+}
+\value{
+WAIC value of a 'remstimate' object.
+}
 \description{
-See \code{\link[remstimate]{waic}}.
+A function that returns the WAIC (Watanabe-Akaike's Information Criterion) value in a 'remstimate' object.
+}
+\section{Methods (by class)}{
+
+\itemize{
+\item \code{waic(remstimate)}: WAIC (Watanabe-Akaike's Information Criterion) value of a 'remstimate' object
+
+}
+}
+
+\examples{
+# No examples available at the moment
 }

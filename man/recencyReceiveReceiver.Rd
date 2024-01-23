@@ -3,6 +3,42 @@
 \name{recencyReceiveReceiver}
 \alias{recencyReceiveReceiver}
 \title{recencyReceiveReceiver}
+\usage{
+recencyReceiveReceiver(consider_type = TRUE)
+}
+\arguments{
+\item{consider_type}{logical, indicates whether to compute the recency
+separately for each event type (TRUE, default) or regardless of event types
+(FALSE).}
+}
+\value{
+List with all information required by `remstats::remstats()` to 
+compute the statistic.
+}
 \description{
-See \code{\link[remstats]{recencyReceiveReceiver}}.
+Specifies the statistic for a recency receive of receiver effect in the
+\code{effects} argument of \code{\link[remstats]{tomstats}} or the
+\code{receiver_effects} argument of \code{\link[remstats]{aomstats}}.
+}
+\details{
+The recencyReceiveReceiver effect refers to a recency statistic similar to
+what is described in Vu et al. (2017) and Mulder and Leenders (2019). For
+each timepoint t, for directed dyad (i,j) the statistic is equal to 1/(the
+time that has past since receiver j was last active as receiver + 1). Note
+that the 'recencyReceiveReceiver' effect is only defined for directed
+events.
+}
+\examples{
+effects <- ~ recencyReceiveReceiver()
+reh_tie <- remify::remify(history, model = "tie")
+remstats(tie_effects = effects, reh = reh_tie)
+
+reh_actor <- remify::remify(history, model = "actor")
+remstats(receiver_effects = effects, reh = reh_actor)
+}
+\seealso{
+\code{\link[remstats]{rrankSend}}, \code{\link[remstats]{rrankReceive}},
+\code{\link[remstats]{recencySendSender}}, \code{\link[remstats]{recencyReceiveSender}},
+\code{\link[remstats]{recencyReceiveSender}} and \code{\link[remstats]{recencyContinue}} for
+other type of recency effects
 }

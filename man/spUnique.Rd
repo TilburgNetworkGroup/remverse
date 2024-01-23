@@ -3,6 +3,12 @@
 \name{spUnique}
 \alias{spUnique}
 \title{spUnique}
+\usage{
+spUnique()
+}
+\value{
+Warning.
+}
 \description{
-See \code{\link[remstats]{spUnique}}.
+Deprecated. Use \code{\link[remstats]{sp}}.
 }

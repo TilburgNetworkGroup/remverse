@@ -1,72 +1,92 @@
-#' getActorID
+# Generated with R/update.R: do not edit by hand
+
+#' @title getActorID
 #'
-#' See \code{\link[remify]{getActorID}}.
 #' @name getActorID
 #' @importFrom remify getActorID
+#' @inherit remify::getActorID
 #' @export getActorID
-NULL
+getActorID <- function(x, actorName = NULL) {
+  remify::getActorID(x = x, actorName = actorName)
+}
 
-#' getActorName
+#' @title getActorName
 #'
-#' See \code{\link[remify]{getActorName}}.
 #' @name getActorName
 #' @importFrom remify getActorName
+#' @inherit remify::getActorName
 #' @export getActorName
-NULL
+getActorName <- function(x, actorID = NULL) {
+  remify::getActorName(x = x, actorID = actorID)
+}
 
-#' getDyad
+#' @title getDyad
 #'
-#' See \code{\link[remify]{getDyad}}.
 #' @name getDyad
 #' @importFrom remify getDyad
+#' @inherit remify::getDyad
 #' @export getDyad
-NULL
+getDyad <- function(x, dyadID, active = FALSE) {
+  remify::getDyad(x = x, dyadID = dyadID, active = active)
+}
 
-#' getDyadID
+#' @title getDyadID
 #'
-#' See \code{\link[remify]{getDyadID}}.
 #' @name getDyadID
 #' @importFrom remify getDyadID
+#' @inherit remify::getDyadID
 #' @export getDyadID
-NULL
+getDyadID <- function(x, actor1, actor2, type) {
+  remify::getDyadID(x = x, actor1 = actor1, actor2 = actor2, type = type)
+}
 
-#' getRiskset
+#' @title getRiskset
 #'
-#' See \code{\link[remify]{getRiskset}}.
 #' @name getRiskset
 #' @importFrom remify getRiskset
+#' @inherit remify::getRiskset
 #' @export getRiskset
-NULL
+getRiskset <- function(x) {
+  remify::getRiskset(x = x)
+}
 
-#' getTypeID
+#' @title getTypeID
 #'
-#' See \code{\link[remify]{getTypeID}}.
 #' @name getTypeID
 #' @importFrom remify getTypeID
+#' @inherit remify::getTypeID
 #' @export getTypeID
-NULL
+getTypeID <- function(x, typeName = NULL) {
+  remify::getTypeID(x = x, typeName = typeName)
+}
 
-#' getTypeName
+#' @title getTypeName
 #'
-#' See \code{\link[remify]{getTypeName}}.
 #' @name getTypeName
 #' @importFrom remify getTypeName
+#' @inherit remify::getTypeName
 #' @export getTypeName
-NULL
+getTypeName <- function(x, typeID = NULL) {
+  remify::getTypeName(x = x, typeID = typeID)
+}
 
-#' rehshape
+#' @title rehshape
 #'
-#' See \code{\link[remify]{rehshape}}.
 #' @name rehshape
 #' @importFrom remify rehshape
+#' @inherit remify::rehshape
 #' @export rehshape
-NULL
+rehshape <- function(data, output_format = c("relevent-rem", "relevent-rem.dyad"), ncores = 1L, optional_arguments = NULL) {
+  remify::rehshape(data = data, output_format = output_format, ncores = ncores, optional_arguments = optional_arguments)
+}
 
-#' remify
+#' @title remify
 #'
-#' See \code{\link[remify]{remify}}.
 #' @name remify
 #' @importFrom remify remify
+#' @inherit remify::remify
 #' @export remify
-NULL
+remify <- function(edgelist, directed = TRUE, ordinal = FALSE, model = c("tie", "actor"), actors = NULL, types = NULL, riskset = c("full", "active", "manual"), origin = NULL, omit_dyad = NULL, ncores = 1L) {
+  remify::remify(edgelist = edgelist, directed = directed, ordinal = ordinal, model = model, actors = actors, types = types, riskset = riskset, origin = origin, omit_dyad = omit_dyad, ncores = ncores)
+}
 

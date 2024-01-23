@@ -3,6 +3,37 @@
 \name{getActorName}
 \alias{getActorName}
 \title{getActorName}
+\usage{
+getActorName(x, actorID = NULL)
+}
+\arguments{
+\item{x}{a \code{remify} object.}
+
+\item{actorID}{a vector of actor ID's. The ID value can range between \code{1} and \code{N} (number of actors in the network).}
+}
+\value{
+character vector of actors' names.
+}
 \description{
-See \code{\link[remify]{getActorName}}.
+A function that given a vector of actor ID's returns the corresponding vector of actor (input) names.
+}
+\section{Methods (by class)}{
+
+\itemize{
+\item \code{getActorName(remify)}: return actor's name from actor's ID
+
+}
+}
+
+\examples{
+# processing the random network 'randomREH'
+library(remify)
+data(randomREH)
+reh <- remify(edgelist = randomREH$edgelist,
+              model = "tie",
+              riskset = "manual",
+              omit_dyad = randomREH$omit_dyad)
+
+# find actor name from actor ID
+getActorName(x = reh, actorID = c(1,2,8,12))
 }
