@@ -30,14 +30,6 @@ NULL
 #' @export bind_remstats
 NULL
 
-#' ccp
-#'
-#' See \code{\link[remstats]{ccp}}.
-#' @name ccp
-#' @importFrom remstats ccp
-#' @export ccp
-NULL
-
 #' degreeDiff
 #'
 #' See \code{\link[remstats]{degreeDiff}}.
