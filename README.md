@@ -8,7 +8,10 @@
 * [NEWS](#news)
 
 ### About the package
-The `remverse` package loads an ensemble of R packages useful for several purposes in the analysis of a Relational Event History (REH). These packages are (at the moment):
+The `remverse` package provides a unified interface to a set of R packages for the analysis of relational event
+history data. It re-exports the main workflow functions and commonly used effects from its core packages, allowing
+users to work with a single package entry point. Additional, more specialised functionality remains available in the
+individual packages. These packages are (at the moment):
 
 | Core package name | Short description |
 | ------------- | ------------- |
