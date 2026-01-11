@@ -58,3 +58,4 @@ Remotes:
     TilburgNetworkGroup/remify,
     TilburgNetworkGroup/remstats,
     TilburgNetworkGroup/remstimate
+LazyData: true
