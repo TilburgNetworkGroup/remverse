@@ -44,7 +44,9 @@ Authors@R:
             role = c("aut"),
             email = "r.t.a.j.leenders@tilburguniversity.edu")
     )
-Description: The 'remverse' package provides a comprehensive set of tools, functions, and utilities for working with relational event history data. It aims to facilitate the entire workflow, from data generation to analysis.
+Description: The ‘remverse’ package provides a unified interface to core packages for relational
+    event history analysis. It re-exports key functions from ‘remify’, ‘remstats’, and ‘remstimate’
+    to support a streamlined workflow from data preparation to model estimation.
 License: MIT + file LICENSE
 BugReports: https://github.com/TilburgNetworkGroup/remverse/issues
 Encoding: UTF-8

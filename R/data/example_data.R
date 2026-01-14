@@ -19,3 +19,12 @@ NULL
 #' @keywords datasets
 NULL
 
+#' Example dataset: randomREH
+#'
+#' Example relational event history dataset. Source: \code{remify}.
+#'
+#' @docType data
+#' @name randomREH
+#' @keywords datasets
+NULL
+
