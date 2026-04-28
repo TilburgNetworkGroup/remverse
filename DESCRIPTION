@@ -1,6 +1,6 @@
 Package: remverse
 Title: Comprehensive Tools for Relational Event History Data
-Version: 0.0.0.9000
+Version: 1.0.0
 Authors@R: 
     c(
         person(
@@ -19,15 +19,15 @@ Authors@R:
             role = c("aut"),
             email = "m.l.meijerink@tilburguniversity.edu"),
         person(
-            given = "Diana",
-            family = "Karimova",
-            role = c("aut"),
-            email = "d.karimova@tilburguniversity.edu"),
-        person(
             given = "Rumana",
             family = "Lakdawala",
             role = c("aut"),
             email = "r.j.lakdawala@tilburguniversity.edu"),
+        person(
+            given = "Roger",
+            family = "Leenders",
+            role = c("aut"),
+            email = "r.t.a.j.leenders@tilburguniversity.edu"),
         person(
             given = "Fabio",
             family = "Generoso Vieira",
@@ -39,10 +39,10 @@ Authors@R:
             role = c("aut"),
             email = "m.shafiee@tilburguniversity.edu"),
         person(
-            given = "Roger",
-            family = "Leenders",
-            role = c("aut"),
-            email = "r.t.a.j.leenders@tilburguniversity.edu")
+            given = "Diana",
+            family = "Karimova",
+            role = c("ctb"),
+            email = "d.karimova@tilburguniversity.edu")
     )
 Description: The ‘remverse’ package provides a unified interface to core packages for relational
     event history analysis. It re-exports key functions from ‘remify’, ‘remstats’, and ‘remstimate’
@@ -51,13 +51,11 @@ License: MIT + file LICENSE
 BugReports: https://github.com/TilburgNetworkGroup/remverse/issues
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Imports: 
-    remify,
-    remstats,
-    remstimate
-Remotes:
-    TilburgNetworkGroup/remify,
-    TilburgNetworkGroup/remstats,
-    TilburgNetworkGroup/remstimate
+    remify (>= 4.0.0),
+    remstats (>= 4.0.0),
+    remstimate (>= 3.0.0)
+Suggests: tinytest
 LazyData: true
+LazyDataCompression: gzip
