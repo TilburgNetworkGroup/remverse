@@ -56,6 +56,9 @@ Imports:
     remify (>= 4.0.0),
     remstats (>= 4.0.0),
     remstimate (>= 3.0.0)
-Suggests: tinytest
+Suggests: tinytest,
+          knitr,
+          rmarkdown
 LazyData: true
+VignetteBuilder: knitr
 LazyDataCompression: gzip

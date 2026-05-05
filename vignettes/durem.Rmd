@@ -1,0 +1,380 @@
+---
+title: "Duration Relational Event Models with remverse"
+subtitle: "<i>A tutorial</i>"
+author: ""
+date: ""
+output:
+  rmarkdown::html_document:
+    toc: true
+    toc_depth: 3
+header-includes:
+  - \usepackage{amsmath,amssymb}
+  - \usepackage{bm}
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{Duration Relational Event Models with remverse}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(dpi = 72, collapse = TRUE, comment = "#>")
+```
+
+---
+
+A **Duration Relational Event Model (DuREM)** extends the standard relational event model (REM) to events that have both a *start time* and an *end time*.  Instead of a single process governing when the next event fires, there are now two linked sub-models:
+
+- a **start model**, which describes which inactive dyad initiates a new event and when;
+- an **end model**, which describes which currently active dyad terminates and when.
+
+The two sub-models share the same parameter vector and are estimated jointly.  Statistics for each sub-model can draw on (a) the accumulated event history — weighted versions of standard remstats effects — and (b) the *current active state* of the network, i.e. the set of events that have started but not yet ended.  These active-state statistics are the contribution of `duremstats()` and cannot be expressed as weighted event history.
+
+The remverse DuREM pipeline follows the same three-step pattern as a standard REM:
+
+```
+remify(edgelist, duration = TRUE, ...)   →  remify_durem object
+  duremstats(reh, start_effects = ..., end_effects = ...)  →  remstats_durem object
+    remstimate(reh, stats, ...)   →  remstimate_durem object
+```
+
+This vignette walks through each step using the `history_durem` dataset: a network of 115 directed social and work interactions among 10 actors, each with an observed start time and end time.
+
+---
+
+# 1  Data
+
+## 1.1  The `history_durem` dataset
+
+`history_durem` is derived from the `history` dataset by adding an `end` column.  Each row records one duration event:
+
+| Column    | Description |
+|-----------|-------------|
+| `time`    | Start time of the event (seconds from midnight) |
+| `actor1`  | Initiating actor (integer ID) |
+| `actor2`  | Receiving actor (integer ID) |
+| `setting` | Context of the interaction: `"work"` or `"social"` |
+| `weight`  | Intrinsic event weight |
+| `end`     | End time of the event (`NA` for right-censored events) |
+
+```{r load-data}
+library(remverse)   # loads remify, remstats, remstimate
+
+data(history_durem)
+head(history_durem)
+```
+
+The dataset contains a number of features that test the boundary behaviour of the pipeline:
+
+- **End coincides with start** (rows 7, 20, 30): the end time of one event equals the start time of another — both a start and an end row appear at the same time point in the dual edgelist.
+- **Simultaneous endings** (rows 23, 26): two events end at the same time point.
+- **Right-censored events**: events whose end would exceed the observation window (`t = 30 000`) have `end = NA`.  They contribute to the end risk set but are never observed to terminate.
+
+```{r data-summary}
+cat(sprintf(
+    "%d events: %d complete, %d right-censored\n",
+    nrow(history_durem),
+    sum(!is.na(history_durem$end)),
+    sum( is.na(history_durem$end))
+))
+```
+
+---
+
+# 2  Step 1 — Processing with `remify()`
+
+Pass `duration = TRUE` to tell remify that the edgelist contains duration information.  The function returns an object of class `c("remify_durem", "remify")`.
+
+```{r remify}
+reh <- remify(
+    edgelist  = history_durem,
+    duration  = TRUE,
+    model     = "tie",
+    directed  = TRUE        # actor1 initiates; end model is undirected by default
+)
+```
+
+## 2.1  The `remify_durem` object
+
+```{r print-reh}
+reh
+```
+
+```{r summary-reh}
+summary(reh)
+```
+
+Alongside the standard `remify` slots (`$M`, `$N`, `$D`, `$edgelist`, `$meta`, …), a `remify_durem` object carries three DuREM-specific elements:
+
+**`$durem`** — a named list of DuREM metadata:
+
+```{r durem-slot}
+reh$durem
+```
+
+| Field          | Meaning |
+|----------------|---------|
+| `n_complete`   | Events with an observed end time |
+| `n_censored`   | Right-censored events (`end = NA`) |
+| `directed_end` | Whether the end process is directed |
+| `has_who_ended`| Whether a `who_ended` column is present |
+| `type_exclusive`| Whether being active in one type blocks other types |
+
+**`$edgelist`** — the normalised start edgelist, including the `end` column.  This is the row-level record of each event and is used by `duremstats()`.
+
+**`$edgelist_dual`** — the dual-event expansion: one `"start"` row and one `"end"` row per complete event (censored events contribute only a `"start"` row), sorted by time.  This is the sequence that the active-state C++ routines iterate over.
+
+```{r edgelist-dual}
+head(reh$edgelist_dual, 12)
+```
+
+The `duration` column on start rows equals `end − time + 1` (the `+1` ensures zero-duration events receive weight 1 under psi-weighting).  Censored start rows have `duration = 1`.  End rows record the same duration for reference.
+
+---
+
+# 3  Step 2 — Active-state statistics with `duremstats()`
+
+`duremstats()` computes statistics that capture properties of the *currently active* event network — the set of dyadic events that have started but not yet ended.  These cannot be expressed as weighted event history and are the distinctive contribution of DuREM.
+
+## 3.1  Effect functions
+
+Effects are specified via formula objects, just like in `remstats()`.  Each effect function returns a configuration list consumed internally by `duremstats()`.
+
+**Directed-network effects** (used in the start model when `directed = TRUE`):
+
+| Effect | Description |
+|--------|-------------|
+| `activeTie()` | Is there currently an active event from actor $i$ to actor $j$? |
+| `activeOutdegreeSender()` | How many active events does actor $i$ (sender) currently have as initiator? |
+| `activeIndegreeReceiver()` | How many active events does actor $j$ (receiver) currently have as target? |
+| `activeTotaldegreeSender()` | Total active degree of actor $i$ (as sender or receiver) |
+| `activeTotaldegreeReceiver()` | Total active degree of actor $j$ |
+| `activeSharedPartners_otp()` | Outgoing two-path shared partners: actors $h$ with $i \to h$ and $h \to j$ both active |
+| `activeSharedPartners_itp()` | Incoming two-path version |
+| `activeSharedPartners_osp()` | Outgoing shared-partner version |
+| `activeSharedPartners_isp()` | Incoming shared-partner version |
+
+**Undirected-network effects** (used in the end model when `directed_end = FALSE`):
+
+| Effect | Description |
+|--------|-------------|
+| `activeTie()` | Is the dyad currently active? |
+| `activeDegreeActor1()` | Active degree of actor $i$ |
+| `activeDegreeActor2()` | Active degree of actor $j$ |
+| `activeSharedPartners()` | Number of shared active partners |
+
+Both families share the optional arguments:
+
+- `scaling = c("none", "std")` — raw counts (default) or per-time-point standardisation over all dyads in the fixed risk set.
+- `consider_type = c("ignore", "separate", "interact")` — how event types are taken into account (see §3.3 below).
+
+## 3.2  Computing statistics
+
+```{r duremstats, message=FALSE}
+# Start model: is this dyad already active? how busy is the sender?
+start_fx <- ~ activeTie() + activeOutdegreeSender()
+
+# End model (undirected, default): how many active events does each actor have?
+end_fx   <- ~ activeOutdegreeSender()
+
+dstats <- duremstats(
+    reh            = reh,
+    start_effects  = start_fx,
+    end_effects    = end_fx,
+    start          = 2L,           # skip the trivially-empty first row
+    display_progress = FALSE
+)
+```
+
+```{r print-dstats}
+dstats
+```
+
+```{r summary-dstats}
+summary(dstats)
+```
+
+The returned object is of class `"remstats_durem"` and contains two 3-D arrays:
+
+- `$start_stats` — dimensions `[M × D_start × P_start]` with effect names suffixed `.start`.
+- `$end_stats` — dimensions `[M × D_end × P_end]` with effect names suffixed `.end`.
+
+$M$ is the number of unique time points in the dual edgelist, $D$ the number of dyads in the risk set, and $P$ the number of effects.
+
+```{r dstats-dims}
+dim(dstats$start_stats)   # [M × D × P_start]
+dimnames(dstats$start_stats)[[3]]
+
+dim(dstats$end_stats)
+dimnames(dstats$end_stats)[[3]]
+```
+
+### Inspecting specific statistics
+
+The active-state statistics encode the network state *just before* each time point in the dual edgelist.  For example, we can trace how `activeTie.start` evolves for the dyad 105 → 109:
+
+```{r inspect-stat, eval=FALSE}
+# Build dyad-column lookup (mirrors the internals of duremstats)
+actor_dict <- reh$meta$dictionary$actors
+actor_ids  <- setNames(actor_dict$actorID - 1L, actor_dict$actorName)
+riskset_mat <- convert_to_risksetMatrix(
+    get_riskset(as.integer(seq_len(reh$N) - 1L), 0L, directed = TRUE),
+    N = reh$N, C = 1L
+)
+col_105_109 <- as.integer(riskset_mat[actor_ids["105"] + 1L,
+                                       actor_ids["109"] + 1L]) + 1L
+# activeTie.start for dyad 105→109 across all time points
+dstats$start_stats[, col_105_109, "activeTie.start"]
+```
+
+## 3.3  Event types and `consider_type`
+
+When the edgelist contains a `type` column (here, `setting` could be renamed `type`), the `consider_type` argument controls how event types are handled in the active-state computation:
+
+| Value | Behaviour | Output shape |
+|-------|-----------|--------------|
+| `"ignore"` (default) | Counts active events of any type | 1 stat, $D$ columns |
+| `"separate"` | One statistic per type; only type-$c$ events contribute to the type-$c$ stat | $C$ stats, each $D$ columns |
+| `"interact"` | One statistic with $D \times C$ columns; column $(i,j,c)$ reflects type-$c$ activity on dyad $(i,j)$ | 1 stat, $D \times C$ columns |
+
+`"separate"` and `"interact"` are implemented entirely in R by filtering the dual edgelist per type; no C++ changes are required.
+
+```{r consider-type-demo, eval=FALSE}
+# Using setting as event type (rename the column first)
+history_typed <- history_durem
+names(history_typed)[names(history_typed) == "setting"] <- "type"
+reh_typed <- remify(history_typed, duration = TRUE)
+
+# "separate": two activeTie statistics, one per setting
+dstats_sep <- duremstats(
+    reh_typed,
+    start_effects = ~ activeTie(consider_type = "separate")
+)
+# Output: activeTie.work.start and activeTie.social.start
+dimnames(dstats_sep$start_stats)[[3]]
+
+# "interact": single activeTie with D*C columns
+dstats_int <- duremstats(
+    reh_typed,
+    start_effects = ~ activeTie(consider_type = "interact")
+)
+dim(dstats_int$start_stats)   # [M × (D * C) × 1]
+```
+
+---
+
+# 4  Step 3 — Estimation with `remstimate()`
+
+`remstimate()` dispatches on the `"remstats_durem"` class and fits the joint start/end model as a **Poisson GLM** with a log inter-event-time offset.  The stacked data frame aligns start events (with `.start` statistics) and end events (with `.end` statistics) into a single long-format design matrix; start statistics are zero for end rows and vice versa.
+
+## 4.1  Fitting the model
+
+```{r remstimate}
+fit <- remstimate(reh = reh, stats = dstats)
+```
+
+```{r print-fit}
+fit
+```
+
+## 4.2  Coefficients and log-likelihood
+
+```{r coef}
+coef(fit)
+logLik(fit)
+```
+
+Each coefficient quantifies the effect of the corresponding active-state statistic on the combined start/end event rate:
+
+- **`activeTie.start`** — the log-rate multiplier when the dyad is already active (i.e. when actor $i$ already has an active event directed at actor $j$).  A negative coefficient means that dyads already in an active event are *less* likely to initiate another event in the same direction — a form of tie saturation.
+
+- **`activeOutdegreeSender.start`** — how the number of active outgoing events of the sender relates to starting a new event.  A negative coefficient reflects engagement: a sender who is already in many active events is less likely to initiate another.
+
+- **`activeOutdegreeSender.end`** — how the active out-degree of the actor associated with the end event relates to termination.  A positive coefficient suggests that actors involved in more active events also end them sooner (or that high-degree actors are disproportionately responsible for terminating events).
+
+## 4.3  Summary
+
+```{r summary-fit}
+summary(fit)
+```
+
+The `summary()` method delegates to the underlying `glm` object and reports standard Poisson GLM output: estimated coefficients, standard errors, $z$-values, and $p$-values.
+
+## 4.4  Model comparison
+
+Because `remstimate_durem` returns a standard `logLik` object, you can compute information criteria and compare nested models in the usual way:
+
+```{r model-comparison, message=FALSE}
+# Fit a simpler model with only activeTie in both sub-models
+dstats_simple <- duremstats(
+    reh,
+    start_effects = ~ activeTie(),
+    end_effects   = ~ activeTie(),
+    start         = 2L
+)
+fit_simple <- remstimate(reh = reh, stats = dstats_simple)
+
+# Compare log-likelihoods
+logLik(fit)
+logLik(fit_simple)
+
+# AIC
+AIC(fit)
+AIC(fit_simple)
+```
+
+---
+
+# 5  Additional topics
+
+## 5.1  Right-censored events
+
+Right-censored events (where `end = NA` in the edgelist) are fully supported.  They contribute a start row to the dual edgelist and appear in the active-state counts until the end of the observation window, but they never produce an observed end event.  The `$durem$n_censored` slot records how many events are censored:
+
+```{r censored}
+reh$durem$n_censored
+reh$durem$n_complete
+```
+
+## 5.2  Simultaneous events and boundary coincidences
+
+The dual edgelist may contain multiple rows at the same time point — for example, two events starting simultaneously, or one event ending at exactly the same moment that another begins.  `remify_durem` handles these cases automatically:
+
+- **Two events ending simultaneously**: both end rows appear at the same time point.  The active-state statistics for that time point reflect the state *just before* both end.
+- **End coincides with start**: an end row and a start row share a time point.  The `$edgelist_dual` is sorted so that the active state at that time point is computed consistently.
+
+```{r simultaneous}
+# Time points in the dual edgelist with more than one row
+tab <- table(reh$edgelist_dual$time)
+head(sort(tab[tab > 1], decreasing = TRUE), 6)
+```
+
+## 5.3  Undirected DuREM (iDynam-style)
+
+For undirected duration events — such as face-to-face conversations — set `directed = FALSE`:
+
+```{r undirected, eval=FALSE}
+reh_ud <- remify(history_durem, duration = TRUE, directed = FALSE)
+
+dstats_ud <- duremstats(
+    reh_ud,
+    start_effects = ~ activeTie() + activeDegreeActor1(),
+    end_effects   = ~ activeDegreeActor1()
+)
+
+fit_ud <- remstimate(reh = reh_ud, stats = dstats_ud)
+coef(fit_ud)
+```
+
+This mirrors the iDynam model of Hoffman, Block, Elmer & Stadtfeld (2020), in which the engagement effect (`activeDegreeActor1`) is the key predictor for both starting and ending face-to-face conversations.
+
+## 5.4  Combining with history-weighted statistics
+
+Active-state statistics from `duremstats()` can be complemented by history-weighted statistics (e.g. inertia, reciprocity) that capture the accumulated event history rather than the current active state.  When `remstats()` gains a dispatch method for `remify_durem` objects — returning a `remstats_durem` object with psi-weighted start and end statistics — the two sources of statistics will be combined into a single object before passing to `remstimate()`.  This is the intended full pipeline described in the DuREM design specification.
+
+---
+
+#### References
+
+Butts, C. T. (2008). A relational event framework for social action. *Sociological Methodology*, 38(1), 155–200.
+
+Hoffman, M., Block, P., Elmer, T., & Stadtfeld, C. (2020). A model for the dynamics of face-to-face interactions in social groups. *Network Science*, 8(S1), S4–S25.
