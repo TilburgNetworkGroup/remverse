@@ -1,25 +1,10 @@
-#' aic
-#'
-#' See \code{\link[remstimate]{aic}}.
-#' @name aic
-#' @importFrom remstimate aic
-#' @export aic
-NULL
 
-#' aicc
-#'
-#' See \code{\link[remstimate]{aicc}}.
-#' @name aicc
-#' @importFrom remstimate aicc
-#' @export aicc
-NULL
 
-#' bic
-#'
-#' See \code{\link[remstimate]{bic}}.
-#' @name bic
-#' @importFrom remstimate bic
-#' @export bic
+#' @title AICC
+#' @description See \code{\link[remstimate]{AICC}}.
+#' @name AICC
+#' @importFrom remstimate AICC
+#' @export
 NULL
 
 #' remstimate
@@ -30,11 +15,18 @@ NULL
 #' @export remstimate
 NULL
 
-#' waic
+#' @title WAIC
+#' @description See \code{\link[remstimate]{WAIC}}.
+#' @name WAIC
+#' @importFrom remstimate WAIC
+#' @export
+NULL
+
+#' diagnostics
 #'
-#' See \code{\link[remstimate]{waic}}.
-#' @name waic
-#' @importFrom remstimate waic
-#' @export waic
+#' See \code{\link[remstimate]{diagnostics}}.
+#' @name diagnostics
+#' @importFrom remstimate diagnostics
+#' @export diagnostics
 NULL
 

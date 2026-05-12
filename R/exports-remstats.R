@@ -222,6 +222,46 @@ NULL
 #' @export psABXY
 NULL
 
+#' psABA
+#'
+#' See \code{\link[remstats]{psABA}}.
+#' @name psABA
+#' @importFrom remstats psABA
+#' @export psABA
+NULL
+
+#' psABB
+#'
+#' See \code{\link[remstats]{psABB}}.
+#' @name psABB
+#' @importFrom remstats psABB
+#' @export psABB
+NULL
+
+#' psABX
+#'
+#' See \code{\link[remstats]{psABX}}.
+#' @name psABX
+#' @importFrom remstats psABX
+#' @export psABX
+NULL
+
+#' dyad
+#'
+#' See \code{\link[remstats]{dyad}}.
+#' @name dyad
+#' @importFrom remstats dyad
+#' @export dyad
+NULL
+
+#' stack_stats
+#'
+#' See \code{\link[remstats]{stack_stats}}.
+#' @name stack_stats
+#' @importFrom remstats stack_stats
+#' @export stack_stats
+NULL
+
 #' receive
 #'
 #' See \code{\link[remstats]{receive}}.
