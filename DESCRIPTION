@@ -14,15 +14,15 @@ Authors@R:
             role = c("aut"),
             email = "g.arena@tilburguniversity.edu"),
         person(
+            given = "Roger",
+            family = "Leenders",
+            role = c("aut"),
+            email = "r.t.a.j.leenders@tilburguniversity.edu"),
+        person(
             given = "Marlyne",
             family = "Meijerink-Bosman",
             role = c("aut"),
             email = "m.l.meijerink@tilburguniversity.edu"),
-        person(
-            given = "Diana",
-            family = "Karimova",
-            role = c("aut"),
-            email = "d.karimova@tilburguniversity.edu"),
         person(
             given = "Rumana",
             family = "Lakdawala",
@@ -36,15 +36,15 @@ Authors@R:
         person(
             given = "Mahdi",
             family = "Shafiee Kamalabad",
-            role = c("aut"),
+            role = c("ctb"),
             email = "m.shafiee@tilburguniversity.edu"),
         person(
-            given = "Roger",
-            family = "Leenders",
-            role = c("aut"),
-            email = "r.t.a.j.leenders@tilburguniversity.edu")
+            given = "Diana",
+            family = "Karimova",
+            role = c("ctb"),
+            email = "d.karimova@tilburguniversity.edu")
     )
-Description: The 'remverse' package provides a comprehensive set of tools, functions, and utilities for working with relational event history data. It aims to facilitate the entire workflow, from data generation to analysis.
+Description: Remverse is a meta-package that provides a single entry point for relational event modeling by re-exporting core functions from 'remify', 'remstats', and 'remstimate'. Supports tie-oriented, actor-oriented, and duration models with frequentist, Bayesian, regularized, and mixture-based estimation.
 License: MIT + file LICENSE
 BugReports: https://github.com/TilburgNetworkGroup/remverse/issues
 Encoding: UTF-8
@@ -54,7 +54,7 @@ Imports:
     remify,
     remstats,
     remstimate
-Remotes:
-    TilburgNetworkGroup/remify,
-    TilburgNetworkGroup/remstats,
-    TilburgNetworkGroup/remstimate
+Suggests:
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
