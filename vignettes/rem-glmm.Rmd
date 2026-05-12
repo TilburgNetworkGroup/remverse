@@ -1,0 +1,223 @@
+---
+title: "Frailty Relational Event Models with GLMM"
+subtitle: "<i>Random intercepts and slopes for actor heterogeneity</i>"
+author: ""
+date: ""
+output:
+  rmarkdown::html_document:
+    toc: true
+    toc_depth: 3
+    theme: spacelab
+    highlight: pygments
+    code_folding: show
+header-includes:
+  - \usepackage{amsmath,amssymb}
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{Frailty Relational Event Models with GLMM}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(dpi = 72, collapse = TRUE, comment = "#>")
+```
+
+---
+
+Standard relational event models assume that all actors and dyads share the same set of parameters. In practice, actors differ in their baseline propensity to interact — some actors are inherently more active than others, beyond what is captured by endogenous statistics. A **frailty REM** addresses this by introducing random intercepts (and optionally random slopes) for actors, borrowing ideas from survival analysis and generalized linear mixed models (GLMMs).
+
+The `remverse` pipeline supports GLMM estimation via `remstimate(method = "GLMM")`, which fits the stacked relational event model as a Poisson GLMM using `lme4::glmer()`. This vignette demonstrates how to specify random effects for sender and receiver heterogeneity, and how to interpret the results.
+
+```{r load}
+library(remverse)
+```
+
+---
+
+# 1 When to use a frailty model
+
+A frailty model is appropriate when:
+
+- **Actor heterogeneity** is expected but not fully captured by observed covariates. Some actors may simply be more sociable or more central, independent of their network position.
+- **Overdispersion** is present in the event rates — the standard Poisson model underpredicts the variance of event counts.
+- **Shrinkage** is desirable — actors with few observations borrow strength from the population-level estimates rather than producing noisy individual-level estimates.
+
+The random intercept acts as a multiplicative frailty on the event rate: actors with a positive random intercept have a higher-than-average baseline rate, while those with a negative intercept have a lower-than-average rate.
+
+---
+
+# 2 Data
+
+We use the `history` dataset (115 directed events among 10 actors) and the `info` dataset (actor-level covariates).
+
+```{r data}
+data(history)
+data(info)
+history$weight <- 1
+```
+
+---
+
+# 3 The standard model (no random effects) {.tabset .tabset-fade}
+
+As a baseline, we first estimate a standard fixed-effects-only model.
+
+```{r standard}
+reh <- remify(edgelist = history, model = "tie")
+
+stats <- remstats(
+  reh = reh,
+  tie_effects = ~ inertia() + reciprocity() +
+                   send("extraversion", info) +
+                   receive("agreeableness", info)
+)
+
+fit_fixed <- remstimate(reh = reh, stats = stats, method = "MLE")
+summary(fit_fixed)
+```
+
+This model assumes all actors share the same baseline rate and the same coefficients. Any unobserved actor-level heterogeneity is absorbed into the residual.
+
+---
+
+# 4 Random intercepts for actors
+
+## 4.1 Sender frailty
+
+A random intercept for `actor1` (the sender) allows each actor to have a different baseline sending rate. This captures unobserved sender-level heterogeneity:
+
+$$\log \lambda_{ij}(t) = \boldsymbol{\beta}^\top \mathbf{x}_{ij}(t) + u_i, \quad u_i \sim \mathcal{N}(0, \sigma^2_u)$$
+
+where $u_i$ is the sender-specific random intercept.
+
+```{r sender-frailty}
+fit_sender <- remstimate(
+  reh    = reh,
+  stats  = stats,
+  method = "GLMM",
+  random = ~ (1 | actor1)
+)
+summary(fit_sender)
+```
+
+The `random` argument uses `lme4` formula syntax. The output reports fixed-effect coefficients (comparable to the standard model) and the estimated variance of the sender random intercept ($\hat{\sigma}^2_u$). A large variance indicates substantial sender-level heterogeneity not captured by the fixed effects.
+
+## 4.2 Receiver frailty
+
+Similarly, a random intercept for `actor2` captures receiver-level heterogeneity — some actors are more attractive as receivers regardless of the network history:
+
+```{r receiver-frailty}
+fit_receiver <- remstimate(
+  reh    = reh,
+  stats  = stats,
+  method = "GLMM",
+  random = ~ (1 | actor2)
+)
+summary(fit_receiver)
+```
+
+## 4.3 Crossed sender and receiver frailties
+
+Both can be included simultaneously as crossed random effects. This is the most common frailty-REM specification:
+
+```{r crossed}
+fit_crossed <- remstimate(
+  reh    = reh,
+  stats  = stats,
+  method = "GLMM",
+  random = ~ (1 | actor1) + (1 | actor2)
+)
+summary(fit_crossed)
+```
+
+The model now estimates separate variance components for sender and receiver heterogeneity. The fixed-effect coefficients are adjusted for both sources of unobserved variation, which can change their magnitude and significance compared to the fixed-effects-only model.
+
+---
+
+# 5 Random slopes
+
+## 5.1 Actor-varying inertia
+
+Beyond intercepts, we can allow the effect of endogenous statistics to vary across actors. For example, some actors may be more habitual than others — their inertia effect is stronger. This is modeled with a random slope for inertia on the sender:
+
+```{r random-slope}
+stats_inertia <- remstats(
+  reh = reh,
+  tie_effects = ~ inertia() + reciprocity()
+)
+
+fit_slope <- remstimate(
+  reh    = reh,
+  stats  = stats_inertia,
+  method = "GLMM",
+  random = ~ (1 + inertia | actor1)
+)
+summary(fit_slope)
+```
+
+The random effects now include a variance for the intercept, a variance for the inertia slope, and their correlation. A positive correlation would mean that actors with a high baseline sending rate also have a stronger inertia effect.
+
+Note that random slopes substantially increase model complexity. With small datasets, the model may have difficulty converging. The `summary()` output will indicate any convergence warnings.
+
+---
+
+# 6 Model comparison
+
+We can compare models using information criteria. The standard approach is AIC or BIC, though for GLMMs these are based on the marginal likelihood:
+
+```{r comparison}
+cat("Fixed-effects only: AIC =", AIC(fit_fixed), "\n")
+cat("Sender frailty:     AIC =", AIC(fit_sender), "\n")
+cat("Receiver frailty:   AIC =", AIC(fit_receiver), "\n")
+cat("Crossed frailties:  AIC =", AIC(fit_crossed), "\n")
+```
+
+A lower AIC indicates a better trade-off between fit and complexity. If the frailty model improves AIC substantially, actor-level heterogeneity is an important feature of the data.
+
+---
+
+# 7 Diagnostics
+
+The GLMM diagnostics compute recall statistics using the full linear predictor, including the best linear unbiased predictors (BLUPs) of the random effects. This means the recall reflects the model's ability to predict events using both population-level parameters and actor-specific adjustments.
+
+```{r diagnostics, out.width="50%", dev=c("jpeg"), dev.args = list(bg = "white")}
+diag_crossed <- diagnostics(fit_crossed)
+diag_crossed
+
+plot(fit_crossed, diagnostics_object = diag_crossed)
+```
+
+For comparison, the diagnostics can also be computed using fixed effects only (without the random effect predictions), by setting `use_ranef = FALSE`:
+
+```{r diagnostics-fixed}
+diag_fixed_only <- diagnostics(fit_crossed, use_ranef = FALSE)
+diag_fixed_only
+```
+
+The difference between the two recall values quantifies how much of the model's predictive power comes from the random effects vs. the fixed effects.
+
+---
+
+# 8 Interpreting random effects
+
+The individual random effects (BLUPs) can be extracted from the fitted model to identify actors with unusually high or low activity:
+
+```{r ranef}
+re <- lme4::ranef(fit_crossed$backend_fit)
+re
+```
+
+These values can be plotted to visualize the distribution of actor-level heterogeneity. Actors with large positive sender random effects are more active senders than average; actors with large positive receiver effects are more popular as receivers.
+
+---
+
+# 9 Summary
+
+| Specification | `random` argument | Interpretation |
+|---|---|---|
+| Sender frailty | `~ (1 \| actor1)` | Sender-level heterogeneity in baseline rate |
+| Receiver frailty | `~ (1 \| actor2)` | Receiver-level heterogeneity (attractiveness) |
+| Crossed frailties | `~ (1 \| actor1) + (1 \| actor2)` | Both sender and receiver heterogeneity |
+| Sender random slope | `~ (1 + inertia \| actor1)` | Actor-varying inertia effect |
+
+The GLMM approach integrates naturally into the `remverse` pipeline. The same `remify()` and `remstats()` calls are used; only the `remstimate()` step changes via `method = "GLMM"`. Diagnostics and plotting work identically.

@@ -65,9 +65,10 @@ head(history_durem)
 
 The dataset contains a number of features that test the boundary behaviour of the pipeline:
 
-- **End coincides with start** (rows 7, 20, 30): the end time of one event equals the start time of another — both a start and an end row appear at the same time point in the dual edgelist.
-- **Simultaneous endings** (rows 23, 26): two events end at the same time point.
-- **Right-censored events**: events whose end would exceed the observation window (`t = 30 000`) have `end = NA`.  They contribute to the end risk set but are never observed to terminate.
+- **End coincides with start** (rows 20, 30): the end time of one event equals the start time of another — both an end row and a start row appear at the same time point in the dual edgelist.
+- **Simultaneous endings** (rows 23, 26): two events end at exactly the same time point (`t = 9276`).
+- **Right-censored events**: events whose computed end would exceed the observation window (`t = 30 000`) have `end = NA`.  They contribute to the active-state counts until the end of the sequence but are never observed to terminate.
+- **Non-overlapping same-dyad events**: for each directed dyad, successive events are guaranteed not to overlap — the first ends before the second begins.
 
 ```{r data-summary}
 cat(sprintf(
@@ -367,9 +368,24 @@ coef(fit_ud)
 
 This mirrors the iDynam model of Hoffman, Block, Elmer & Stadtfeld (2020), in which the engagement effect (`activeDegreeActor1`) is the key predictor for both starting and ending face-to-face conversations.
 
-## 5.4  Combining with history-weighted statistics
+## 5.4  Combining active-state and history-weighted statistics
 
-Active-state statistics from `duremstats()` can be complemented by history-weighted statistics (e.g. inertia, reciprocity) that capture the accumulated event history rather than the current active state.  When `remstats()` gains a dispatch method for `remify_durem` objects — returning a `remstats_durem` object with psi-weighted start and end statistics — the two sources of statistics will be combined into a single object before passing to `remstimate()`.  This is the intended full pipeline described in the DuREM design specification.
+Active-state statistics can be freely combined with history-weighted statistics (e.g. `inertia()`, `reciprocity()`) in a single formula.  `remstats()` inspects each term, routes active-state and history-weighted effects to their respective backends, and stitches the resulting arrays together automatically:
+
+```{r mixed-effects, eval=FALSE}
+stats_mixed <- remstats(
+    reh,
+    start_effects = ~ activeTie() + inertia(),
+    end_effects   = ~ activeDegreeActor1() + inertia(),
+    psi_start     = 1,   # duration exponent for history-weighted terms
+    psi_end       = 1
+)
+
+fit_mixed <- remstimate(reh = reh, stats = stats_mixed)
+coef(fit_mixed)
+```
+
+The `psi_start` and `psi_end` arguments control psi-weighting for the history-weighted terms and are ignored for active-state terms.
 
 ---
 

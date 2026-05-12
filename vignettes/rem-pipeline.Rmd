@@ -1,0 +1,400 @@
+---
+title: "The Relational Event Modeling Pipeline"
+subtitle: "<i>A comprehensive tutorial</i>"
+author: ""
+date: ""
+output:
+  rmarkdown::html_document:
+    toc: true
+    toc_depth: 3
+    theme: spacelab
+    highlight: pygments
+    code_folding: show
+header-includes:
+  - \usepackage{amsmath,amssymb}
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{The Relational Event Modeling Pipeline}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(dpi = 72, collapse = TRUE, comment = "#>")
+```
+
+---
+
+The `remverse` suite provides a three-step pipeline for relational event modeling:
+
+1. **`remify()`** — process a raw edgelist into a standardized event history
+2. **`remstats()`** — compute network statistics (endogenous and exogenous)
+3. **`remstimate()`** — estimate model parameters via MLE or HMC
+
+This vignette walks through the full pipeline for a range of modeling choices: tie-oriented vs. actor-oriented models, interval vs. ordinal timing, different risk set definitions, typed events, and a variety of endogenous and exogenous statistics. Each section builds on the same dataset so the results can be compared directly.
+
+```{r load}
+library(remverse)
+```
+
+---
+
+# 1 Data
+
+We use the `history` dataset (115 directed events among 10 actors) and the `info` dataset (time-varying actor attributes), both included in the `remstats` package.
+
+```{r data}
+data(history)
+data(info)
+
+head(history)
+head(info)
+```
+
+Events record a `time`, a `sender` (`actor1`), a `receiver` (`actor2`), a `setting` (event type: `"work"` or `"social"`), and a `weight`. The `info` table provides `extraversion` and `agreeableness` scores measured at multiple time points for each actor.
+
+---
+
+# 2 Tie-oriented models {.tabset .tabset-fade .tabset-pills}
+
+## 2.1 Basic model (interval timing)
+
+The simplest specification: a directed tie-oriented model with interval timing (exact event times), a full risk set, and a few endogenous statistics.
+
+```{r tie-basic}
+# Step 1: process the event history
+reh <- remify(edgelist = history, model = "tie", directed = TRUE)
+summary(reh)
+
+# Step 2: define effects and compute statistics
+effects <- ~ inertia() + reciprocity() + indegreeSender() + outdegreeReceiver()
+stats <- remstats(reh = reh, tie_effects = effects)
+stats
+
+# Step 3: estimate the model
+fit <- remstimate(reh = reh, stats = stats, method = "MLE")
+summary(fit)
+```
+
+The baseline intercept is automatically included for interval timing (`ordinal = FALSE`). It captures the average event rate across all dyads. The endogenous effects quantify how the accumulated event history shapes future interaction patterns: `inertia` measures the tendency to repeat past interactions, `reciprocity` captures the tendency to reciprocate received events, and the degree effects capture sender and receiver activity.
+
+### Diagnostics
+
+```{r tie-basic-diag, out.width="50%", dev=c("jpeg"), dev.args = list(bg = "white")}
+diag <- diagnostics(object = fit, reh = reh, stats = stats)
+diag
+
+plot(x = fit, reh = reh, diagnostics = diag)
+```
+
+The `diagnostics()` function computes recall statistics: for each time point, the observed event is ranked among all competing dyads based on its predicted rate. A well-fitting model assigns high ranks to observed events. The recall summary reports the mean relative rank (1.0 = perfectly predicted) and the proportion of events in the top 5%.
+
+---
+
+## 2.2 Ordinal timing
+
+When only the order of events matters (or when exact timestamps are unreliable), set `ordinal = TRUE`. The model reduces to a stratified Cox proportional-hazard model — no baseline intercept is estimated.
+
+```{r tie-ordinal}
+reh_ord <- remify(edgelist = history, model = "tie", ordinal = TRUE)
+
+stats_ord <- remstats(reh = reh_ord, tie_effects = ~ inertia() + reciprocity())
+fit_ord <- remstimate(reh = reh_ord, stats = stats_ord, method = "MLE")
+summary(fit_ord)
+```
+
+The coefficients are comparable to the interval model but the intercept and inter-event-time offset are absent.
+
+---
+
+## 2.3 Risk set variations
+
+### Active risk set
+
+For sparse networks, the active risk set includes only dyads observed at least once, reducing computation substantially.
+
+```{r tie-active}
+reh_active <- remify(edgelist = history, model = "tie", riskset = "active")
+
+cat("Full risk set:", reh$D, "dyads\n")
+cat("Active risk set:", reh_active$activeD, "dyads\n")
+
+stats_active <- remstats(reh = reh_active, tie_effects = ~ inertia() + reciprocity())
+fit_active <- remstimate(reh = reh_active, stats = stats_active, method = "MLE")
+summary(fit_active)
+```
+
+### Manual risk set
+
+A manual risk set allows you to restrict the set of dyads at risk to a predefined set. Observed dyads not included in the manual specification are added automatically.
+
+```{r tie-manual}
+# Define a manual risk set: a subset of dyads
+my_riskset <- data.frame(
+  actor1 = c(101, 102, 103, 104, 105, 106, 107),
+  actor2 = c(102, 103, 104, 105, 106, 107, 108)
+)
+
+reh_manual <- remify(
+  edgelist      = history,
+  model         = "tie",
+  riskset       = "manual",
+  manual.riskset = my_riskset
+)
+cat("Manual risk set:", reh_manual$activeD, "dyads\n")
+```
+
+---
+
+## 2.4 Typed events
+
+When events carry a type label (here, `"work"` vs. `"social"`), the `consider_type` argument controls how statistics account for event types. The risk set can optionally be extended by type (`extend_riskset_by_type = TRUE`), so that each dyad-type combination is a separate unit at risk.
+
+```{r tie-typed}
+reh_typed <- remify(
+  edgelist   = history,
+  model      = "tie",
+  event_type = "setting"
+)
+```
+
+### `consider_type = "ignore"`
+
+Event types are not distinguished — statistics aggregate over all types.
+
+```{r typed-ignore}
+stats_ign <- remstats(
+  reh = reh_typed,
+  tie_effects = ~ inertia(consider_type = "ignore")
+)
+dimnames(stats_ign)[[3]]
+```
+
+### `consider_type = "separate"`
+
+One statistic per type: separate counts of past `"work"` events and past `"social"` events.
+
+```{r typed-separate}
+stats_sep <- remstats(
+  reh = reh_typed,
+  tie_effects = ~ inertia(consider_type = "separate")
+)
+dimnames(stats_sep)[[3]]
+```
+
+### `consider_type = "interact"`
+
+The statistic conditions on the type of the event at the current time point, allowing the effect of event history to depend on the triggering type.
+
+```{r typed-interact}
+stats_int <- remstats(
+  reh = reh_typed,
+  tie_effects = ~ inertia(consider_type = "interact")
+)
+dimnames(stats_int)[[3]]
+```
+
+### Estimation with typed events
+
+```{r typed-fit}
+stats_typed <- remstats(
+  reh = reh_typed,
+  tie_effects = ~ inertia(consider_type = "separate") +
+                   reciprocity(consider_type = "separate")
+)
+
+fit_typed <- remstimate(reh = reh_typed, stats = stats_typed, method = "MLE")
+summary(fit_typed)
+```
+
+The type-separated coefficients tell us whether inertia and reciprocity operate differently across event types. For instance, a stronger inertia effect for `"work"` events would suggest that work interactions are more habitual than social ones.
+
+---
+
+## 2.5 Exogenous statistics
+
+Exogenous actor attributes and dyadic covariates can be included in the model alongside endogenous effects. The `info` dataset provides time-varying attributes.
+
+### Actor-level effects
+
+```{r exo-actor}
+stats_exo <- remstats(
+  reh = reh,
+  tie_effects = ~ inertia() +
+                   reciprocity() +
+                   send("extraversion", info) +
+                   receive("agreeableness", info) +
+                   average("extraversion", info)
+)
+
+fit_exo <- remstimate(reh = reh, stats = stats_exo, method = "MLE")
+summary(fit_exo)
+```
+
+- `send("extraversion")`: the sender's extraversion score — do extraverted actors initiate more events?
+- `receive("agreeableness")`: the receiver's agreeableness — are agreeable actors more often chosen as receivers?
+- `average("extraversion")`: the average extraversion of the dyad — do events flow between similarly extraverted actors?
+
+### Interactions between endogenous and exogenous effects
+
+Effects can be interacted to test whether endogenous tendencies (e.g., inertia) depend on actor attributes:
+
+```{r exo-interaction}
+stats_ix <- remstats(
+  reh = reh,
+  tie_effects = ~ inertia() +
+                   send("extraversion", info) +
+                   inertia():send("extraversion", info)
+)
+
+fit_ix <- remstimate(reh = reh, stats = stats_ix, method = "MLE")
+summary(fit_ix)
+```
+
+A significant interaction would indicate that the tendency to repeat past interactions depends on the sender's extraversion level.
+
+---
+
+## 2.6 Memory types
+
+The `memory` argument controls which past events contribute to endogenous statistics at each time point.
+
+```{r memory}
+# Full memory (default): entire event history
+stats_full <- remstats(reh = reh, tie_effects = ~ inertia(), memory = "full")
+
+# Window memory: only events within the last 500 time units
+stats_win <- remstats(reh = reh, tie_effects = ~ inertia(),
+                      memory = "window", memory_value = 500)
+
+# Decay memory: exponential decay with half-life 200
+stats_dec <- remstats(reh = reh, tie_effects = ~ inertia(),
+                      memory = "decay", memory_value = 200)
+
+# Compare the inertia statistic at the last time point for a single dyad
+cat("Full memory:  ", stats_full[115, 1, "inertia"], "\n")
+cat("Window (500): ", stats_win[115, 1, "inertia"], "\n")
+cat("Decay (200):  ", stats_dec[115, 1, "inertia"], "\n")
+```
+
+Full memory accumulates all past events equally; window memory discards events older than the threshold; decay memory down-weights older events exponentially.
+
+---
+
+## 2.7 Case-control sampling
+
+For large networks, computing statistics over the full risk set at every time point is expensive. Case-control sampling draws a random subset of non-event dyads as the comparison set, substantially reducing computation.
+
+```{r sampling}
+stats_sampled <- remstats(
+  reh = reh,
+  tie_effects = ~ inertia() + reciprocity(),
+  sampling = TRUE,
+  samp_num = 20,
+  seed = 42
+)
+
+fit_sampled <- remstimate(reh = reh, stats = stats_sampled, method = "MLE")
+summary(fit_sampled)
+```
+
+The estimates are consistent as the sample size grows but will differ slightly from the full-risk-set estimates due to sampling variability.
+
+---
+
+# 3 Actor-oriented models {.tabset .tabset-fade .tabset-pills}
+
+Actor-oriented models decompose the event process into two steps: a sender rate model (which actor initiates next?) and a receiver choice model (whom does the sender choose?). This requires `directed = TRUE`.
+
+## 3.1 Sender + receiver model
+
+```{r actor-basic}
+reh_ao <- remify(edgelist = history, model = "actor", directed = TRUE)
+
+rate_effects <- ~ outdegreeSender() + indegreeSender()
+choice_effects <- ~ inertia() + reciprocity()
+
+stats_ao <- remstats(
+  reh = reh_ao,
+  sender_effects = rate_effects,
+  receiver_effects = choice_effects
+)
+stats_ao
+
+fit_ao <- remstimate(reh = reh_ao, stats = stats_ao, method = "MLE")
+summary(fit_ao)
+```
+
+The sender model estimates include a baseline rate and the effects of out-degree and in-degree on sender activity. The receiver model estimates describe how inertia and reciprocity shape the choice of receiver, conditional on the sender.
+
+## 3.2 Actor-oriented model with exogenous effects
+
+```{r actor-exo}
+rate_effects_exo <- ~ outdegreeSender() + send("extraversion", info)
+choice_effects_exo <- ~ inertia() + reciprocity() + receive("agreeableness", info)
+
+stats_ao_exo <- remstats(
+  reh = reh_ao,
+  sender_effects = rate_effects_exo,
+  receiver_effects = choice_effects_exo
+)
+
+fit_ao_exo <- remstimate(reh = reh_ao, stats = stats_ao_exo, method = "MLE")
+summary(fit_ao_exo)
+```
+
+## 3.3 Actor-oriented diagnostics
+
+```{r actor-diag, out.width="50%", dev=c("jpeg"), dev.args = list(bg = "white")}
+diag_ao <- diagnostics(object = fit_ao, reh = reh_ao, stats = stats_ao)
+plot(x = fit_ao, reh = reh_ao, diagnostics = diag_ao)
+```
+
+---
+
+# 4 Bayesian estimation with HMC
+
+Both tie-oriented and actor-oriented models can be estimated with Hamiltonian Monte Carlo via `method = "HMC"`. This requires specifying the number of chains, draws, burn-in, and leap-frog parameters.
+
+```{r hmc, message=FALSE}
+fit_hmc <- remstimate(
+  reh    = reh,
+  stats  = stats,
+  method = "HMC",
+  ncores = 1L,
+  nsim   = 300L,
+  nchains = 2L,
+  burnin  = 300L,
+  L       = 100L,
+  epsilon = 0.001,
+  thin    = 2L,
+  seed    = 42
+)
+
+summary(fit_hmc)
+```
+
+```{r hmc-diag, out.width="50%", dev=c("jpeg"), dev.args = list(bg = "white")}
+diag_hmc <- diagnostics(object = fit_hmc, reh = reh, stats = stats)
+plot(x = fit_hmc, reh = reh, diagnostics = diag_hmc)
+```
+
+The HMC output includes posterior means, standard deviations, and trace plots for convergence assessment.
+
+---
+
+# 5 Putting it all together
+
+The table below summarizes the key modeling choices and how they map to function arguments:
+
+| Choice | Argument | Options |
+|--------|----------|---------|
+| Model type | `remify(model = ...)` | `"tie"`, `"actor"` |
+| Timing | `remify(ordinal = ...)` | `FALSE` (interval), `TRUE` (ordinal) |
+| Risk set | `remify(riskset = ...)` | `"full"`, `"active"`, `"active_saturated"`, `"manual"` |
+| Event types | `remify(event_type = ...)` | column name or `NULL` |
+| Type handling | `inertia(consider_type = ...)` | `"ignore"`, `"separate"`, `"interact"` |
+| Memory | `remstats(memory = ...)` | `"full"`, `"window"`, `"interval"`, `"decay"` |
+| Sampling | `remstats(sampling = ...)` | `TRUE`/`FALSE` |
+| Estimation | `remstimate(method = ...)` | `"MLE"`, `"HMC"` |
+
+These choices can be freely combined — for example, an ordinal actor-oriented model with an active risk set, typed events using `consider_type = "separate"`, and Bayesian estimation via HMC.

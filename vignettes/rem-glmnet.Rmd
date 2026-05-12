@@ -1,0 +1,248 @@
+---
+title: "Regularized Relational Event Models with GLMNET"
+subtitle: "<i>Variable selection and shrinkage for REMs</i>"
+author: ""
+date: ""
+output:
+  rmarkdown::html_document:
+    toc: true
+    toc_depth: 3
+    theme: spacelab
+    highlight: pygments
+    code_folding: show
+header-includes:
+  - \usepackage{amsmath,amssymb}
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{Regularized Relational Event Models with GLMNET}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(dpi = 72, collapse = TRUE, comment = "#>")
+```
+
+---
+
+When building relational event models, researchers often face a choice between including many network statistics to capture complex dynamics and keeping the model parsimonious to avoid overfitting. **Regularized estimation** provides a principled middle ground: fit all candidate statistics simultaneously and let the data determine which effects are important through penalized regression.
+
+The `remverse` pipeline supports regularized estimation via `remstimate(method = "GLMNET")`, which fits the stacked relational event model using `glmnet::cv.glmnet()`. This vignette demonstrates the workflow: first fitting a rich, unregularized model to show the problem, then applying GLMNET to obtain a sparser, more robust solution.
+
+```{r load}
+library(remverse)
+```
+
+---
+
+# 1 Data
+
+We use the `history` dataset (115 directed events among 10 actors) and the `info` dataset (time-varying actor attributes).
+
+```{r data}
+data(history)
+data(info)
+history$weight <- 1
+
+reh <- remify(edgelist = history, model = "tie")
+```
+
+---
+
+# 2 The kitchen-sink model
+
+We start by specifying a rich model with many endogenous and exogenous effects. This is the kind of model a researcher might consider when exploring which network mechanisms drive the event process.
+
+```{r kitchen-sink}
+effects_rich <- ~ inertia() +
+                   reciprocity() +
+                   indegreeSender() +
+                   indegreeReceiver() +
+                   outdegreeSender() +
+                   outdegreeReceiver() +
+                   totaldegreeSender() +
+                   totaldegreeReceiver() +
+                   send("extraversion", info) +
+                   send("agreeableness", info) +
+                   receive("extraversion", info) +
+                   receive("agreeableness", info) +
+                   average("extraversion", info) +
+                   difference("extraversion", info)
+
+stats_rich <- remstats(reh = reh, tie_effects = effects_rich)
+dimnames(stats_rich)[[3]]
+```
+
+That gives us `r dim(stats_rich)[3]` statistics (including the baseline). With only 115 events and 90 dyads in the risk set, this is a relatively high-dimensional model.
+
+## 2.1 Unregularized MLE
+
+```{r mle-rich}
+fit_mle <- remstimate(reh = reh, stats = stats_rich, method = "MLE")
+summary(fit_mle)
+```
+
+Several things to note in the unregularized output:
+
+- Some coefficients may have large standard errors, indicating instability.
+- Degree statistics (in-degree, out-degree, total degree) are correlated with each other, potentially causing multicollinearity.
+- With many parameters relative to the effective sample size, the model may overfit — performing well on the training data but poorly on held-out events.
+
+---
+
+# 3 Regularized estimation with GLMNET
+
+## 3.1 Elastic net (default)
+
+`method = "GLMNET"` fits the model with an elastic net penalty, which combines L1 (lasso) and L2 (ridge) regularization. Cross-validation selects the optimal penalty strength $\lambda$.
+
+```{r glmnet-default}
+fit_glmnet <- remstimate(reh = reh, stats = stats_rich, method = "GLMNET")
+summary(fit_glmnet)
+coef(fit_glmnet)
+```
+
+The regularized estimates are shrunken toward zero. Statistics with small or noisy effects are pushed to exactly zero (L1 component), effectively performing variable selection. The remaining non-zero coefficients identify the most important network mechanisms.
+
+## 3.2 Comparing coefficients
+
+```{r compare-coefs}
+coefs_mle    <- coef(fit_mle)
+coefs_glmnet <- coef(fit_glmnet)
+
+# Align names (GLMNET drops the baseline)
+shared <- intersect(names(coefs_mle), names(coefs_glmnet))
+
+comparison <- data.frame(
+  statistic = shared,
+  MLE       = round(coefs_mle[shared], 4),
+  GLMNET    = round(coefs_glmnet[shared], 4),
+  row.names = NULL
+)
+comparison$selected <- comparison$GLMNET != 0
+comparison
+```
+
+The `selected` column shows which effects survived regularization. Effects shrunk to zero are considered non-informative given the other effects in the model.
+
+---
+
+# 4 Tuning the penalty
+
+## 4.1 Alpha: lasso vs. ridge
+
+The `alpha` argument controls the mix between L1 (lasso, `alpha = 1`) and L2 (ridge, `alpha = 0`). The default is `alpha = 0.5` (elastic net).
+
+```{r alpha}
+# Pure lasso: maximum sparsity
+fit_lasso <- remstimate(
+  reh = reh, stats = stats_rich,
+  method = "GLMNET", alpha = 1
+)
+
+# Pure ridge: no variable selection, only shrinkage
+fit_ridge <- remstimate(
+  reh = reh, stats = stats_rich,
+  method = "GLMNET", alpha = 0
+)
+
+cat("Lasso non-zero:", sum(coef(fit_lasso) != 0), "of", length(coef(fit_lasso)), "\n")
+cat("Ridge non-zero:", sum(coef(fit_ridge) != 0), "of", length(coef(fit_ridge)), "\n")
+```
+
+The lasso tends to select a small subset of effects, while ridge retains all effects but shrinks them. Elastic net (`alpha = 0.5`) typically offers the best balance.
+
+## 4.2 Lambda selection
+
+By default, `cv.glmnet` selects `lambda.min` (the $\lambda$ that minimizes cross-validated deviance). Alternatively, `lambda.1se` selects a more parsimonious model within one standard error of the minimum:
+
+```{r lambda}
+fit_1se <- remstimate(
+  reh = reh, stats = stats_rich,
+  method = "GLMNET", lambda_select = "1se"
+)
+
+cat("lambda.min non-zero:", sum(coef(fit_glmnet) != 0), "\n")
+cat("lambda.1se non-zero:", sum(coef(fit_1se) != 0), "\n")
+```
+
+---
+
+# 5 Diagnostics
+
+Recall diagnostics for the regularized model use the penalized point estimates to compute linear predictors. This provides an in-sample assessment of predictive accuracy.
+
+```{r diagnostics, out.width="50%", dev=c("jpeg"), dev.args = list(bg = "white")}
+diag_mle    <- diagnostics(fit_mle)
+diag_glmnet <- diagnostics(fit_glmnet)
+
+cat("MLE recall:    ", round(diag_mle$recall$summary$mean_rel_rank, 3), "\n")
+cat("GLMNET recall: ", round(diag_glmnet$recall$summary$mean_rel_rank, 3), "\n")
+
+plot(fit_glmnet, diagnostics_object = diag_glmnet)
+```
+
+In-sample recall may be slightly lower for the regularized model (it trades a small amount of in-sample fit for better generalization). On held-out data, the regularized model often outperforms.
+
+---
+
+# 6 Typed events with regularization
+
+Regularization is particularly valuable for typed event models, where `consider_type = "separate"` or `"interact"` multiplies the number of parameters by the number of event types.
+
+```{r typed-glmnet}
+reh_typed <- remify(edgelist = history, model = "tie", event_type = "setting")
+
+stats_typed <- remstats(
+  reh = reh_typed,
+  tie_effects = ~ inertia(consider_type = "separate") +
+                   reciprocity(consider_type = "separate") +
+                   indegreeSender(consider_type = "separate") +
+                   outdegreeSender(consider_type = "separate") +
+                   send("extraversion", info, consider_type = "separate") +
+                   receive("agreeableness", info, consider_type = "separate")
+)
+
+cat("Number of statistics:", dim(stats_typed)[3], "\n")
+
+fit_typed_glmnet <- remstimate(
+  reh = reh_typed, stats = stats_typed,
+  method = "GLMNET"
+)
+
+# Which type-specific effects survived?
+coefs_typed <- coef(fit_typed_glmnet)
+coefs_typed[coefs_typed != 0]
+```
+
+With type-separated effects, the number of parameters doubles per type. Regularization identifies which type-specific effects carry genuine signal and which are noise.
+
+---
+
+# 7 Comparison with GLMM
+
+Regularization and mixed models address different problems. GLMM captures unobserved actor-level heterogeneity through random effects; GLMNET performs variable selection and shrinkage on the fixed effects. They can be complementary: use GLMNET to identify the important effects, then fit a GLMM with those effects plus random intercepts.
+
+```{r glmm-comparison, eval=FALSE}
+# Step 1: GLMNET for variable selection
+selected_stats <- names(coefs_glmnet[coefs_glmnet != 0])
+
+# Step 2: Refit with only selected effects, adding actor random intercepts
+# (This requires re-specifying the effects formula with only the selected terms)
+```
+
+---
+
+# 8 Summary
+
+| Aspect | MLE | GLMNET |
+|--------|-----|--------|
+| Estimates | Unpenalized | Shrunk toward zero |
+| Variable selection | No | Yes (L1 component) |
+| Multicollinearity | Problematic | Handled (L2 component) |
+| Overfitting risk | Higher with many effects | Lower |
+| Computation | Standard GLM | Cross-validated penalized GLM |
+| Uncertainty | Standard errors available | Point estimates only |
+
+GLMNET integrates seamlessly into the `remverse` pipeline. The same `remify()` and `remstats()` calls are used; only the `remstimate()` step changes via `method = "GLMNET"`. Diagnostics work identically to the standard model.
+
+A natural workflow is to use GLMNET as a screening step — identifying which of many candidate effects carry signal — and then re-estimate the selected model with MLE or GLMM for proper inference (standard errors, confidence intervals, random effects).
