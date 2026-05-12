@@ -18,3 +18,17 @@ NULL
 #' @docType data
 #' @keywords data
 NULL
+
+#' @title history
+#' @description See \code{\link[remstats]{history}}.
+#' @name history
+#' @docType data
+#' @keywords data
+NULL
+
+#' @title info
+#' @description See \code{\link[remstats]{info}}.
+#' @name info
+#' @docType data
+#' @keywords data
+NULL
