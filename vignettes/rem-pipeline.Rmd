@@ -1,5 +1,5 @@
 ---
-title: "The Relational Event Modeling Pipeline"
+title: "Relational Event Modeling Using 'remverse'"
 subtitle: "<i>A comprehensive tutorial</i>"
 author: ""
 date: ""
@@ -271,9 +271,9 @@ stats_dec <- remstats(reh = reh, tie_effects = ~ inertia(),
                       memory = "decay", memory_value = 200)
 
 # Compare the inertia statistic at the last time point for a single dyad
-cat("Full memory:  ", stats_full[115, 1, "inertia"], "\n")
-cat("Window (500): ", stats_win[115, 1, "inertia"], "\n")
-cat("Decay (200):  ", stats_dec[115, 1, "inertia"], "\n")
+cat("Full memory:  ", stats_full[114, 1, "inertia"], "\n")
+cat("Window (500): ", stats_win[114, 1, "inertia"], "\n")
+cat("Decay (200):  ", stats_dec[114, 1, "inertia"], "\n")
 ```
 
 Full memory accumulates all past events equally; window memory discards events older than the threshold; decay memory down-weights older events exponentially.
