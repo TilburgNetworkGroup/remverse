@@ -1,5 +1,5 @@
 ---
-title: "Relational Event Modeling Using 'remverse'"
+title: "Relational Event Modeling Using `remverse`"
 subtitle: "<i>A comprehensive tutorial</i>"
 author: ""
 date: ""
@@ -26,9 +26,10 @@ knitr::opts_chunk$set(dpi = 72, collapse = TRUE, comment = "#>")
 
 The `remverse` suite provides a three-step pipeline for relational event modeling:
 
-1. **`remify()`** — process a raw edgelist into a standardized event history
-2. **`remstats()`** — compute network statistics (endogenous and exogenous)
-3. **`remstimate()`** — estimate model parameters via MLE or HMC
+1. **`remify()`** — process a raw edgelist into a standardized event history,
+specifying the model type ("tie" or "actor"), risk set, timing, and event characteristics (e.g., types, directionality).
+2. **`remstats()`** — compute network statistics (endogenous, exogenous, and interactions), with options for memory decay and case-control sampling.
+3. **`remstimate()`** — estimate model parameters via MLE or HMC. Model fit can then be assessed with `diagnostics()`.
 
 This vignette walks through the full pipeline for a range of modeling choices: tie-oriented vs. actor-oriented models, interval vs. ordinal timing, different risk set definitions, typed events, and a variety of endogenous and exogenous statistics. Each section builds on the same dataset so the results can be compared directly.
 
@@ -40,7 +41,7 @@ library(remverse)
 
 # 1 Data
 
-We use the `history` dataset (115 directed events among 10 actors) and the `info` dataset (time-varying actor attributes), both included in the `remstats` package.
+We use the `history` dataset (115 directed events among 10 actors) and the `info` dataset (time-varying actor attributes).
 
 ```{r data}
 data(history)
