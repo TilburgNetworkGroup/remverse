@@ -44,7 +44,8 @@ Authors@R:
             role = c("ctb"),
             email = "d.karimova@tilburguniversity.edu")
     )
-Description: Remverse is a meta-package that provides a single entry point for relational event modeling by re-exporting core functions from 'remify', 'remstats', and 'remstimate'. Supports tie-oriented, actor-oriented, and duration models with frequentist, Bayesian, regularized, and mixture-based estimation.
+Maintainer: Joris Mulder <j.mulder3@tilburguniversity.edu>
+Description: Remverse is a meta-package that provides a single entry point for relational event modeling by re-exporting core functions from 'remify', 'remstats', and 'remstimate'. Supports tie-oriented and actor-oriented modeling with frequentist and Bayesian estimation.
 License: MIT + file LICENSE
 BugReports: https://github.com/TilburgNetworkGroup/remverse/issues
 Encoding: UTF-8
