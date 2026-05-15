@@ -1,6 +1,6 @@
 Package: remverse
-Title: Comprehensive Tools for Relational Event History Data
-Version: 0.0.0.9000
+Title: A Meta-Package for Relational Event History Analysis
+Version: 1.0.0
 Authors@R: 
     c(
         person(
