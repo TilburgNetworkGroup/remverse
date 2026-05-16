@@ -45,16 +45,20 @@ devtools::install_github("TilburgNetworkGroup/remverse")
 library(remverse)
 
 # preprocess event history
-reh <- remify(edgelist, actors = actors, directed = TRUE)
+reh <- remify(history, model = "tie", directed = TRUE)
 
 # compute statistics for the tie model
-stats <- tomstats2(reh, effects = ~ inertia() + reciprocity())
+stats <- remstats(reh, tie_effects = ~ inertia() + reciprocity())
 
 # estimate the model
-fit <- remstimate2(reh, stats, method = "MLE")
+fit <- remstimate(reh, stats, method = "MLE")
 
 # inspect results
 summary(fit)
+
+# perform diagnostics check
+diag_fit <- diagnostics(fit, reh = reh, stats = stats)
+plot(diag_fit)
 ```
 
 ## NEWS
