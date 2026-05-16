@@ -32,10 +32,15 @@ The `remverse` package loads an ensemble of R packages for working with Relation
 
 ## Installation
 
+Install CRAN version:
+
+```r
+install.packages("devtools")
+```
+
 Install the development version from GitHub:
 
 ```r
-# install.packages("devtools")
 devtools::install_github("TilburgNetworkGroup/remverse")
 ```
 
