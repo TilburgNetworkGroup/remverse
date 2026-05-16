@@ -1,54 +1,62 @@
-# remverse (Version: 0.0)
-# A collection of open source R packages focussed on the analysis of relational event history data
+# remverse <img src="man/figures/logo.png" align="right" width="150"/>
 
-### Table of contents
-* [About the package](#about-the-package)
-* [Programming Languages](#programming-languages)
-* [Installing the package](#installing-the-package)
-* [NEWS](#news)
+<!-- badges: start -->
+<!-- [![CRAN status](https://www.r-pkg.org/badges/version/remverse)](https://CRAN.R-project.org/package=remverse) -->
+[![R-CMD-check](https://github.com/TilburgNetworkGroup/remverse/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/TilburgNetworkGroup/remverse/actions/workflows/R-CMD-check.yaml)
+[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+<!-- badges: end -->
 
-### About the package
-The `remverse` package loads an ensemble of R packages useful for several purposes in the analysis of a Relational Event History (REH). These packages are (at the moment):
+A collection of open-source R packages for the analysis of relational event history data.
 
-| Core package name | Short description |
-| ------------- | ------------- |
-| [`remify`](https://github.com/TilburgNetworkGroup/remify) | A package that transforms REH data from other packages (hence: in other formats) or other sources to a REH structure that can be used in our packages (and, potentially, vice versa) |
-| [`remstats`](https://github.com/TilburgNetworkGroup/remstats)  | Computation of statistics (network-based and not) which are finally arranged within a data structure that is suitable for the other core packages |
-| [`remstimate`](https://github.com/TilburgNetworkGroup/remstimate) | Functions for the optimization of the likelihood, for the estimation of parameters in a bayesian fashion and other functions that are useful for handling the data structure of a REH.  |
+## Overview
 
-Packages that will be added later:
-| Core package name | Short description |
-| ------------- | ------------- |
-|`rembrandt`| Functions for visualization and descriptive (quantitative and qualitative) analysis of a REH|
-| [`bremory`](https://github.com/TilburgNetworkGroup/bremory)  | A semiparametric method to inquire about the presence of memory in a REH |
-| `remdata` | A package with REH datasets |
-| [`remulate`](https://github.com/TilburgNetworkGroup/remulate) | Package to generate/simulate/emulate REH data |
-| ... | ... |
+The `remverse` package loads an ensemble of R packages for working with Relational Event Histories (REH): preprocessing event sequences, computing network statistics, and estimating relational event models.
 
-### Programming Languages 
-The package contains code written in:
-* R (>= 4.0.0)
-* Rcpp (>= 1.0.4.6) and RcppArmadillo (>= 0.9.860.2.0)
-* C++11 (Compiler Version: GCC-8.1.0)
+### Core packages
 
- _(languages used across all the minor packages)_
-	
-### Installing the package 
-To install the package in R using `devtools` _(when available as an R package)_:
+| Package | Description |
+|---------|-------------|
+| [`remify`](https://github.com/TilburgNetworkGroup/remify) | Transforms raw event history data into the REH format used across the ecosystem |
+| [`remstats`](https://github.com/TilburgNetworkGroup/remstats) | Computes network statistics and organizes them into structures suitable for model estimation |
+| [`remstimate`](https://github.com/TilburgNetworkGroup/remstimate) | Estimation, model selection, and diagnostics for relational event models |
 
+### Planned additions
+
+| Package | Description |
+|---------|-------------|
+| [`durem`](https://github.com/TilburgNetworkGroup/durem) | Duration-weighted relational event modeling |
+| `rembrandt` | Visualization and descriptive analysis of relational event histories |
+| [`bremory`](https://github.com/TilburgNetworkGroup/bremory) | Semiparametric methods for detecting memory in event sequences |
+| `remdata` | Curated relational event history datasets |
+| [`remulate`](https://github.com/TilburgNetworkGroup/remulate) | Simulation of relational event history data |
+
+## Installation
+
+Install the development version from GitHub:
+
+```r
+# install.packages("devtools")
+devtools::install_github("TilburgNetworkGroup/remverse")
 ```
-library(devtools)
-install_github("TilburgNetworkGroup/remverse")
 
-# load the package
+## Example
+
+```r
 library(remverse)
+
+# preprocess event history
+reh <- remify(edgelist, actors = actors, directed = TRUE)
+
+# compute statistics for the tie model
+stats <- tomstats2(reh, effects = ~ inertia() + reciprocity())
+
+# estimate the model
+fit <- remstimate2(reh, stats, method = "MLE")
+
+# inspect results
+summary(fit)
 ```
 
-### NEWS
-See [NEWS](NEWS.md) file for the most up to date changes.
+## NEWS
 
-
-
-
-
-
+See the [NEWS](NEWS.md) file for the latest changes.

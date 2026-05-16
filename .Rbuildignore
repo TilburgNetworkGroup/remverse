@@ -1,4 +1,16 @@
-^remverse\.Rproj$
+^.*\.Rproj$
 ^\.Rproj\.user$
+^doc$
+^Meta$
+^\.vscode$
+^\.git$
+^\.gitignore$
 ^LICENSE\.md$
+^\.github$
 ^cran-comments\.md$
+^README\.md$
+^CRAN-SUBMISSION$
+^man\figures\$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
