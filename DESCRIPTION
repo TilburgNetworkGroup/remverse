@@ -62,3 +62,5 @@ Suggests: tinytest,
 LazyData: true
 VignetteBuilder: knitr
 LazyDataCompression: gzip
+Depends: 
+    R (>= 3.5)
