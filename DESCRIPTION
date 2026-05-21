@@ -44,9 +44,9 @@ Authors@R:
             role = c("ctb"),
             email = "d.karimova@tilburguniversity.edu")
     )
-Description: The ‘remverse’ package provides a unified interface to core packages for relational
-    event history analysis. It re-exports key functions from ‘remify’, ‘remstats’, and ‘remstimate’
-    to support a streamlined workflow from data preparation to model estimation.
+Description: A unified interface for relational event history analysis.
+    Remverse re-exports key functions from ‘remify’, ‘remstats’, and ‘remstimate’ to support a
+    streamlined workflow from data processing to model estimation and diagnosis.
 License: MIT + file LICENSE
 BugReports: https://github.com/TilburgNetworkGroup/remverse/issues
 Encoding: UTF-8
@@ -56,11 +56,14 @@ Imports:
     remify (>= 4.0.0),
     remstats (>= 4.0.0),
     remstimate (>= 3.0.0)
-Suggests: tinytest,
-          knitr,
-          rmarkdown
+Depends:
+    R (>= 4.0),
+    remdata
+Suggests: 
+    tinytest,
+    knitr,
+    rmarkdown
 LazyData: true
 VignetteBuilder: knitr
 LazyDataCompression: gzip
-Depends: 
-    R (>= 3.5)
+    
