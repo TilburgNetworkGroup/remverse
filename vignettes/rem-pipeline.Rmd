@@ -42,17 +42,17 @@ library(remverse)
 
 # 1 Data
 
-We use the `history` dataset (115 directed events among 10 actors) and the `info` dataset (time-varying actor attributes).
+We use the `edgelist0` dataset (115 directed events among 10 actors) and the `edgelist0_actors` dataset (time-varying actor attributes).
 
 ```{r data}
-data(history)
-data(info)
+data(edgelist0)
+data(edgelist0_actors)
 
-head(history)
-head(info)
+head(edgelist0)
+head(edgelist0_actors)
 ```
 
-Events record a `time`, a `sender` (`actor1`), a `receiver` (`actor2`), a `setting` (event type: `"work"` or `"social"`), and a `weight`. The `info` table provides `extraversion` and `agreeableness` scores measured at multiple time points for each actor.
+Events record a `time`, a `sender` (`actor1`), a `receiver` (`actor2`), a `setting` (event type: `"work"` or `"social"`), and a `weight`. The `edgelist0_actors` table provides `job` scores measured from time point `0` for each actor.
 
 ---
 
@@ -62,7 +62,7 @@ The tie-oriented model (`model = "tie"`) models the event rate at the dyadic (ti
 
 ```{r tie-basic}
 # Step 1: process the event history
-reh <- remify(edgelist = history, model = "tie", directed = TRUE)
+reh <- remify(edgelist = edgelist0, model = "tie", directed = TRUE)
 summary(reh)
 
 # Step 2: define effects and compute statistics
@@ -75,7 +75,7 @@ fit <- remstimate(reh = reh, stats = stats, method = "MLE")
 summary(fit)
 ```
 
-The baseline intercept is automatically included for interval timing (`ordinal = FALSE`). It captures the average event rate across all dyads. The endogenous effects quantify how the accumulated event history shapes future interaction patterns: `inertia` measures the tendency of dyads to repeat past interactions, `reciprocity` captures the tendency to reciprocate received events, and the degree effects capture sender and receiver activity. The column `Pr(>|z|)` is the 2-sided p value for testing whether a parameter equals zero. The column `Pr(=0)` is the posterior probability that a parameter is zero based on the default Bayes factor methodology of the `BFpack` package [@mulder2021bfpack].
+The baseline intercept is automatically included for interval timing (`ordinal = FALSE`). It captures the average event rate across all dyads. The endogenous effects quantify how the accumulated event history shapes future interaction patterns: `inertia` measures the tendency of dyads to repeat past interactions, `reciprocity` captures the tendency to reciprocate received events, and the degree effects capture sender and receiver activity, all as function of the volume of past events. These endogenous statistics can be scaled in different manners (Section 4.5) which also affects the interpretation of the corresponding effects. The column `Pr(>|z|)` is the 2-sided p value for testing whether a parameter equals zero. The column `Pr(=0)` is the posterior probability that a parameter is zero based on the default Bayes factor of the `BFpack` package [@mulder2021bfpack].
 
 ---
 
@@ -85,16 +85,16 @@ Actor-oriented models decompose the event process into two steps: a sender rate 
 
 ```{r actor-basic}
 # Step 1: process the event history
-reh_ao <- remify(edgelist = history, model = "actor", directed = TRUE, riskset = "active")
+reh_ao <- remify(edgelist = edgelist0, model = "actor", directed = TRUE, riskset = "active")
 summary(reh_ao)
 
-# Step 2: specify statistics for sender and receiver models separately
-rate_effects <- ~ outdegreeSender() + indegreeSender()
+# Step 2: specify statistics for sender and receiver choice models separately
+sender_effects <- ~ outdegreeSender() + indegreeSender()
 choice_effects <- ~ inertia() + reciprocity()
 
 stats_ao <- remstats(
   reh = reh_ao,
-  sender_effects = rate_effects,
+  sender_effects = sender_effects,
   receiver_effects = choice_effects
 )
 stats_ao
@@ -118,7 +118,7 @@ By default, the model uses exact event times (`ordinal = FALSE`), resulting in a
 
 ```{r ordinal-tie}
 # Tie model with ordinal timing
-reh_ord <- remify(edgelist = history, model = "tie", ordinal = TRUE)
+reh_ord <- remify(edgelist = edgelist0, model = "tie", ordinal = TRUE)
 stats_ord <- remstats(reh = reh_ord, tie_effects = ~ inertia() + reciprocity())
 fit_ord <- remstimate(reh = reh_ord, stats = stats_ord, method = "MLE")
 summary(fit_ord)
@@ -126,7 +126,7 @@ summary(fit_ord)
 
 ```{r ordinal-actor}
 # Actor model with ordinal timing
-reh_ao_ord <- remify(edgelist = history, model = "actor", ordinal = TRUE, riskset = "active")
+reh_ao_ord <- remify(edgelist = edgelist0, model = "actor", ordinal = TRUE, riskset = "active")
 stats_ao_ord <- remstats(
   reh = reh_ao_ord,
   sender_effects = ~ outdegreeSender(),
@@ -143,7 +143,7 @@ summary(fit_ao_ord)
 When events have no inherent directionality, set `directed = FALSE` in `remify()`. The risk set then contains unordered actor pairs rather than ordered dyads, and only statistics defined for undirected networks are available. For example, `sp()` (shared partners) counts the number of third actors through which the two actors have interacted with in the past. Undirected events are only supported for the tie-oriented model.
 
 ```{r undirected}
-reh_undir <- remify(edgelist = history, model = "tie", directed = FALSE)
+reh_undir <- remify(edgelist = edgelist0, model = "tie", directed = FALSE)
 cat("Directed dyads:", reh$D, "\n")
 cat("Undirected pairs:", reh_undir$D, "\n")
 
@@ -173,7 +173,7 @@ All possible dyads are at risk at every time point. For a directed network with 
 In certain situations, it may be unrealistic that all dyads in the network are at risk to initiate events (e.g., in the case of very large networks). In this case, the user could approximate the actual risk set by taking the active risk set which includes only dyads that are observed in the event history data. This may severely reduce the computation of endogenous statistics as only statistics are computed that are in this (typically much) smaller risk set.
 
 ```{r active}
-reh_active <- remify(edgelist = history, model = "tie", riskset = "active")
+reh_active <- remify(edgelist = edgelist0, model = "tie", riskset = "active")
 
 cat("Full risk set:", reh$D, "dyads\n")
 cat("Active risk set:", reh_active$activeD, "dyads\n")
@@ -192,14 +192,14 @@ A manual risk set allows you to restrict the set of dyads at risk to a predefine
 ```{r manual}
 # Define a manual risk set: a subset of dyads
 my_riskset <- data.frame(
-  actor1 = c(101, 102, 103, 104, 105, 106, 107),
-  actor2 = c(102, 103, 104, 105, 106, 107, 108)
+  actor1 = c(1, 1, 2, 3, 5, 6, 5),
+  actor2 = c(2, 3, 1, 4, 4, 7, 7)
 )
 
 reh_manual <- remify(
-  edgelist      = history,
-  model         = "tie",
-  riskset       = "manual",
+  edgelist       = edgelist0,
+  model          = "tie",
+  riskset        = "manual",
   manual.riskset = my_riskset
 )
 cat("Manual risk set:", reh_manual$activeD, "dyads\n")
@@ -213,7 +213,7 @@ When events carry a type label (here, `"work"` vs. `"social"` in the column `set
 
 ```{r typed-setup}
 reh_typed <- remify(
-  edgelist   = history,
+  edgelist   = edgelist0,
   model      = "tie",
   event_type = "setting"
 )
@@ -251,7 +251,7 @@ With `consider_type = "interact"` (requires `extend_riskset_by_type = TRUE`), ea
 
 ```{r typed-interact}
 reh_typed_ext <- remify(
-  edgelist   = history,
+  edgelist   = edgelist0,
   model      = "tie",
   event_type = "setting",
   extend_riskset_by_type = TRUE
@@ -283,11 +283,10 @@ Typed events and `consider_type` work the same way in the actor-oriented model:
 
 ```{r typed-actor}
 reh_ao_typed <- remify(
-  edgelist   = history,
+  edgelist   = edgelist0,
   model      = "actor",
   event_type = "setting"
 )
-
 stats_ao_typed <- remstats(
   reh = reh_ao_typed,
   sender_effects = ~ outdegreeSender(),
@@ -310,7 +309,7 @@ The full list of available statistics is obtained with `tie_effects()` for the t
 - `"std"`: raw counts are standardized (zero mean, unit variance) across all dyads at each time point.
 
 ```{r scaling}
-reh <- remify(edgelist = history, model = "tie", directed = TRUE)
+reh <- remify(edgelist = edgelist0, model = "tie", directed = TRUE)
 
 stats_none <- remstats(reh = reh, tie_effects = ~ inertia(scaling = "none"))
 stats_prop <- remstats(reh = reh, tie_effects = ~ inertia(scaling = "prop"))
@@ -333,31 +332,29 @@ The different types of scaling change the interpretation of the corresponding ef
 
 ### Exogenous effects
 
-Exogenous actor attributes and dyadic covariates can be included in the model alongside endogenous effects. The `info` dataset provides time-varying attributes.
+Exogenous actor attributes and dyadic covariates can be included in the model alongside endogenous effects. The `edgelist0_actors` dataset provides time-varying attributes.
 
 ```{r exo-tie}
+exo_effects <- ~ inertia(scaling = "std") +
+                   reciprocity(scaling = "std") +
+                   send("job", edgelist0_actors) +
+                   same("job", edgelist0_actors)
 stats_exo <- remstats(
   reh = reh,
-  tie_effects = ~ inertia() +
-                   reciprocity() +
-                   send("extraversion", info) +
-                   receive("agreeableness", info) +
-                   average("extraversion", info)
+  tie_effects = exo_effects
 )
-
 fit_exo <- remstimate(reh = reh, stats = stats_exo, method = "MLE")
 summary(fit_exo)
 ```
 
-- `send("extraversion")`: quantifies whether extraverted actors tend to initiate more events.
-- `receive("agreeableness")`: quantifies whether agreeable actors tend to be chosen more often as receivers.
-- `average("extraversion")`: quantifies the effect of the average extraversion of the actors in the dyad on the event rate.
+- `send("job")`: quantifies whether actors who have a job tend to initiate more events.
+- `same("job")`: quantifies whether actors having the same job status tend to send more events to each other.
 
 Exogenous effects are also available in the actor model, where they can enter the sender rate model, the receiver choice model, or both:
 
 ```{r exo-actor}
-rate_effects_exo <- ~ outdegreeSender() + send("extraversion", info)
-choice_effects_exo <- ~ inertia() + reciprocity() + receive("agreeableness", info)
+rate_effects_exo <- ~ outdegreeSender(scaling = "std") + send("job", edgelist0_actors)
+choice_effects_exo <- ~ inertia(scaling = "std") + reciprocity(scaling = "std") + same("job", edgelist0_actors)
 
 stats_ao_exo <- remstats(
   reh = reh_ao,
@@ -377,8 +374,8 @@ Interaction effects can be used to examine how endogenous tendencies (e.g., iner
 stats_ix <- remstats(
   reh = reh,
   tie_effects = ~ inertia() +
-                   send("extraversion", info) +
-                   inertia():send("extraversion", info)
+                   send("job", edgelist0_actors) +
+                   inertia():send("job", edgelist0_actors)
 )
 
 fit_ix <- remstimate(reh = reh, stats = stats_ix, method = "MLE")
@@ -406,9 +403,9 @@ stats_dec <- remstats(reh = reh, tie_effects = ~ inertia(),
                       memory = "decay", memory_value = 200)
 
 # Compare the inertia statistic at the last time point for a single dyad
-cat("Full memory:  ", stats_full[114, 1, "inertia"], "\n")
-cat("Window (500): ", stats_win[114, 1, "inertia"], "\n")
-cat("Decay (200):  ", stats_dec[114, 1, "inertia"], "\n")
+cat("Full memory:  ", stats_full[900, 2, "inertia"], "\n")
+cat("Window (500): ", stats_win[900, 2, "inertia"], "\n")
+cat("Decay (200):  ", stats_dec[900, 2, "inertia"], "\n")
 ```
 
 `full` memory accumulates all past events equally; `window` memory discards events older than the threshold (specified in `memory_value`); `decay` memory down-weights older events exponentially via a half-life parameter (specified in `memory_value`).
@@ -420,10 +417,10 @@ cat("Decay (200):  ", stats_dec[114, 1, "inertia"], "\n")
 For large networks, computing statistics over the full risk set at every time point is expensive. Case-control sampling draws a random subset of non-event dyads as the comparison set, substantially reducing computation [@lerner2020reliability]. This can be done by setting `sampling = TRUE` and setting `samp_num` to be the total number of dyads in the risk set per event (which includes the observed event(s)). Case-control sampling is currently only available for the tie-oriented model.
 
 ```{r sampling}
-reh_samp <- remify(edgelist = history, model = "tie", directed = TRUE, event_type = "setting")
+reh_samp <- remify(edgelist = edgelist0, model = "tie", directed = TRUE, event_type = "setting")
 stats_sampled <- remstats(
   reh = reh_samp,
-  tie_effects = ~ inertia() + reciprocity(),
+  tie_effects = exo_effects,
   sampling = TRUE,
   samp_num = 20,
   seed = 42
@@ -444,34 +441,31 @@ MLE is the default estimation method (`method = "MLE"`) and has been used throug
 
 ## 5.2 Bayesian estimation with HMC
 
-Both tie-oriented and actor-oriented models can be estimated with Hamiltonian Monte Carlo via `method = "HMC"`. By default, independent normal priors with mean 0 and variance 100 are placed on all coefficients. Custom priors can be specified via the `prior` argument:
+Both tie-oriented and actor-oriented models can be estimated with Hamiltonian Monte Carlo via `method = "HMC"`. By default, independent normal priors with mean 0 and variance 100 are placed on all coefficients. Custom priors can be specified via the `prior` argument. When using va:
 
 ```{r hmc, message=FALSE}
-P <- length(dimnames(stats)[[3]])
+P <- length(dimnames(stats_exo)[[3]])
 my_prior <- list(
   mean = rep(0, P),
   vcov = diag(c(100, rep(1, P - 1)))  # wide prior on intercept, N(0,1) on effects
 )
 
-fit_hmc <- remstimate(
+fit_exo_hmc <- remstimate(
   reh    = reh,
-  stats  = stats,
+  stats  = stats_exo,
   method = "HMC",
   prior  = my_prior,
-  ncores = 1L,
-  nsim   = 300L,
-  nchains = 2L,
-  burnin  = 300L,
-  L       = 100L,
-  epsilon = 0.001,
-  thin    = 2L,
-  seed    = 42
+  burnin = 200,
+  nsim   = 500,
+  thin   = 2,
+  L      = 100,
+  seed   = 42
 )
 
-summary(fit_hmc)
+summary(fit_exo_hmc)
 ```
 
-The HMC output includes posterior means, standard deviations, and trace plots for convergence assessment.
+The HMC output includes posterior means, standard deviations, and trace plots for convergence assessment. Note that the algorithm takes considerably longer than `MLE`.
 
 ---
 
@@ -482,10 +476,9 @@ The `diagnostics()` function computes several goodness-of-fit measures. The `plo
 ## 6.1 Tie model diagnostics
 
 ```{r diag-tie, out.width="80%", fig.width=8, fig.height=4, dev=c("jpeg"), dev.args = list(bg = "white")}
-diag <- diagnostics(object = fit, reh = reh, stats = stats)
+diag <- diagnostics(object = fit_exo, reh = reh, stats = stats_exo)
 diag
-
-plot(x = fit, reh = reh, diagnostics = diag)
+plot(x = fit_exo, reh = reh, diagnostics = diag)
 ```
 
 ### Waiting-time diagnostics (plot 1)
@@ -510,8 +503,17 @@ residuals should fluctuate randomly around zero with no systematic trend.
 A smoothing spline (red line) is fitted through the residuals. If the spline substantially
 deviates from the zero line (dashed), the effect of that statistic may be changing over time — violating the
 proportional-hazards assumption that the coefficient is constant throughout the observation
-period. For instance, an upward trend in the inertia residual would suggest that the inertia
-effect strengthens over time.
+period.
+
+Regarding static covariates (e.g., sender attributes such as `send_job` and `same_job`),
+the Schoenfeld residuals do not reveal a trend in the effect.
+However, these residuals are still informative: if residuals
+for a static covariate are systematically shifted away from zero, this
+suggests the estimated coefficient may be unreliable — possibly due to
+confounding with other effects or because the variable does not contribute
+meaningfully to the model. In contrast, residuals centered around zero
+indicate that the model's predictions are consistent with the observed
+covariate values across events. In the current example, the residuals for same_job are centered around zero, while those for send_job are systematically shifted — suggesting the latter may be redundant or confounded with other effects in the model.
 
 ### Recall (plot 3)
 
@@ -529,22 +531,24 @@ Three reference lines aid interpretation:
 
 The title reports the median rank and the proportion of events in the top 5%.
 
-In this example, we see that the recall is close to the null model baseline of 0.5, indicating that these endogenous effects do not strongly predict which dyad interacts next.
+In this example, we see that the median recall is 0.85 implying that half of the observed events belong
+to the 15% most likely events according to the fitted model, suggesting a fairly good in-sample predictive
+performance.
 
 ## 6.2 Actor model diagnostics
 
 The same diagnostic tools are available for actor-oriented models:
 
 ```{r diag-actor, out.width="50%", dev=c("jpeg"), dev.args = list(bg = "white")}
-diag_ao <- diagnostics(object = fit_ao, reh = reh_ao, stats = stats_ao)
-plot(x = fit_ao, reh = reh_ao, diagnostics = diag_ao)
+diag_ao <- diagnostics(object = fit_ao_exo, reh = reh_ao, stats = stats_ao_exo)
+plot(x = fit_ao_exo, reh = reh_ao, diagnostics = diag_ao)
 ```
 
 ## 6.3 HMC diagnostics
 
 ```{r diag-hmc, out.width="50%", dev=c("jpeg"), dev.args = list(bg = "white")}
-diag_hmc <- diagnostics(object = fit_hmc, reh = reh, stats = stats)
-plot(x = fit_hmc, reh = reh, diagnostics = diag_hmc)
+diag_hmc <- diagnostics(object = fit_exo_hmc, reh = reh, stats = stats_exo)
+plot(x = fit_exo_hmc, reh = reh, diagnostics = diag_hmc)
 ```
 
 ---

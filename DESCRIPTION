@@ -45,7 +45,12 @@ Authors@R:
             email = "d.karimova@tilburguniversity.edu")
     )
 Maintainer: Joris Mulder <j.mulder3@tilburguniversity.edu>
-Description: A unified workflow for relational event modeling by re-exporting core functions from 'remify', 'remstats', and 'remstimate'. Supports tie-oriented and actor-oriented modeling with frequentist and Bayesian estimation.
+Description: A unified workflow for relational event modeling by re-exporting
+    core functions from 'remify', 'remstats', and 'remstimate'. Supports
+    tie-oriented and actor-oriented modeling with frequentist and Bayesian
+    estimation. Methods are described in Butts (2008)
+    <doi:10.1111/j.1467-9531.2008.00203.x> and Stadtfeld and Block (2017)
+    <doi:10.1177/0081175017709295>.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -58,4 +63,5 @@ Depends:
 Suggests:
     knitr,
     rmarkdown
+LazyData: true
 VignetteBuilder: knitr
