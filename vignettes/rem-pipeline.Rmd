@@ -382,7 +382,7 @@ fit_ix <- remstimate(reh = reh, stats = stats_ix, method = "MLE")
 summary(fit_ix)
 ```
 
-The interaction effect quantifies the tendency of dyads to repeat past interactions depending on the sender's extraversion level.
+The interaction between inertia and send_job quantifies whether the tendency to repeat past interactions differs depending on the sender's job.
 
 ---
 

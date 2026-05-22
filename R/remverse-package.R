@@ -9,16 +9,21 @@
 #' library(remverse)
 #'
 #' # Load example data
-#' data("randomREHsmall")
+#' data("edgelist0")
+#' data("edgelist0_actors")
 #'
-#' # Preprocess
-#' reh <- remify(edgelist = randomREHsmall$edgelist,
+#' # Preprocess data
+#' reh <- remify(edgelist = edgelist0,
 #'               model = "tie",
-#'               directed = TRUE)
+#'               directed = TRUE,
+#'               event_type = "setting",
+#'               extend_riskset_by_type = TRUE)
 #'
 #' # Compute statistics
 #' stats <- remstats(reh,
-#'                   tie_effects = ~ inertia(scaling="std") + reciprocity(scaling="std"),
+#'                   tie_effects = ~ inertia(scaling="std", consider_type = "ignore") +
+#'                     reciprocity(scaling="std", consider_type = "separate") +
+#'                     same("job", attr_actors = edgelist0_actors),
 #'                   start = 10)
 #'
 #' # Fit model
