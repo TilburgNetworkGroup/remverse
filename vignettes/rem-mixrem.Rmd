@@ -20,6 +20,10 @@ vignette: >
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(dpi = 72, collapse = TRUE, comment = "#>")
+# Mixture fits need flexmix (declared in Suggests). If it is unavailable - e.g.
+# a CRAN check run with _R_CHECK_FORCE_SUGGESTS_=false - the modelling chunks
+# render code-only instead of erroring the vignette build.
+has_flexmix <- requireNamespace("flexmix", quietly = TRUE)
 ```
 
 ---
@@ -62,7 +66,7 @@ stats <- remstats(
 
 `dlcrem()` fits the dyadic latent class model directly: it groups events by `dyad` and gives every included statistic a class-specific coefficient.
 
-```{r fit-k2, message=FALSE}
+```{r fit-k2, message=FALSE, eval=has_flexmix}
 fit_k2 <- dlcrem(reh = reh, stats = stats, k = 2)
 fit_k2
 ```
@@ -74,7 +78,7 @@ Equivalently, `remixture(reh, stats, random = ~ (1 | dyad), k = 2)` or
 
 The output reports mixing proportions ($\pi_k$) and per-component coefficients ($\boldsymbol{\beta}_k$):
 
-```{r coefs}
+```{r coefs, eval=has_flexmix}
 coef(fit_k2)
 ```
 
@@ -86,7 +90,7 @@ Each column is one latent class, sorted by mixing proportion (largest first). Di
 
 The number of classes $K$ is usually unknown. Passing a vector to `k` fits all models at once and returns a list; `bic_table()` compares them by BIC.
 
-```{r select-k, message=FALSE}
+```{r select-k, message=FALSE, eval=has_flexmix}
 fit_multi <- remixture(
   reh    = reh,
   stats  = stats,
@@ -100,13 +104,13 @@ bic_table(fit_multi)
 
 The model with the lowest BIC is preferred. If $K = 1$ wins, there is no evidence for dyadic heterogeneity in the included effects. The `nrep` argument sets the number of random initializations per $K$, guarding against local optima.
 
-```{r plot-k, out.width="60%", fig.align="center", dev=c("jpeg"), dev.args = list(bg = "white")}
+```{r plot-k, out.width="60%", fig.align="center", dev=c("jpeg"), dev.args = list(bg = "white"), eval=has_flexmix}
 plot(fit_multi)
 ```
 
 ## 3.1 Inspecting the selected model
 
-```{r best-model}
+```{r best-model, eval=has_flexmix}
 bics   <- bic_table(fit_multi)
 best_k <- bics$k[which.min(bics$BIC)]
 cat("Best K:", best_k, "\n")
@@ -125,7 +129,7 @@ $$\hat{\lambda}_{ij}(t) = \sum_{k=1}^{K} P(Z_{ij} = k \mid \text{data}) \cdot \e
 
 As elsewhere in `remverse`, `diagnostics()` takes the fit together with the `reh` and `stats` it was built from.
 
-```{r diagnostics, out.width="50%", dev=c("jpeg"), dev.args = list(bg = "white")}
+```{r diagnostics, out.width="50%", dev=c("jpeg"), dev.args = list(bg = "white"), eval=has_flexmix}
 diag_k2 <- diagnostics(fit_k2, reh, stats)
 diag_k2
 
@@ -148,7 +152,7 @@ The three approaches address different sources of heterogeneity:
 
 Use **GLMM** when actor effects vary continuously around a population mean; use **MIXREM** when you expect *distinct types* of relational dynamics (e.g. collaborative vs. hierarchical dyads).
 
-```{r compare-loglik, message=FALSE}
+```{r compare-loglik, message=FALSE, eval=has_flexmix}
 fit_mle <- remstimate(reh = reh, stats = stats)
 
 cat("MLE logLik:    ", round(as.numeric(logLik(fit_mle)), 2), "\n")

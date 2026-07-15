@@ -20,6 +20,10 @@ vignette: >
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(dpi = 72, collapse = TRUE, comment = "#>")
+# Frailty fits need lme4 (declared in Suggests). If it is unavailable - e.g. a
+# CRAN check run with _R_CHECK_FORCE_SUGGESTS_=false - the modelling chunks
+# render code-only instead of erroring the vignette build.
+run_glmm <- requireNamespace("lme4", quietly = TRUE)
 ```
 
 ---
@@ -90,7 +94,7 @@ $$\log \lambda_{ij}(t) = \boldsymbol{\beta}^\top \mathbf{x}_{ij}(t) + u_i, \quad
 
 where $u_i$ is the sender-specific random intercept. Random effects are requested via the `random` argument, which uses `lme4` formula syntax. We set `engine = "lme4"` for reproducibility (the default `"auto"` uses `glmmTMB` when installed).
 
-```{r sender-frailty, message=FALSE, warning=FALSE}
+```{r sender-frailty, message=FALSE, warning=FALSE, eval=run_glmm}
 fit_sender <- remstimate(
   reh    = reh,
   stats  = stats,
@@ -106,7 +110,7 @@ The output reports fixed-effect coefficients (comparable to the standard model) 
 
 Similarly, a random intercept for `actor2` captures receiver-level heterogeneity — some actors are more attractive as receivers regardless of the network history:
 
-```{r receiver-frailty, message=FALSE, warning=FALSE}
+```{r receiver-frailty, message=FALSE, warning=FALSE, eval=run_glmm}
 fit_receiver <- remstimate(
   reh    = reh,
   stats  = stats,
@@ -120,7 +124,7 @@ summary(fit_receiver)
 
 Both can be included simultaneously as crossed random effects. This is the standard frailty-REM specification, and `remfrailty()` builds it for you: for a directed tie model it uses `(1 | actor1) + (1 | actor2)`.
 
-```{r crossed, message=FALSE, warning=FALSE}
+```{r crossed, message=FALSE, warning=FALSE, eval=run_glmm}
 fit_crossed <- remfrailty(reh = reh, stats = stats, engine = "lme4")
 summary(fit_crossed)
 ```
@@ -133,7 +137,7 @@ The model estimates separate variance components for sender and receiver heterog
 
 Beyond intercepts, we can allow the effect of an endogenous statistic to vary across actors. For example, some actors may be more habitual than others — their inertia effect is stronger — modeled with a random slope for inertia on the sender:
 
-```{r random-slope, message=FALSE, warning=FALSE}
+```{r random-slope, message=FALSE, warning=FALSE, eval=run_glmm}
 stats_inertia <- remstats(
   reh = reh,
   tie_effects = ~ inertia(scaling = "std") + reciprocity(scaling = "std"),
@@ -157,7 +161,7 @@ The random effects now include a variance for the intercept, a variance for the 
 
 We can compare models using information criteria:
 
-```{r comparison}
+```{r comparison, eval=run_glmm}
 cat("Fixed-effects only: AIC =", AIC(fit_fixed),    "\n")
 cat("Sender frailty:     AIC =", AIC(fit_sender),   "\n")
 cat("Receiver frailty:   AIC =", AIC(fit_receiver), "\n")
@@ -172,7 +176,7 @@ A lower AIC indicates a better trade-off between fit and complexity. If a frailt
 
 The GLMM diagnostics compute recall using the full linear predictor, including the best linear unbiased predictors (BLUPs) of the random effects. As throughout `remverse`, `diagnostics()` takes the fit together with the `reh` and `stats` objects it was built from.
 
-```{r diagnostics, out.width="50%", dev=c("jpeg"), dev.args = list(bg = "white")}
+```{r diagnostics, out.width="50%", dev=c("jpeg"), dev.args = list(bg = "white"), eval=run_glmm}
 diag_crossed <- diagnostics(fit_crossed, reh, stats)
 diag_crossed
 
@@ -181,7 +185,7 @@ plot(diag_crossed)
 
 For comparison, the recall can also be computed using fixed effects only (without the random-effect predictions), by setting `use_ranef = FALSE`:
 
-```{r diagnostics-fixed}
+```{r diagnostics-fixed, eval=run_glmm}
 diag_fixed_only <- diagnostics(fit_crossed, reh, stats, use_ranef = FALSE)
 diag_fixed_only
 ```
@@ -194,7 +198,7 @@ The difference between the two recall values quantifies how much of the model's 
 
 The individual random effects (BLUPs) can be extracted from the fitted model to identify actors with unusually high or low activity:
 
-```{r ranef}
+```{r ranef, eval=run_glmm}
 re <- lme4::ranef(fit_crossed$backend_fit)
 re
 ```

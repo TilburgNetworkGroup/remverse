@@ -20,6 +20,12 @@ vignette: >
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(dpi = 72, collapse = TRUE, comment = "#>")
+# Penalized fits need glmnet (frequentist) / shrinkem (Bayesian), both declared
+# in Suggests. If a backend is unavailable - e.g. a CRAN check run with
+# _R_CHECK_FORCE_SUGGESTS_=false - the relevant chunks render code-only instead
+# of erroring the vignette build.
+has_glmnet   <- requireNamespace("glmnet",   quietly = TRUE)
+has_shrinkem <- requireNamespace("shrinkem", quietly = TRUE)
 ```
 
 ---
@@ -92,7 +98,7 @@ With many correlated parameters, some coefficients have large standard errors an
 
 The Bayesian route applies a shrinkage prior (horseshoe by default) that pulls small effects strongly toward zero while leaving genuinely large effects essentially unpenalized. It is fast and typically yields a clean, parsimonious solution.
 
-```{r shrinkem, message=FALSE}
+```{r shrinkem, message=FALSE, eval=has_shrinkem}
 fit_bayes <- rempenalty(reh = reh, stats = stats_rich, approach = "Bayesian")
 summary(fit_bayes)
 round(coef(fit_bayes), 3)
@@ -106,7 +112,7 @@ The effects that survive shrinkage identify the network mechanisms the data actu
 
 The frequentist route uses `glmnet`. Cross-validation selects the penalty strength $\lambda$, and the elastic-net mixing parameter `alpha` interpolates between lasso (`alpha = 1`, the default) and ridge (`alpha = 0`).
 
-```{r glmnet-default, message=FALSE}
+```{r glmnet-default, message=FALSE, eval=has_glmnet}
 fit_glmnet <- rempenalty(reh = reh, stats = stats_rich, approach = "frequentist")
 summary(fit_glmnet)
 coef(fit_glmnet)
@@ -116,7 +122,7 @@ Equivalently, `remstimate(reh, stats_rich, penalty = list(alpha = 1))` fits the 
 
 ## 4.1 Comparing coefficients
 
-```{r compare-coefs}
+```{r compare-coefs, eval=has_glmnet}
 coefs_mle    <- coef(fit_mle)
 coefs_glmnet <- coef(fit_glmnet)
 
@@ -136,7 +142,7 @@ The `selected` column shows which effects survived regularization. Effects shrun
 
 ## 4.2 Alpha: lasso vs. ridge
 
-```{r alpha, message=FALSE}
+```{r alpha, message=FALSE, eval=has_glmnet}
 # Pure lasso (default): maximum sparsity
 fit_lasso <- rempenalty(reh, stats_rich, approach = "frequentist", alpha = 1)
 
@@ -153,7 +159,7 @@ The lasso selects a small subset of effects; ridge retains all but shrinks them.
 
 By default `rempenalty()` uses `lambda.1se` (the most parsimonious model within one standard error of the cross-validation minimum). Use `lambda_select = "min"` for the deviance-minimizing $\lambda$:
 
-```{r lambda, message=FALSE}
+```{r lambda, message=FALSE, eval=has_glmnet}
 fit_min <- rempenalty(reh, stats_rich, approach = "frequentist",
                       lambda_select = "min")
 
@@ -167,7 +173,7 @@ cat("lambda.min non-zero:", sum(coef(fit_min)    != 0), "\n")
 
 Recall diagnostics for a penalized model use its point estimates to compute linear predictors. As elsewhere in `remverse`, `diagnostics()` takes the fit plus the `reh` and `stats` it was built from.
 
-```{r diagnostics, out.width="50%", dev=c("jpeg"), dev.args = list(bg = "white")}
+```{r diagnostics, out.width="50%", dev=c("jpeg"), dev.args = list(bg = "white"), eval=has_glmnet}
 diag_mle    <- diagnostics(fit_mle,    reh, stats_rich)
 diag_glmnet <- diagnostics(fit_glmnet, reh, stats_rich)
 

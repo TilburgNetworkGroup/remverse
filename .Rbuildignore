@@ -2,3 +2,6 @@
 ^\.Rproj\.user$
 ^LICENSE\.md$
 ^update\.R$
+^cran-comments\.md$
+^info3\.rda$
+^randomREH3\.rda$

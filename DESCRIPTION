@@ -53,16 +53,26 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
 Imports: 
-    remify (>= 4.0.0),
-    remstats (>= 4.0.0),
-    remstimate (>= 3.0.0)
+    remify (>= 4.1.0),
+    remstats (>= 4.1.0),
+    remstimate (>= 3.1.0)
 Depends:
     R (>= 4.0),
-    remdata
-Suggests: 
+    remdata (>= 0.2.1)
+Suggests:
     tinytest,
     knitr,
-    rmarkdown
+    rmarkdown,
+    survival,
+    coxme,
+    lme4,
+    glmmTMB,
+    glmnet,
+    flexmix,
+    shrinkem (>= 0.4.0)
+Remotes:
+    TilburgNetworkGroup/remstats
+    TilburgNetworkGroup/remstimate
 LazyData: true
 VignetteBuilder: knitr
 LazyDataCompression: gzip

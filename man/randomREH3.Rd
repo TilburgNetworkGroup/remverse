@@ -28,6 +28,6 @@ the two actors. Exponential memory decay was used with a half-life of 2000.
 Actor covariates are in \code{\link{info3}}.
 }
 \seealso{
-\code{\link{info2}} for actor covariates.
+\code{\link{info3}} for actor covariates.
 }
 \keyword{datasets}
