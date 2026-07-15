@@ -92,14 +92,13 @@ A random intercept for `actor1` (the sender) allows each actor to have a differe
 
 $$\log \lambda_{ij}(t) = \boldsymbol{\beta}^\top \mathbf{x}_{ij}(t) + u_i, \quad u_i \sim \mathcal{N}(0, \sigma^2_u)$$
 
-where $u_i$ is the sender-specific random intercept. Random effects are requested via the `random` argument, which uses `lme4` formula syntax. We set `engine = "lme4"` for reproducibility (the default `"auto"` uses `glmmTMB` when installed).
+where $u_i$ is the sender-specific random intercept. Random effects are requested via the `random` argument, which uses `glmmTMB` (default) or `lme4`.
 
 ```{r sender-frailty, message=FALSE, warning=FALSE, eval=run_glmm}
 fit_sender <- remstimate(
   reh    = reh,
   stats  = stats,
-  random = ~ (1 | actor1),
-  engine = "lme4"
+  random = ~ (1 | actor1)
 )
 summary(fit_sender)
 ```
@@ -114,8 +113,7 @@ Similarly, a random intercept for `actor2` captures receiver-level heterogeneity
 fit_receiver <- remstimate(
   reh    = reh,
   stats  = stats,
-  random = ~ (1 | actor2),
-  engine = "lme4"
+  random = ~ (1 | actor2)
 )
 summary(fit_receiver)
 ```
@@ -125,7 +123,7 @@ summary(fit_receiver)
 Both can be included simultaneously as crossed random effects. This is the standard frailty-REM specification, and `remfrailty()` builds it for you: for a directed tie model it uses `(1 | actor1) + (1 | actor2)`.
 
 ```{r crossed, message=FALSE, warning=FALSE, eval=run_glmm}
-fit_crossed <- remfrailty(reh = reh, stats = stats, engine = "lme4")
+fit_crossed <- remfrailty(reh = reh, stats = stats)
 summary(fit_crossed)
 ```
 
@@ -147,8 +145,7 @@ stats_inertia <- remstats(
 fit_slope <- remstimate(
   reh    = reh,
   stats  = stats_inertia,
-  random = ~ (1 + inertia | actor1),
-  engine = "lme4"
+  random = ~ (1 + inertia | actor1)
 )
 summary(fit_slope)
 ```
