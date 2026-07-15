@@ -1,0 +1,278 @@
+---
+title: "Moving-Window Relational Event Models"
+subtitle: "<i>Detecting temporal drift in tie- and actor-oriented parameters</i>"
+author: "Joris Mulder"
+date: ""
+output:
+  rmarkdown::html_document:
+    toc: true
+    toc_depth: 3
+    theme: spacelab
+    highlight: pygments
+    code_folding: show
+header-includes:
+  - \usepackage{amsmath,amssymb}
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{Moving-Window Relational Event Models}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(dpi = 72, collapse = TRUE, comment = "#>")
+```
+
+---
+
+A standard relational event model assumes a single, fixed set of coefficients over the entire observation period. That assumption is often convenient rather than realistic: the strength of inertia, reciprocity, or any other effect can strengthen, weaken, or reverse as a network matures. `remwindow()` tests this by re-fitting the same model specification repeatedly over subregions ("windows") of the event sequence, reusing a single `remify()` object and a single `remstats()` computation throughout — no re-processing of the event history or re-computation of statistics is needed per window.
+
+This vignette covers moving-window estimation for both tie-oriented and actor-oriented models: how windows are chosen, how to read the stability diagnostics, and how recall-based diagnostics are computed continuously across windows via interpolation.
+
+```{r load}
+library(remverse)
+```
+
+---
+
+# 1 When to use moving-window estimation
+
+Moving-window estimation is useful when:
+
+- **Temporal stability is itself the question** — e.g., did the tendency to reciprocate change over the observation period, without specifying a shift point in advance?
+- **A single global fit hides local behavior** — a large positive coefficient early and a near-zero coefficient later can average to a modest global estimate that misrepresents both periods.
+- **A quick diagnostic is wanted before a formal change-point model** — moving windows are cheap and give a first visual read.
+
+Note that moving-window estimation is not fully model and thus not a substitute for a fully specified time-varying-coefficient model. Each window is an independent fit on a subset of events.
+
+---
+
+# 2 Data
+
+We use `randomREH3` (provided with `remverse`): 999 directed events among 5 actors, together with the actor attributes in `info3`. The sequence was generated in three successive regimes with *different* parameter values, so it carries genuine temporal drift — a natural showcase for moving-window estimation. Statistics use exponential memory decay (half-life 2000).
+
+```{r data}
+data(randomREH3)
+data(info3)
+str(randomREH3)
+```
+
+With roughly a thousand events and only a handful of estimated parameters, the default window sizing rule (20 events per parameter, floored at 50 events per window) supports the default `n.windows = 5`. Manual choices of the window size and number of windows can be changed via the function's arguments.
+
+---
+
+# 3 Tie-oriented moving-window models {.tabset .tabset-fade .tabset-pills}
+
+## 3.1 Default (auto) windowing
+
+```{r tie-setup}
+reh <- remify(
+  edgelist = randomREH3,
+  model    = "tie",
+  directed = TRUE
+)
+
+stats_tie <- remstats(
+  reh = reh,
+  tie_effects = ~ inertia(scaling = "std") + reciprocity(scaling = "std") +
+                   send("age", attr_actors = info3, scaling = "std"),
+  memory = "decay", memory_value = 2000
+)
+```
+
+```{r tie-auto}
+mw_tie_auto <- remwindow(reh = reh, stats = stats_tie)
+mw_tie_auto
+```
+
+With four estimated parameters (`baseline`, `inertia`, `reciprocity`, `send_age`) and roughly 200 events per window, the default target of five windows is met directly.
+
+```{r tie-auto-summary}
+summary(mw_tie_auto)
+```
+
+The **Fit** block reports one row per window: its time range, event count, convergence status, and log-likelihood/AIC/BIC. The **Stability** block collapses across windows per effect: mean, standard deviation, and range of the estimate, together with `sd_over_se` — the ratio of across-window spread to the average within-window standard error. Values well above 1 suggest genuine drift; values near or below 1 are consistent with a single stable coefficient.
+
+```{r tie-auto-plot, out.width="70%", dev=c("jpeg"), dev.args = list(bg = "white")}
+plot(mw_tie_auto)
+```
+
+The ribbon is a 95% Wald interval around each window's point estimate; the x-axis is the window midpoint in event-time.
+
+---
+
+## 3.2 Manual, overlapping windows
+
+Windows can also be specified directly via `window.width` and `step.size.window`, which controls overlap explicitly rather than relying on the non-overlapping automatic default.
+
+```{r tie-manual}
+mw_tie <- remwindow(
+  reh              = reh,
+  stats            = stats_tie,
+  window.width     = 200,
+  step.size.window = 50
+)
+mw_tie
+```
+
+Because `step.size.window` (50) is smaller than `window.width` (200), consecutive windows overlap by 150 events. The final window absorbs any remainder, so no events are silently dropped. Because windows overlap, a single event can fall in more than one window's range — this is why the diagnostics in Section 5 are computed from a continuously interpolated coefficient rather than assigning each event to one "owning" window.
+
+```{r tie-manual-plot, out.width="70%", dev=c("jpeg"), dev.args = list(bg = "white")}
+plot(mw_tie)
+```
+
+---
+
+## 3.3 Reading the stability table
+
+```{r tie-stability}
+summary(mw_tie)
+```
+
+Two columns matter most when a coefficient looks unstable:
+
+- **`n`** — the number of windows that contributed to the mean/sd/min/max for that effect (can be less than the total window count).
+- **`excluded`** — which windows were left out: a window is excluded from an effect's stability summary when that effect's standard error there exceeds `k` times the median SE across windows (default `k = 10`). This flags quasi-complete separation — a coefficient running large because a pattern was rare or absent in that specific window.
+
+A coefficient with a small `sd_over_se` and no exclusions behaves like a single stable parameter. A coefficient with excluded windows should be interpreted with those windows' event counts and convergence status in mind.
+
+---
+
+# 4 Actor-oriented moving-window models {.tabset .tabset-fade .tabset-pills}
+
+## 4.1 Sender + receiver model
+
+```{r actor-setup}
+reh_ao <- remify(
+  edgelist = randomREH3,
+  model    = "actor",
+  directed = TRUE
+)
+
+stats_ao <- remstats(
+  reh = reh_ao,
+  sender_effects   = ~ outdegreeSender(scaling = "std"),
+  receiver_effects = ~ inertia(scaling = "std") + reciprocity(scaling = "std"),
+  memory = "decay", memory_value = 2000
+)
+```
+
+```{r actor-auto}
+mw_actor <- remwindow(reh = reh_ao, stats = stats_ao)
+mw_actor
+```
+
+The printed table shows the sender (rate) and receiver (choice) submodels separately, each with its own coefficient rows, since they are two independently optimized fits per window.
+
+```{r actor-summary}
+summary(mw_actor)
+```
+
+```{r actor-plot, out.width="70%", dev=c("jpeg"), dev.args = list(bg = "white")}
+plot(mw_actor)
+```
+
+The sender-model panels are shown first, followed by the receiver-model panels.
+
+## 4.2 Receiver-only actor model
+
+An actor model need not specify a sender (rate) submodel — a receiver-choice-only specification is valid, and `remwindow()` handles the missing submodel throughout (fitting, stability tables, plots, diagnostics all skip the absent piece cleanly).
+
+```{r actor-receiver-only}
+stats_choice_only <- remstats(
+  reh = reh_ao,
+  receiver_effects = ~ inertia(scaling = "std") + reciprocity(scaling = "std"),
+  memory = "decay", memory_value = 2000
+)
+
+mw_actor_choice <- remwindow(reh = reh_ao, stats = stats_choice_only)
+mw_actor_choice
+```
+
+Only the receiver (choice) model appears — there is no sender block, and no error is raised for its absence.
+
+---
+
+# 5 Diagnostics across windows
+
+Because windows can overlap (Section 3.2), assigning each event to a single window for recall-based diagnostics is not well defined at the boundary. Instead, `diagnostics()` on a `remstimate_window` object builds, for every event, a coefficient vector obtained by **clamped linear interpolation between window midpoints in event-time**:
+
+$$\hat{\boldsymbol\beta}(t) = \hat{\boldsymbol\beta}(t_w) + \frac{t - t_w}{t_{w+1} - t_w}\Big(\hat{\boldsymbol\beta}(t_{w+1}) - \hat{\boldsymbol\beta}(t_w)\Big), \qquad t_w \le t < t_{w+1}$$
+
+where $t_w$ is the midpoint time of window $w$. Before $t_1$ or after the last midpoint, the nearest window's estimate is used unchanged (no extrapolation). Windows flagged as separated for a given effect (Section 3.3) are skipped as interpolation anchors for that effect only.
+
+Recall is then computed once, continuously, over every event using this time-varying coefficient.
+
+## 5.1 Tie model
+
+```{r tie-diag, out.width="70%", dev=c("jpeg"), dev.args = list(bg = "white")}
+diag_tie <- diagnostics(mw_tie, reh, stats_tie)
+diag_tie
+
+plot(diag_tie)
+```
+
+Each point is one observed event's relative rank among its competing dyads at that moment, scored against the interpolated coefficient. The dashed horizontal line is the overall median rank; the solid line is a robust (median-smoothed) trend. Dotted vertical lines mark the original window boundaries.
+
+## 5.2 Actor model
+
+```{r actor-diag, out.width="70%", dev=c("jpeg"), dev.args = list(bg = "white")}
+diag_actor <- diagnostics(mw_actor, reh_ao, stats_ao)
+
+plot(diag_actor)
+```
+
+Sender and receiver recall scatterplots are shown in turn, following the same layout as the tie-model version.
+
+---
+
+# 6 Parallelization
+
+Each window is an independent fit, so windows can be estimated in parallel via `parallel::mclapply` (Unix/macOS; falls back to sequential with a message on Windows):
+
+```{r parallel, eval=FALSE}
+mw_parallel <- remwindow(
+  reh           = reh,
+  stats         = stats_tie,
+  parallel      = TRUE,
+  ncores.window = 4
+)
+```
+
+When parallelizing across windows, it is usually best to leave the within-fit `ncores` at 1; `remwindow()` warns when the product of `ncores.window` and a within-fit `ncores` exceeds the detected cores.
+
+---
+
+# 7 Current limitations
+
+- **Duration models (`durem`) are not yet supported.** `remwindow()` accepts `tomstats`/`aomstats` objects for tie- and actor-oriented models only; a duration-model `remstats` object raises an informative error. Windowing an active-state, interval-based process raises separate design questions (an interval can straddle a window boundary in a way a point event cannot) and is on the roadmap.
+- **Case-control sampled statistics (`tomstats_sampled`) are not yet supported.**
+- The stability table's separation flag (`k = 10`) is a heuristic, not a formal test. Always cross-check a flagged effect's excluded windows against their event counts and convergence status.
+
+---
+
+# 8 Summary
+
+| Choice | Argument | Notes |
+|---|---|---|
+| Window count (auto) | `remwindow(n.windows = ...)` | Default 5; silently reduced if the event floor cannot be met |
+| Window size (manual) | `remwindow(window.width = ...)` | Disables auto mode |
+| Window step | `remwindow(step.size.window = ...)` | Defaults to `window.width` (non-overlapping); smaller values overlap |
+| Minimum events/window | `remwindow(min.events = ...)` | Floor on auto-computed width |
+| Separation threshold | `summary(..., k = ...)`, `coef(..., k = ...)` | SE-ratio multiplier for flagging a diverged window, per effect |
+| Estimation approach | `remwindow(approach = ...)` | `"frequentist"` (default) or `"Bayesian"`, forwarded to `remstimate()` |
+| Parallel windows | `remwindow(parallel = TRUE, ncores.window = ...)` | Unix/macOS only |
+
+`remwindow()` and its methods (`print`, `summary`, `plot`, `coef`, `diagnostics`) sit alongside the standard single-fit pipeline: the same `reh` and `stats` objects are reused unchanged, and only the estimation step is repeated across subregions of the event sequence.
+
+---
+
+#### References
+
+Meijerink-Bosman, M., Leenders, R., & Mulder, J. (2022). Dynamic relational
+event modeling: Testing, exploring, and applying. PLoS One, 17(8).
+https://doi.org/10.1371/journal.pone.0272309
+
+Mulder, J., & Leenders, R. T. A. (2019). Modeling the evolution of interaction
+behavior in social networks: A dynamic relational event approach for real-time
+analysis. Chaos, Solitons & Fractals, 119, 73-85.
+https://doi.org/10.1016/j.chaos.2018.11.027

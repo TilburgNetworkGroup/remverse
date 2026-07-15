@@ -1,7 +1,7 @@
 ---
 title: "Frailty Relational Event Models with GLMM"
 subtitle: "<i>Random intercepts and slopes for actor heterogeneity</i>"
-author: ""
+author: "Joris Mulder"
 date: ""
 output:
   rmarkdown::html_document:
@@ -26,7 +26,7 @@ knitr::opts_chunk$set(dpi = 72, collapse = TRUE, comment = "#>")
 
 Standard relational event models assume that all actors and dyads share the same set of parameters. In practice, actors differ in their baseline propensity to interact — some actors are inherently more active than others, beyond what is captured by endogenous statistics. A **frailty REM** addresses this by introducing random intercepts (and optionally random slopes) for actors, borrowing ideas from survival analysis and generalized linear mixed models (GLMMs).
 
-The `remverse` pipeline supports GLMM estimation via `remstimate(method = "GLMM")`, which fits the stacked relational event model as a Poisson GLMM using `lme4::glmer()`. This vignette demonstrates how to specify random effects for sender and receiver heterogeneity, and how to interpret the results.
+In `remverse`, a GLMM is requested simply by passing a `random` formula to `remstimate()`; the convenience wrapper `remfrailty()` builds the standard sender/receiver frailty structure for you. Under the hood the stacked relational event model is fit as a Poisson GLMM (via `lme4` or `glmmTMB` for interval timing, or `coxme` for ordinal timing).
 
 ```{r load}
 library(remverse)
@@ -48,31 +48,31 @@ The random intercept acts as a multiplicative frailty on the event rate: actors 
 
 # 2 Data
 
-We use the `history` dataset (115 directed events among 10 actors) and the `info` dataset (actor-level covariates).
+We use the `randomREH3` event history and the `info3` actor attributes provided with `remverse`. Statistics use exponential memory decay (half-life 2000). To keep the GLMM fits fast in this vignette, we compute statistics on the last stretch of the sequence via the `first` argument (a GLMM stacks the full case-control design, which is heavier than a plain MLE fit).
 
 ```{r data}
-data(history)
-data(info)
-history$weight <- 1
+data(randomREH3)
+data(info3)
+
+reh <- remify(edgelist = randomREH3, model = "tie", directed = TRUE)
+
+stats <- remstats(
+  reh = reh,
+  tie_effects = ~ inertia(scaling = "std") + reciprocity(scaling = "std") +
+                   send("age", attr_actors = info3, scaling = "std") +
+                   receive("age", attr_actors = info3, scaling = "std"),
+  first = 700, memory = "decay", memory_value = 2000
+)
 ```
 
 ---
 
-# 3 The standard model (no random effects) {.tabset .tabset-fade}
+# 3 The standard model (no random effects)
 
 As a baseline, we first estimate a standard fixed-effects-only model.
 
 ```{r standard}
-reh <- remify(edgelist = history, model = "tie")
-
-stats <- remstats(
-  reh = reh,
-  tie_effects = ~ inertia() + reciprocity() +
-                   send("extraversion", info) +
-                   receive("agreeableness", info)
-)
-
-fit_fixed <- remstimate(reh = reh, stats = stats, method = "MLE")
+fit_fixed <- remstimate(reh = reh, stats = stats)
 summary(fit_fixed)
 ```
 
@@ -84,113 +84,105 @@ This model assumes all actors share the same baseline rate and the same coeffici
 
 ## 4.1 Sender frailty
 
-A random intercept for `actor1` (the sender) allows each actor to have a different baseline sending rate. This captures unobserved sender-level heterogeneity:
+A random intercept for `actor1` (the sender) allows each actor to have a different baseline sending rate:
 
 $$\log \lambda_{ij}(t) = \boldsymbol{\beta}^\top \mathbf{x}_{ij}(t) + u_i, \quad u_i \sim \mathcal{N}(0, \sigma^2_u)$$
 
-where $u_i$ is the sender-specific random intercept.
+where $u_i$ is the sender-specific random intercept. Random effects are requested via the `random` argument, which uses `lme4` formula syntax. We set `engine = "lme4"` for reproducibility (the default `"auto"` uses `glmmTMB` when installed).
 
-```{r sender-frailty}
+```{r sender-frailty, message=FALSE, warning=FALSE}
 fit_sender <- remstimate(
   reh    = reh,
   stats  = stats,
-  method = "GLMM",
-  random = ~ (1 | actor1)
+  random = ~ (1 | actor1),
+  engine = "lme4"
 )
 summary(fit_sender)
 ```
 
-The `random` argument uses `lme4` formula syntax. The output reports fixed-effect coefficients (comparable to the standard model) and the estimated variance of the sender random intercept ($\hat{\sigma}^2_u$). A large variance indicates substantial sender-level heterogeneity not captured by the fixed effects.
+The output reports fixed-effect coefficients (comparable to the standard model) and the estimated variance of the sender random intercept ($\hat{\sigma}^2_u$). A large variance indicates substantial sender-level heterogeneity not captured by the fixed effects. (With only five actors here, the variance component is estimated from few groups and should be read as illustrative.)
 
 ## 4.2 Receiver frailty
 
 Similarly, a random intercept for `actor2` captures receiver-level heterogeneity — some actors are more attractive as receivers regardless of the network history:
 
-```{r receiver-frailty}
+```{r receiver-frailty, message=FALSE, warning=FALSE}
 fit_receiver <- remstimate(
   reh    = reh,
   stats  = stats,
-  method = "GLMM",
-  random = ~ (1 | actor2)
+  random = ~ (1 | actor2),
+  engine = "lme4"
 )
 summary(fit_receiver)
 ```
 
 ## 4.3 Crossed sender and receiver frailties
 
-Both can be included simultaneously as crossed random effects. This is the most common frailty-REM specification:
+Both can be included simultaneously as crossed random effects. This is the standard frailty-REM specification, and `remfrailty()` builds it for you: for a directed tie model it uses `(1 | actor1) + (1 | actor2)`.
 
-```{r crossed}
-fit_crossed <- remstimate(
-  reh    = reh,
-  stats  = stats,
-  method = "GLMM",
-  random = ~ (1 | actor1) + (1 | actor2)
-)
+```{r crossed, message=FALSE, warning=FALSE}
+fit_crossed <- remfrailty(reh = reh, stats = stats, engine = "lme4")
 summary(fit_crossed)
 ```
 
-The model now estimates separate variance components for sender and receiver heterogeneity. The fixed-effect coefficients are adjusted for both sources of unobserved variation, which can change their magnitude and significance compared to the fixed-effects-only model.
+The model estimates separate variance components for sender and receiver heterogeneity, and the fixed-effect coefficients are adjusted for both sources of unobserved variation. (An explicit `remstimate(..., random = ~ (1 | actor1) + (1 | actor2))` gives the same fit.)
 
 ---
 
 # 5 Random slopes
 
-## 5.1 Actor-varying inertia
+Beyond intercepts, we can allow the effect of an endogenous statistic to vary across actors. For example, some actors may be more habitual than others — their inertia effect is stronger — modeled with a random slope for inertia on the sender:
 
-Beyond intercepts, we can allow the effect of endogenous statistics to vary across actors. For example, some actors may be more habitual than others — their inertia effect is stronger. This is modeled with a random slope for inertia on the sender:
-
-```{r random-slope}
+```{r random-slope, message=FALSE, warning=FALSE}
 stats_inertia <- remstats(
   reh = reh,
-  tie_effects = ~ inertia() + reciprocity()
+  tie_effects = ~ inertia(scaling = "std") + reciprocity(scaling = "std"),
+  first = 700, memory = "decay", memory_value = 2000
 )
 
 fit_slope <- remstimate(
   reh    = reh,
   stats  = stats_inertia,
-  method = "GLMM",
-  random = ~ (1 + inertia | actor1)
+  random = ~ (1 + inertia | actor1),
+  engine = "lme4"
 )
 summary(fit_slope)
 ```
 
-The random effects now include a variance for the intercept, a variance for the inertia slope, and their correlation. A positive correlation would mean that actors with a high baseline sending rate also have a stronger inertia effect.
-
-Note that random slopes substantially increase model complexity. With small datasets, the model may have difficulty converging. The `summary()` output will indicate any convergence warnings.
+The random effects now include a variance for the intercept, a variance for the inertia slope, and their correlation. A positive correlation would mean that actors with a high baseline sending rate also have a stronger inertia effect. Random slopes substantially increase model complexity; with small datasets the model may struggle to converge, which the `summary()` output will indicate.
 
 ---
 
 # 6 Model comparison
 
-We can compare models using information criteria. The standard approach is AIC or BIC, though for GLMMs these are based on the marginal likelihood:
+We can compare models using information criteria:
 
 ```{r comparison}
-cat("Fixed-effects only: AIC =", AIC(fit_fixed), "\n")
-cat("Sender frailty:     AIC =", AIC(fit_sender), "\n")
+cat("Fixed-effects only: AIC =", AIC(fit_fixed),    "\n")
+cat("Sender frailty:     AIC =", AIC(fit_sender),   "\n")
 cat("Receiver frailty:   AIC =", AIC(fit_receiver), "\n")
-cat("Crossed frailties:  AIC =", AIC(fit_crossed), "\n")
+cat("Crossed frailties:  AIC =", AIC(fit_crossed),  "\n")
 ```
 
-A lower AIC indicates a better trade-off between fit and complexity. If the frailty model improves AIC substantially, actor-level heterogeneity is an important feature of the data.
+A lower AIC indicates a better trade-off between fit and complexity. If a frailty model improves AIC substantially, actor-level heterogeneity is an important feature of the data.
 
 ---
 
 # 7 Diagnostics
 
-The GLMM diagnostics compute recall statistics using the full linear predictor, including the best linear unbiased predictors (BLUPs) of the random effects. This means the recall reflects the model's ability to predict events using both population-level parameters and actor-specific adjustments.
+The GLMM diagnostics compute recall using the full linear predictor, including the best linear unbiased predictors (BLUPs) of the random effects. As throughout `remverse`, `diagnostics()` takes the fit together with the `reh` and `stats` objects it was built from.
 
 ```{r diagnostics, out.width="50%", dev=c("jpeg"), dev.args = list(bg = "white")}
-diag_crossed <- diagnostics(fit_crossed)
+diag_crossed <- diagnostics(fit_crossed, reh, stats)
 diag_crossed
 
-plot(fit_crossed, diagnostics_object = diag_crossed)
+plot(diag_crossed)
 ```
 
-For comparison, the diagnostics can also be computed using fixed effects only (without the random effect predictions), by setting `use_ranef = FALSE`:
+For comparison, the recall can also be computed using fixed effects only (without the random-effect predictions), by setting `use_ranef = FALSE`:
 
 ```{r diagnostics-fixed}
-diag_fixed_only <- diagnostics(fit_crossed, use_ranef = FALSE)
+diag_fixed_only <- diagnostics(fit_crossed, reh, stats, use_ranef = FALSE)
 diag_fixed_only
 ```
 
@@ -207,17 +199,31 @@ re <- lme4::ranef(fit_crossed$backend_fit)
 re
 ```
 
-These values can be plotted to visualize the distribution of actor-level heterogeneity. Actors with large positive sender random effects are more active senders than average; actors with large positive receiver effects are more popular as receivers.
+Actors with large positive sender random effects are more active senders than average; actors with large positive receiver effects are more popular as receivers.
 
 ---
 
 # 9 Summary
 
-| Specification | `random` argument | Interpretation |
+| Specification | Call | Interpretation |
 |---|---|---|
-| Sender frailty | `~ (1 \| actor1)` | Sender-level heterogeneity in baseline rate |
-| Receiver frailty | `~ (1 \| actor2)` | Receiver-level heterogeneity (attractiveness) |
-| Crossed frailties | `~ (1 \| actor1) + (1 \| actor2)` | Both sender and receiver heterogeneity |
-| Sender random slope | `~ (1 + inertia \| actor1)` | Actor-varying inertia effect |
+| Sender frailty | `remstimate(random = ~ (1 \| actor1))` | Sender-level heterogeneity in baseline rate |
+| Receiver frailty | `remstimate(random = ~ (1 \| actor2))` | Receiver-level heterogeneity (attractiveness) |
+| Crossed frailties | `remfrailty(reh, stats)` | Both sender and receiver heterogeneity |
+| Sender random slope | `remstimate(random = ~ (1 + inertia \| actor1))` | Actor-varying inertia effect |
 
-The GLMM approach integrates naturally into the `remverse` pipeline. The same `remify()` and `remstats()` calls are used; only the `remstimate()` step changes via `method = "GLMM"`. Diagnostics and plotting work identically.
+The GLMM approach integrates naturally into the `remverse` pipeline. The same `remify()` and `remstats()` calls are used; only the `remstimate()` step gains a `random` argument (or is replaced by `remfrailty()`). Diagnostics and plotting work identically.
+
+
+---
+
+#### References
+
+Juozaitiene, R., & Wit, E. C. (2024). Nodal heterogeneity can induce ghost
+triadic effects in relational event models. *Psychometrika*, 89(1),
+151-171. https://doi.org/10.1007/s11336-024-09952-x
+
+Mulder, J., & Hoff, P. D. (2024). A latent variable approach for modeling
+relational data with multiple receivers. *Annals of Applied Statistics*. https://doi.org/10.1214/24-AOAS1885
+
+

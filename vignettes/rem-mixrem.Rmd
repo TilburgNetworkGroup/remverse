@@ -1,7 +1,7 @@
 ---
-title: "Dyadic Latent Class Relational Event Models with MIXREM"
+title: "Dyadic Latent Class Relational Event Models"
 subtitle: "<i>Finite mixture models for relational event heterogeneity</i>"
-author: ""
+author: "Joris Mulder"
 date: ""
 output:
   rmarkdown::html_document:
@@ -14,7 +14,7 @@ header-includes:
   - \usepackage{amsmath,amssymb}
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteIndexEntry{Dyadic Latent Class Relational Event Models with MIXREM}
+  %\VignetteIndexEntry{Dyadic Latent Class Relational Event Models}
   %\VignetteEncoding{UTF-8}
 ---
 
@@ -24,15 +24,15 @@ knitr::opts_chunk$set(dpi = 72, collapse = TRUE, comment = "#>")
 
 ---
 
-Standard relational event models assume that all dyads in the network follow the same relational dynamics — a single set of parameters governs the entire event process. In many empirical networks, this assumption is too restrictive. Some dyads may exhibit strong reciprocity while others are primarily driven by inertia; some may have a high baseline rate while others interact rarely. A **dyadic latent class REM** (Lakdawala et al.) captures this heterogeneity by assuming that dyads belong to one of $K$ latent classes, each with its own set of parameters.
+Standard relational event models assume that all dyads follow the same relational dynamics — a single set of parameters governs the entire event process. In many empirical networks this is too restrictive. Some dyads exhibit strong reciprocity while others are driven by inertia; some have a high baseline rate while others interact rarely. A **dyadic latent class REM** (Lakdawala et al., 2026) captures this by assuming that dyads belong to one of $K$ latent classes, each with its own parameter vector.
 
-The model is a finite mixture of Poisson (or conditional logistic) REMs:
+The model is a finite mixture of relational event models:
 
-$$\mathscr{L}(\boldsymbol{\Theta}; E_{t_M}, X) = \prod_{(i,j) \in \mathcal{D}} \sum_{k=1}^{K} \pi_k \prod_{m: e_m \in \mathcal{R}_{ij}} f(e_m \mid \boldsymbol{\beta}_k, X)$$
+$$\mathscr{L}(\boldsymbol{\Theta}) = \prod_{(i,j) \in \mathcal{D}} \sum_{k=1}^{K} \pi_k \prod_{m: e_m \in \mathcal{R}_{ij}} f(e_m \mid \boldsymbol{\beta}_k)$$
 
-where $\pi_k$ is the mixing proportion of class $k$, $\boldsymbol{\beta}_k$ is the class-specific parameter vector, and the product over $m$ runs over time points where dyad $(i,j)$ is at risk. The key feature is that all events belonging to the same dyad are assigned to the same latent class — this is the *dyadic* grouping that distinguishes the model from event-level mixture models.
+where $\pi_k$ is the mixing proportion of class $k$ and $\boldsymbol{\beta}_k$ its class-specific parameters. The key feature is that all events of the same dyad share a latent class — the *dyadic* grouping that distinguishes this model from event-level mixtures.
 
-The `remverse` pipeline supports this model via `remstimate(method = "MIXREM")`, which fits the stacked REM as a finite mixture using `flexmix::flexmix()`.
+In `remverse` this is requested through the `mixture` argument of `remstimate()`, or the convenience wrappers `remixture()` (general mixture) and `dlcrem()` (the dyadic-latent-class special case with a `~ (1 | dyad)` grouping). Fitting uses `flexmix`.
 
 ```{r load}
 library(remverse)
@@ -42,52 +42,35 @@ library(remverse)
 
 # 1 Data
 
-We use the `history` dataset (115 directed events among 10 actors).
+We use the `randomREH3` event history provided with `remverse`. Statistics use exponential memory decay (half-life 2000). Mixture models refit the stacked design several times (across restarts and across candidate $K$), so we compute statistics on the last stretch of the sequence via `first`.
 
 ```{r data}
-data(history)
-data(info)
-history$weight <- 1
+data(randomREH3)
 
-reh <- remify(edgelist = history, model = "tie")
+reh <- remify(edgelist = randomREH3, model = "tie", directed = TRUE)
+
+stats <- remstats(
+  reh = reh,
+  tie_effects = ~ inertia(scaling = "std") + reciprocity(scaling = "std"),
+  first = 100, memory = "decay", memory_value = 2000
+)
 ```
 
 ---
 
-# 2 Motivation: why latent classes?
+# 2 Fitting the model
 
-Consider a network where some dyads are close collaborators who interact frequently and reciprocally, while others interact only sporadically and unidirectionally. A single-class model must find a compromise set of parameters that averages over these qualitatively different interaction patterns. This leads to biased estimates for both groups.
+`dlcrem()` fits the dyadic latent class model directly: it groups events by `dyad` and gives every included statistic a class-specific coefficient.
 
-A two-class model can separate these patterns: one class with high inertia and reciprocity (the collaborators) and another with low inertia and near-zero reciprocity (the sporadic pairs). Each class gets its own parameters, and the model assigns each dyad to the most likely class based on its observed event pattern.
-
----
-
-# 3 Fitting the model
-
-## 3.1 Specifying the mixture
-
-The `random` argument uses a formula that specifies which effects vary across classes and the grouping variable. For a dyadic latent class model, the grouping variable is `dyad`:
-
-```{r fit-k2}
-stats <- remstats(
-  reh = reh,
-  tie_effects = ~ inertia() + reciprocity() + indegreeSender()
-)
-
-fit_k2 <- remstimate(
-  reh    = reh,
-  stats  = stats,
-  method = "MIXREM",
-  random = ~ (1 + inertia + reciprocity + indegreeSender | dyad),
-  k      = 2
-)
-
+```{r fit-k2, message=FALSE}
+fit_k2 <- dlcrem(reh = reh, stats = stats, k = 2)
 fit_k2
 ```
 
-All effects listed before `|` vary across the $K$ classes (here including the intercept via `1`). The `dyad` grouping ensures that all events from the same dyad are assigned to the same class.
+Equivalently, `remixture(reh, stats, random = ~ (1 | dyad), k = 2)` or
+`remstimate(reh, stats, mixture = list(k = 2, random = ~ (1 | dyad)))` fit the same model. All statistics vary across the $K$ classes; the `dyad` grouping ensures that events from the same dyad are assigned to the same class.
 
-## 3.2 Interpreting the output
+## 2.1 Interpreting the output
 
 The output reports mixing proportions ($\pi_k$) and per-component coefficients ($\boldsymbol{\beta}_k$):
 
@@ -95,24 +78,19 @@ The output reports mixing proportions ($\pi_k$) and per-component coefficients (
 coef(fit_k2)
 ```
 
-Each column represents one latent class. Components are sorted by mixing proportion (largest first). The differences between columns reveal *how* the classes differ:
-
-- If the intercepts differ strongly, the classes capture high-rate vs. low-rate dyads.
-- If inertia differs, some dyads are more habitual than others.
-- If reciprocity differs, some dyads are reciprocal while others are unidirectional.
+Each column is one latent class, sorted by mixing proportion (largest first). Differences between columns reveal *how* the classes differ — e.g. if reciprocity differs, some dyads are reciprocal while others are unidirectional; if the baseline differs, the classes capture high-rate vs. low-rate dyads.
 
 ---
 
-# 4 Selecting the number of classes
+# 3 Selecting the number of classes
 
-The number of latent classes $K$ is typically unknown. A common approach is to fit the model for several values of $K$ and select the best-fitting model using the Bayesian Information Criterion (BIC). Passing a vector to `k` fits all models at once:
+The number of classes $K$ is usually unknown. Passing a vector to `k` fits all models at once and returns a list; `bic_table()` compares them by BIC.
 
-```{r select-k}
-fit_multi <- remstimate(
+```{r select-k, message=FALSE}
+fit_multi <- remixture(
   reh    = reh,
   stats  = stats,
-  method = "MIXREM",
-  random = ~ (1 + inertia + reciprocity + indegreeSender | dyad),
+  random = ~ (1 | dyad),
   k      = 1:4,
   nrep   = 5
 )
@@ -120,59 +98,17 @@ fit_multi <- remstimate(
 bic_table(fit_multi)
 ```
 
-The model with the lowest BIC is preferred. If the single-class model ($K = 1$) wins, there is no evidence for dyadic heterogeneity in the effects included. The `nrep` argument controls the number of random initializations per $K$ to guard against local optima.
+The model with the lowest BIC is preferred. If $K = 1$ wins, there is no evidence for dyadic heterogeneity in the included effects. The `nrep` argument sets the number of random initializations per $K$, guarding against local optima.
 
-## 4.1 Recall across $K$
-
-Beyond BIC, predictive recall provides a complementary view of model adequacy. We can compute recall for each $K$ and compare:
-
-```{r recall-by-k}
-recall_table <- data.frame(
-  k          = integer(0),
-  BIC        = numeric(0),
-  mean_rank  = numeric(0),
-  top5_pct   = numeric(0)
-)
-
-for (ki in seq_along(fit_multi)) {
-  fit_ki <- fit_multi[[ki]]
-  if (!inherits(fit_ki, "remstimate_mixrem")) next
-  diag_ki <- diagnostics(fit_ki)
-  rc <- diag_ki$recall$summary
-  recall_table <- rbind(recall_table, data.frame(
-    k         = fit_ki$k,
-    BIC       = round(fit_ki$bic, 2),
-    mean_rank = round(rc$mean_rel_rank, 3),
-    top5_pct  = round(rc$top_pct_prop * 100, 1)
-  ))
-}
-
-recall_table
+```{r plot-k, out.width="60%", fig.align="center", dev=c("jpeg"), dev.args = list(bg = "white")}
+plot(fit_multi)
 ```
 
-A model with more classes typically achieves higher recall (more parameters, better in-sample fit), but BIC penalizes this complexity. The optimal $K$ balances both: a clear jump in recall from $K$ to $K+1$ alongside a BIC decrease suggests a genuine improvement; a marginal recall gain with a BIC increase suggests overfitting.
-
-```{r recall-plot-k, out.width="60%", fig.align="center", dev=c("jpeg"), dev.args = list(bg = "white")}
-if (nrow(recall_table) > 1) {
-  par(mfrow = c(1, 2))
-  plot(recall_table$k, recall_table$BIC,
-       type = "b", pch = 19,
-       xlab = "K (number of classes)", ylab = "BIC",
-       main = "BIC by K")
-  plot(recall_table$k, recall_table$mean_rank,
-       type = "b", pch = 19,
-       xlab = "K (number of classes)", ylab = "Mean relative rank",
-       main = "Recall by K")
-  par(mfrow = c(1, 1))
-}
-```
-
-## 4.2 Inspecting the selected model
+## 3.1 Inspecting the selected model
 
 ```{r best-model}
-# Extract the best model (lowest BIC)
-bics <- bic_table(fit_multi)
-best_k <- bics$k[1]
+bics   <- bic_table(fit_multi)
+best_k <- bics$k[which.min(bics$BIC)]
 cat("Best K:", best_k, "\n")
 
 fit_best <- fit_multi[[paste0("k", best_k)]]
@@ -181,123 +117,60 @@ fit_best
 
 ---
 
-# 5 Posterior class membership
+# 4 Diagnostics
 
-After estimation, each dyad can be assigned to its most likely class using the posterior probabilities. These are computed by `flexmix::posterior()`:
-
-```{r posterior, eval=FALSE}
-post <- flexmix::posterior(fit_k2$backend_fit)
-
-# posterior probability of class membership for each row in the stacked data
-head(post)
-
-# Most likely class per dyad
-df <- fit_k2$stacked_data
-df$class <- apply(post, 1, which.max)
-
-# Summarize: which dyads belong to which class?
-dyad_classes <- unique(df[, c("dyad", "actor1", "actor2", "class")])
-table(dyad_classes$class)
-```
-
-This classification can be used to characterize the latent classes substantively — for example, by examining whether class membership correlates with actor attributes or structural position.
-
----
-
-# 6 Diagnostics
-
-The MIXREM diagnostics compute recall using posterior-weighted linear predictors. At each time point, the predicted rate for each dyad is a weighted average across classes, where the weights are the dyad's posterior class probabilities:
+MIXREM diagnostics compute recall using posterior-weighted linear predictors: at each time point, a dyad's predicted rate is a weighted average across classes, weighted by its posterior class probabilities.
 
 $$\hat{\lambda}_{ij}(t) = \sum_{k=1}^{K} P(Z_{ij} = k \mid \text{data}) \cdot \exp(\boldsymbol{\beta}_k^\top \mathbf{x}_{ij}(t))$$
 
+As elsewhere in `remverse`, `diagnostics()` takes the fit together with the `reh` and `stats` it was built from.
+
 ```{r diagnostics, out.width="50%", dev=c("jpeg"), dev.args = list(bg = "white")}
-diag_k2 <- diagnostics(fit_k2)
+diag_k2 <- diagnostics(fit_k2, reh, stats)
 diag_k2
 
-# Recall plot
-plot(fit_k2, diagnostics_object = diag_k2, which = 1)
+plot(diag_k2)
 ```
 
-### Per-component recall
-
-The diagnostics also report recall within each component separately. This shows how well each class's parameters predict that class's events:
-
-```{r per-component, out.width="50%", dev=c("jpeg"), dev.args = list(bg = "white")}
-# Per-component recall panels
-plot(fit_k2, diagnostics_object = diag_k2, which = 2)
-```
-
-If one component has much higher recall than the other, it suggests that the corresponding class of dyads follows a clearer, more predictable pattern.
+The diagnostics object also carries per-component recall (`recall_by_component`): how well each class's parameters predict that class's events. A component with much higher recall follows a clearer, more predictable pattern.
 
 ---
 
-# 7 Comparison with MLE and GLMM
+# 5 Comparison with MLE and GLMM
 
-The three estimation methods address different sources of heterogeneity:
+The three approaches address different sources of heterogeneity:
 
-| Method | Heterogeneity | Parameters | Interpretation |
+| Approach | Heterogeneity | Parameters | Interpretation |
 |--------|--------------|------------|----------------|
 | MLE | None assumed | Single $\boldsymbol{\beta}$ | One-size-fits-all |
 | GLMM | Continuous (normal) | $\boldsymbol{\beta} + \mathbf{u}$ | Actor-level frailty |
 | MIXREM | Discrete (classes) | $\boldsymbol{\beta}_1, \ldots, \boldsymbol{\beta}_K$ | Qualitatively different dyad types |
 
-GLMM assumes that actor effects vary continuously around a population mean. MIXREM assumes that dyads fall into a small number of qualitatively different categories. The choice depends on the research question:
+Use **GLMM** when actor effects vary continuously around a population mean; use **MIXREM** when you expect *distinct types* of relational dynamics (e.g. collaborative vs. hierarchical dyads).
 
-- Use **GLMM** when you expect actor-level variation that is well-described by a normal distribution (e.g., some actors are slightly more active).
-- Use **MIXREM** when you expect *distinct types* of relational dynamics (e.g., collaborative vs. hierarchical dyads).
-
-```{r compare-loglik}
-fit_mle <- remstimate(reh = reh, stats = stats, method = "MLE")
+```{r compare-loglik, message=FALSE}
+fit_mle <- remstimate(reh = reh, stats = stats)
 
 cat("MLE logLik:    ", round(as.numeric(logLik(fit_mle)), 2), "\n")
-cat("MIXREM logLik: ", round(as.numeric(logLik(fit_k2)), 2), "\n")
+cat("MIXREM logLik: ", round(as.numeric(logLik(fit_k2)),  2), "\n")
 ```
 
 ---
 
-# 8 Typed events with latent classes
+# 6 Practical considerations
 
-When events carry type labels, the latent class model can uncover whether the type-specific dynamics differ across dyad classes. For example, some dyads may show strong work-inertia but weak social-inertia, while others show the reverse.
+**Convergence and local optima.** Finite mixture models are sensitive to starting values. Use `nrep >= 3` (the default); if results vary across runs, increase it.
 
-```{r typed-mixrem}
-reh_typed <- remify(edgelist = history, model = "tie", event_type = "setting")
+**Sample size.** Each class needs enough data to estimate its parameters. With $P$ parameters and $K$ classes the model has $K \times P + (K-1)$ free parameters; the effective sample size per class is the number of dyad-event pairs assigned to it, not the total number of events.
 
-stats_typed <- remstats(
-  reh = reh_typed,
-  tie_effects = ~ inertia(consider_type = "separate") +
-                   reciprocity(consider_type = "separate")
-)
+**Identifiability.** If two components converge to the same parameters, the model is over-specified — reduce $K$.
 
-fit_typed_mix <- remstimate(
-  reh    = reh_typed,
-  stats  = stats_typed,
-  method = "MIXREM",
-  random = ~ (1 + inertia.social + inertia.work +
-                  reciprocity.social + reciprocity.work | dyad),
-  k      = 2
-)
-
-fit_typed_mix
-```
-
-The per-component coefficients now reveal whether the type-specific effects cluster into interpretable dyad types.
-
----
-
-# 9 Practical considerations
-
-**Convergence and local optima.** Finite mixture models are sensitive to starting values. Always use `nrep >= 3` (the default) to run multiple initializations. If results vary across runs, increase `nrep`.
-
-**Sample size.** Each class needs enough data to estimate its parameters reliably. With $P$ parameters and $K$ classes, the model has $K \times P + (K-1)$ free parameters (coefficients plus mixing proportions). The effective sample size per class is the number of dyad-event-pairs assigned to that class — not the total number of events.
-
-**Identifiability.** If two components converge to the same parameter values, the model is over-specified. Reduce $K$ or simplify the varying effects.
-
-**Grouping variable.** The `dyad` grouping is natural for tie-oriented models. For actor-oriented models, grouping by `actor1` (sender classes) or `actor2` (receiver classes) may be more appropriate, depending on the research question.
+**Grouping variable.** `dyad` grouping (via `dlcrem()`) is natural for tie-oriented models. For a different grouping, use `remixture(reh, stats, random = ~ (1 | actor1), ...)`.
 
 ---
 
 #### References
 
-Lakdawala, R., Mulder, J., & Leenders, R. (2024). Dyadic latent class relational event models. *Working paper*.
+Lakdawala, R., Leenders, R., & Mulder, J. (2026). Not all bonds are created equal: Dyadic latent class models for relational event data. *Social Networks*. https://doi.org/10.1016/j.socnet.2026.06.006
 
 Grün, B., & Leisch, F. (2008). FlexMix version 2: Finite mixtures with concomitant variables and varying and constant parameters. *Journal of Statistical Software*, 28(4), 1–35.

@@ -430,3 +430,139 @@ NULL
 #' @export userStat
 NULL
 
+#' activeDegreeDyad
+#'
+#' See \code{\link[remstats]{activeDegreeDyad}}.
+#' @name activeDegreeDyad
+#' @importFrom remstats activeDegreeDyad
+#' @export activeDegreeDyad
+NULL
+
+#' activeDegreeMax
+#'
+#' See \code{\link[remstats]{activeDegreeMax}}.
+#' @name activeDegreeMax
+#' @importFrom remstats activeDegreeMax
+#' @export activeDegreeMax
+NULL
+
+#' activeDegreeMin
+#'
+#' See \code{\link[remstats]{activeDegreeMin}}.
+#' @name activeDegreeMin
+#' @importFrom remstats activeDegreeMin
+#' @export activeDegreeMin
+NULL
+
+#' activeIndegreeReceiver
+#'
+#' See \code{\link[remstats]{activeIndegreeReceiver}}.
+#' @name activeIndegreeReceiver
+#' @importFrom remstats activeIndegreeReceiver
+#' @export activeIndegreeReceiver
+NULL
+
+#' activeOutdegreeSender
+#'
+#' See \code{\link[remstats]{activeOutdegreeSender}}.
+#' @name activeOutdegreeSender
+#' @importFrom remstats activeOutdegreeSender
+#' @export activeOutdegreeSender
+NULL
+
+#' activeReciprocalTie
+#'
+#' See \code{\link[remstats]{activeReciprocalTie}}.
+#' @name activeReciprocalTie
+#' @importFrom remstats activeReciprocalTie
+#' @export activeReciprocalTie
+NULL
+
+#' activeSharedPartners
+#'
+#' See \code{\link[remstats]{activeSharedPartners}}.
+#' @name activeSharedPartners
+#' @importFrom remstats activeSharedPartners
+#' @export activeSharedPartners
+NULL
+
+#' activeSharedPartners_isp
+#'
+#' See \code{\link[remstats]{activeSharedPartners_isp}}.
+#' @name activeSharedPartners_isp
+#' @importFrom remstats activeSharedPartners_isp
+#' @export activeSharedPartners_isp
+NULL
+
+#' activeSharedPartners_itp
+#'
+#' See \code{\link[remstats]{activeSharedPartners_itp}}.
+#' @name activeSharedPartners_itp
+#' @importFrom remstats activeSharedPartners_itp
+#' @export activeSharedPartners_itp
+NULL
+
+#' activeSharedPartners_osp
+#'
+#' See \code{\link[remstats]{activeSharedPartners_osp}}.
+#' @name activeSharedPartners_osp
+#' @importFrom remstats activeSharedPartners_osp
+#' @export activeSharedPartners_osp
+NULL
+
+#' activeSharedPartners_otp
+#'
+#' See \code{\link[remstats]{activeSharedPartners_otp}}.
+#' @name activeSharedPartners_otp
+#' @importFrom remstats activeSharedPartners_otp
+#' @export activeSharedPartners_otp
+NULL
+
+#' activeTie
+#'
+#' See \code{\link[remstats]{activeTie}}.
+#' @name activeTie
+#' @importFrom remstats activeTie
+#' @export activeTie
+NULL
+
+#' activeTotaldegreeDyad
+#'
+#' See \code{\link[remstats]{activeTotaldegreeDyad}}.
+#' @name activeTotaldegreeDyad
+#' @importFrom remstats activeTotaldegreeDyad
+#' @export activeTotaldegreeDyad
+NULL
+
+#' activeTotaldegreeReceiver
+#'
+#' See \code{\link[remstats]{activeTotaldegreeReceiver}}.
+#' @name activeTotaldegreeReceiver
+#' @importFrom remstats activeTotaldegreeReceiver
+#' @export activeTotaldegreeReceiver
+NULL
+
+#' activeTotaldegreeSender
+#'
+#' See \code{\link[remstats]{activeTotaldegreeSender}}.
+#' @name activeTotaldegreeSender
+#' @importFrom remstats activeTotaldegreeSender
+#' @export activeTotaldegreeSender
+NULL
+
+#' select_stats
+#'
+#' See \code{\link[remstats]{select_stats}}.
+#' @name select_stats
+#' @importFrom remstats select_stats
+#' @export select_stats
+NULL
+
+#' is.remstats_durem
+#'
+#' See \code{\link[remstats]{is.remstats_durem}}.
+#' @name is.remstats_durem
+#' @importFrom remstats is.remstats_durem
+#' @export is.remstats_durem
+NULL
+
