@@ -71,7 +71,7 @@ Suggests:
     flexmix,
     shrinkem (>= 0.4.0)
 Remotes:
-    TilburgNetworkGroup/remstats
+    TilburgNetworkGroup/remstats,
     TilburgNetworkGroup/remstimate
 LazyData: true
 VignetteBuilder: knitr
