@@ -1,7 +1,7 @@
 ---
 title: "The Relational Event Modeling Pipeline"
 subtitle: "<i>A comprehensive tutorial</i>"
-author: "remverse Team"
+author: ""
 date: ""
 output:
   rmarkdown::html_document:

@@ -1,7 +1,7 @@
 ---
 title: "Dyadic Latent Class Relational Event Models"
 subtitle: "<i>Finite mixture models for relational event heterogeneity</i>"
-author: "remverse Team"
+author: ""
 date: ""
 output:
   rmarkdown::html_document:
@@ -28,7 +28,18 @@ has_flexmix <- requireNamespace("flexmix", quietly = TRUE)
 
 ---
 
-Standard relational event models assume that all dyads follow the same relational dynamics — a single set of parameters governs the entire event process. In many empirical networks this is too restrictive. Some dyads exhibit strong reciprocity while others are driven by inertia; some have a high baseline rate while others interact rarely. A **dyadic latent class REM** (Lakdawala et al., 2026) captures this by assuming that dyads belong to one of $K$ latent classes, each with its own parameter vector.
+<script>
+window.MathJax = {
+  "HTML-CSS": {
+    availableFonts: [],
+    preferredFont: null,
+    webFont: "TeX"
+  }
+};
+</script>
+
+
+Standard relational event models assume that all dyads follow the same relational dynamics — a single set of parameters governs the entire event process. In many empirical networks this is too restrictive. Some dyads exhibit strong reciprocity while others are driven by inertia; some have a high baseline rate while others interact rarely. A **dyadic latent class REM** (Lakdawala et al., 2026) captures this by assuming that dyads belong to one of $K$ distinct latent classes, each with its own parameter vector.
 
 The model is a finite mixture of relational event models:
 
@@ -46,7 +57,7 @@ library(remverse)
 
 # 1 Data
 
-We use the `randomREH3` event history provided with `remverse`. Statistics use exponential memory decay (half-life 2000). Mixture models refit the stacked design several times (across restarts and across candidate $K$), so we compute statistics on the last stretch of the sequence via `first`.
+We use the `randomREH3` event history provided with `remverse`. Statistics use exponential memory decay (half-life set to 2000). To train the endogenous statistics we start the computation from the 100th event via the `first` argument.
 
 ```{r data}
 data(randomREH3)
@@ -102,7 +113,7 @@ fit_multi <- remixture(
 bic_table(fit_multi)
 ```
 
-The model with the lowest BIC is preferred. If $K = 1$ wins, there is no evidence for dyadic heterogeneity in the included effects. The `nrep` argument sets the number of random initializations per $K$, guarding against local optima.
+The model with the lowest BIC is preferred. If $K = 1$ wins, there is no evidence for dyadic heterogeneity in the included effects. The `nrep` argument sets the number of random initializations per $K$, guarding against local optima. Based on these results, the model with `k = 2` latent classes is preferred by the BIC.
 
 ```{r plot-k, out.width="60%", fig.align="center", dev=c("jpeg"), dev.args = list(bg = "white"), eval=has_flexmix}
 plot(fit_multi)
@@ -165,7 +176,7 @@ cat("MIXREM logLik: ", round(as.numeric(logLik(fit_k2)),  2), "\n")
 
 **Convergence and local optima.** Finite mixture models are sensitive to starting values. Use `nrep >= 3` (the default); if results vary across runs, increase it.
 
-**Sample size.** Each class needs enough data to estimate its parameters. With $P$ parameters and $K$ classes the model has $K \times P + (K-1)$ free parameters; the effective sample size per class is the number of dyad-event pairs assigned to it, not the total number of events.
+**Sample size.** Each class needs enough data to estimate its parameters. With $P$ parameters and $K$ classes the model has $K \times P + (K-1)$ free parameters (`P` parameters per class, and `K-1` mixing proportions). The effective sample size per class is the number of dyad-event pairs assigned to it, not the total number of events.
 
 **Identifiability.** If two components converge to the same parameters, the model is over-specified — reduce $K$.
 

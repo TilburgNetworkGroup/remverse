@@ -1,7 +1,7 @@
 ---
 title: "Duration Relational Event Models with remverse"
 subtitle: "<i>A tutorial</i>"
-author: "remverse Team"
+author: ""
 date: ""
 output:
   rmarkdown::html_document:

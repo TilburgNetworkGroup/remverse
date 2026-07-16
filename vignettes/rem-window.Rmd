@@ -1,7 +1,7 @@
 ---
 title: "Moving-Window Relational Event Models"
 subtitle: "<i>Detecting temporal drift in tie- and actor-oriented parameters</i>"
-author: "remverse Team"
+author: ""
 date: ""
 output:
   rmarkdown::html_document:
@@ -42,7 +42,7 @@ Moving-window estimation is useful when:
 - **A single global fit hides local behavior** — a large positive coefficient early and a near-zero coefficient later can average to a modest global estimate that misrepresents both periods.
 - **A quick diagnostic is wanted before a formal change-point model** — moving windows are cheap and give a first visual read.
 
-Note that moving-window estimation is not fully model and thus not a substitute for a fully specified time-varying-coefficient model. Each window is an independent fit on a subset of events.
+As each window is an independent fit on a subset of events, the moving-window appraoch cannot be viewed as a substitute for a fully specified time-varying-coefficients model. 
 
 ---
 

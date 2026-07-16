@@ -1,7 +1,7 @@
 ---
 title: "Regularized Relational Event Models"
 subtitle: "<i>Variable selection and shrinkage for REMs</i>"
-author: "Joris Mulder"
+author: ""
 date: ""
 output:
   rmarkdown::html_document:
@@ -90,11 +90,11 @@ fit_mle <- remstimate(reh = reh, stats = stats_rich)
 summary(fit_mle)
 ```
 
-With many correlated parameters, some coefficients have large standard errors and the model is prone to overfitting — good in-sample fit, poor prediction on held-out events.
+With many correlated parameters, some coefficients have large standard errors and the model is prone to overfitting — good in-sample fit, poor prediction on held-out events. Note here that the p-values and posterior probabilities of zero effects, in columns `Pr(>|z|)` and `Pr(=0)`, respectively, already indicate that there is not a lot of evidence for including many effects. In this multiple testing problem, however, the question is what statistically sound thresholds should be for including/excluding effects. This is achieved via statistical regularization techniques.
 
 ---
 
-# 3 Bayesian regularization (recommended)
+# 3 Bayesian regularization
 
 The Bayesian route applies a shrinkage prior (horseshoe by default) that pulls small effects strongly toward zero while leaving genuinely large effects essentially unpenalized. It is fast and typically yields a clean, parsimonious solution.
 
@@ -104,7 +104,7 @@ summary(fit_bayes)
 round(coef(fit_bayes), 3)
 ```
 
-The effects that survive shrinkage identify the network mechanisms the data actually support; the rest are shrunk to (near) zero. The baseline is never penalized.
+The effects that survive shrinkage identify the network mechanisms the data actually support; the rest are shrunk to (near) zero. The baseline is never penalized. We recommend to use the posterior mode as point estimate `shrunk.mode` of the effects, resulting in 4 nonzero effects (besides the intercept). (Because the posterior mode is estimated numerically from the posterior density, some effects may be reported as marginally nonzero—for example, `itp = -0.001`—but can be treated as zero.).
 
 ---
 
@@ -124,17 +124,18 @@ Equivalently, `remstimate(reh, stats_rich, penalty = list(alpha = 1))` fits the 
 
 ```{r compare-coefs, eval=has_glmnet}
 coefs_mle    <- coef(fit_mle)
+coefs_bayes <- coef(fit_bayes)
 coefs_glmnet <- coef(fit_glmnet)
 
-shared <- intersect(names(coefs_mle), names(coefs_glmnet))
+shared <- intersect(intersect(names(coefs_mle), names(coefs_glmnet)), names(coefs_bayes))
 
 comparison <- data.frame(
   statistic = shared,
-  MLE       = round(coefs_mle[shared], 4),
-  GLMNET    = round(coefs_glmnet[shared], 4),
+  MLE       = round(coefs_mle[shared], 3),
+  BAYES     = round(coefs_bayes[shared], 3),
+  GLMNET    = round(coefs_glmnet[shared], 3),
   row.names = NULL
 )
-comparison$selected <- comparison$GLMNET != 0
 comparison
 ```
 
@@ -175,15 +176,23 @@ Recall diagnostics for a penalized model use its point estimates to compute line
 
 ```{r diagnostics, out.width="50%", dev=c("jpeg"), dev.args = list(bg = "white"), eval=has_glmnet}
 diag_mle    <- diagnostics(fit_mle,    reh, stats_rich)
+diag_bayes <- diagnostics(fit_bayes,   reh, stats_rich)
 diag_glmnet <- diagnostics(fit_glmnet, reh, stats_rich)
 
 cat("MLE recall:    ", round(diag_mle$recall$summary$mean_rel_rank, 3),    "\n")
+cat("BAYES recall: ", round(diag_bayes$recall$summary$mean_rel_rank, 3), "\n")
 cat("GLMNET recall: ", round(diag_glmnet$recall$summary$mean_rel_rank, 3), "\n")
 
+plot(diag_mle)
+plot(diag_bayes)
 plot(diag_glmnet)
 ```
 
-In-sample recall may be slightly lower for the regularized model — it trades a little in-sample fit for better generalization. On held-out data the regularized model often wins.
+In-sample recall may be slightly lower for the regularized model — it trades a little in-sample fit for better generalization. In this case, the recall is equal approximately across models while the regularized solutions `coefs_bayes` and `coefs_glmnet` and much more parsimonious than the unregularized solution `coefs_mle`:
+
+```{r compare-coefs, eval=has_glmnet}
+comparison
+```
 
 ---
 
