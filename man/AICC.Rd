@@ -3,6 +3,9 @@
 \name{AICC}
 \alias{AICC}
 \title{AICC}
+\usage{
+AICC(object, ...)
+}
 \description{
 See \code{\link[remstimate]{AICC}}.
 }

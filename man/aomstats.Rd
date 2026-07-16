@@ -3,6 +3,20 @@
 \name{aomstats}
 \alias{aomstats}
 \title{aomstats}
+\usage{
+aomstats(
+  reh,
+  sender_effects = NULL,
+  receiver_effects = NULL,
+  memory = c("full", "window", "decay", "interval"),
+  memory_value = NA,
+  first = 2,
+  last = Inf,
+  display_progress = FALSE,
+  attr_actors = NULL,
+  attr_dyads = NULL
+)
+}
 \description{
 See \code{\link[remstats]{aomstats}}.
 }

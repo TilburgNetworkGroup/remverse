@@ -3,6 +3,9 @@
 \name{bind_remstats}
 \alias{bind_remstats}
 \title{bind_remstats}
+\usage{
+bind_remstats(...)
+}
 \description{
 See \code{\link[remstats]{bind_remstats}}.
 }

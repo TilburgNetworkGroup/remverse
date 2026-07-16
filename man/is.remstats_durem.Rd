@@ -3,6 +3,9 @@
 \name{is.remstats_durem}
 \alias{is.remstats_durem}
 \title{is.remstats_durem}
+\usage{
+is.remstats_durem(x)
+}
 \description{
 See \code{\link[remstats]{is.remstats_durem}}.
 }

@@ -3,6 +3,9 @@
 \name{maximum}
 \alias{maximum}
 \title{maximum}
+\usage{
+maximum(variable, attr_actors = NULL, scaling = c("none", "std"), attr_data)
+}
 \description{
 See \code{\link[remstats]{maximum}}.
 }

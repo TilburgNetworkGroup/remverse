@@ -3,6 +3,9 @@
 \name{tie_effects}
 \alias{tie_effects}
 \title{tie_effects}
+\usage{
+tie_effects(directed = NULL, endogenous = NULL)
+}
 \description{
 See \code{\link[remstats]{tie_effects}}.
 }

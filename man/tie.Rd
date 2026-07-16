@@ -3,6 +3,9 @@
 \name{tie}
 \alias{tie}
 \title{tie}
+\usage{
+tie(variable, attr_dyads = NULL, scaling = c("none", "std"), x, variableName)
+}
 \description{
 See \code{\link[remstats]{tie}}.
 }

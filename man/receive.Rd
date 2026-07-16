@@ -3,6 +3,9 @@
 \name{receive}
 \alias{receive}
 \title{receive}
+\usage{
+receive(variable, attr_actors = NULL, scaling = c("none", "std"), attr_data)
+}
 \description{
 See \code{\link[remstats]{receive}}.
 }

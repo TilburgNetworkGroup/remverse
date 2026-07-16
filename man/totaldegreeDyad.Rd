@@ -3,6 +3,9 @@
 \name{totaldegreeDyad}
 \alias{totaldegreeDyad}
 \title{totaldegreeDyad}
+\usage{
+totaldegreeDyad(scaling = c("none", "prop", "std"), consider_type = "ignore")
+}
 \description{
 See \code{\link[remstats]{totaldegreeDyad}}.
 }

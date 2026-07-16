@@ -3,6 +3,9 @@
 \name{activeDegreeDyad}
 \alias{activeDegreeDyad}
 \title{activeDegreeDyad}
+\usage{
+activeDegreeDyad(scaling = c("none", "std"), consider_type = "ignore")
+}
 \description{
 See \code{\link[remstats]{activeDegreeDyad}}.
 }

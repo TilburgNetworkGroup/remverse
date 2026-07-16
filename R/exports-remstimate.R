@@ -5,7 +5,7 @@
 #' @name AICC
 #' @importFrom remstimate AICC
 #' @export
-NULL
+remstimate::AICC
 
 #' remstimate
 #'
@@ -13,14 +13,14 @@ NULL
 #' @name remstimate
 #' @importFrom remstimate remstimate
 #' @export remstimate
-NULL
+remstimate::remstimate
 
 #' @title WAIC
 #' @description See \code{\link[remstimate]{WAIC}}.
 #' @name WAIC
 #' @importFrom remstimate WAIC
 #' @export
-NULL
+remstimate::WAIC
 
 #' diagnostics
 #'
@@ -28,60 +28,60 @@ NULL
 #' @name diagnostics
 #' @importFrom remstimate diagnostics
 #' @export diagnostics
-NULL
+remstimate::diagnostics
 
 #' @title bic_table
 #' @description See \code{\link[remstimate]{bic_table}}.
 #' @name bic_table
 #' @importFrom remstimate bic_table
 #' @export
-NULL
+remstimate::bic_table
 
 #' @title dlcrem
 #' @description See \code{\link[remstimate]{dlcrem}}.
 #' @name dlcrem
 #' @importFrom remstimate dlcrem
 #' @export
-NULL
+remstimate::dlcrem
 
 #' @title frailty_rem
 #' @description See \code{\link[remstimate]{frailty_rem}}.
 #' @name frailty_rem
 #' @importFrom remstimate frailty_rem
 #' @export
-NULL
+remstimate::frailty_rem
 
 #' @title remfrailty
 #' @description See \code{\link[remstimate]{remfrailty}}.
 #' @name remfrailty
 #' @importFrom remstimate remfrailty
 #' @export
-NULL
+remstimate::remfrailty
 
 #' @title remixture
 #' @description See \code{\link[remstimate]{remixture}}.
 #' @name remixture
 #' @importFrom remstimate remixture
 #' @export
-NULL
+remstimate::remixture
 
 #' @title rempenalty
 #' @description See \code{\link[remstimate]{rempenalty}}.
 #' @name rempenalty
 #' @importFrom remstimate rempenalty
 #' @export
-NULL
+remstimate::rempenalty
 
 #' @title remtribute
 #' @description See \code{\link[remstimate]{remtribute}}.
 #' @name remtribute
 #' @importFrom remstimate remtribute
 #' @export
-NULL
+remstimate::remtribute
 
 #' @title remwindow
 #' @description See \code{\link[remstimate]{remwindow}}.
 #' @name remwindow
 #' @importFrom remstimate remwindow
 #' @export
-NULL
+remstimate::remwindow

@@ -3,6 +3,9 @@
 \name{osp}
 \alias{osp}
 \title{osp}
+\usage{
+osp(unique = FALSE, scaling = c("none", "std"), consider_type = "ignore")
+}
 \description{
 See \code{\link[remstats]{osp}}.
 }

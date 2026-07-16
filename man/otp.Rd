@@ -3,6 +3,9 @@
 \name{otp}
 \alias{otp}
 \title{otp}
+\usage{
+otp(unique = FALSE, scaling = c("none", "std"), consider_type = "ignore")
+}
 \description{
 See \code{\link[remstats]{otp}}.
 }

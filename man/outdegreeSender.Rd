@@ -3,6 +3,9 @@
 \name{outdegreeSender}
 \alias{outdegreeSender}
 \title{outdegreeSender}
+\usage{
+outdegreeSender(scaling = c("none", "prop", "std"), consider_type = "ignore")
+}
 \description{
 See \code{\link[remstats]{outdegreeSender}}.
 }

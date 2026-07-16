@@ -3,6 +3,9 @@
 \name{activeTie}
 \alias{activeTie}
 \title{activeTie}
+\usage{
+activeTie(scaling = c("none", "std"), consider_type = "ignore")
+}
 \description{
 See \code{\link[remstats]{activeTie}}.
 }

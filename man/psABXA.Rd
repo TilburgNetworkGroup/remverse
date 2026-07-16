@@ -3,6 +3,9 @@
 \name{psABXA}
 \alias{psABXA}
 \title{psABXA}
+\usage{
+psABXA(consider_type = "ignore")
+}
 \description{
 See \code{\link[remstats]{psABXA}}.
 }

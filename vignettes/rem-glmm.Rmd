@@ -1,7 +1,7 @@
 ---
 title: "Frailty Relational Event Models with GLMM"
 subtitle: "<i>Random intercepts and slopes for actor heterogeneity</i>"
-author: "Joris Mulder"
+author: "remverse Team"
 date: ""
 output:
   rmarkdown::html_document:
@@ -28,9 +28,9 @@ run_glmm <- requireNamespace("lme4", quietly = TRUE)
 
 ---
 
-Standard relational event models assume that all actors and dyads share the same set of parameters. In practice, actors differ in their baseline propensity to interact — some actors are inherently more active than others, beyond what is captured by endogenous statistics. A **frailty REM** addresses this by introducing random intercepts (and optionally random slopes) for actors, borrowing ideas from survival analysis and generalized linear mixed models (GLMMs).
+Standard relational event models assume that all actors and dyads share the same set of parameters. In practice, actors differ in their baseline propensity to interact — some actors are inherently more active than others, beyond what is captured by endogenous statistics. A **frailty REM** addresses this by introducing random intercepts (and optionally random slopes) for actors, borrowing ideas from survival analysis and generalized linear mixed models (GLMMs). Additionally, random effects can be introduced for the other statistics as well across actors and dyads.
 
-In `remverse`, a GLMM is requested simply by passing a `random` formula to `remstimate()`; the convenience wrapper `remfrailty()` builds the standard sender/receiver frailty structure for you. Under the hood the stacked relational event model is fit as a Poisson GLMM (via `lme4` or `glmmTMB` for interval timing, or `coxme` for ordinal timing).
+In `remverse`, a GLMM is requested simply by passing a `random` formula to `remstimate()`; the convenience wrapper `remfrailty()` builds the standard sender/receiver frailty structure for you. Under the hood the stacked relational event model is fit as a Poisson GLMM (via `glmmTMB` or `lme4` for interval timing, or `coxme` for ordinal timing).
 
 ```{r load}
 library(remverse)
@@ -48,6 +48,8 @@ A frailty model is appropriate when:
 
 The random intercept acts as a multiplicative frailty on the event rate: actors with a positive random intercept have a higher-than-average baseline rate, while those with a negative intercept have a lower-than-average rate.
 
+Additionally, random effects can be specified for the other statistics as well via the `random` argument.
+
 ---
 
 # 2 Data
@@ -62,9 +64,7 @@ reh <- remify(edgelist = randomREH3, model = "tie", directed = TRUE)
 
 stats <- remstats(
   reh = reh,
-  tie_effects = ~ inertia(scaling = "std") + reciprocity(scaling = "std") +
-                   send("age", attr_actors = info3, scaling = "std") +
-                   receive("age", attr_actors = info3, scaling = "std"),
+  tie_effects = ~ inertia(scaling = "std") + reciprocity(scaling = "std"),
   first = 700, memory = "decay", memory_value = 2000
 )
 ```
@@ -103,7 +103,7 @@ fit_sender <- remstimate(
 summary(fit_sender)
 ```
 
-The output reports fixed-effect coefficients (comparable to the standard model) and the estimated variance of the sender random intercept ($\hat{\sigma}^2_u$). A large variance indicates substantial sender-level heterogeneity not captured by the fixed effects. (With only five actors here, the variance component is estimated from few groups and should be read as illustrative.)
+The output reports fixed-effect coefficients (comparable to the standard model) and the estimated variance of the sender random intercept ($\hat{\sigma}^2_u$). A large variance indicates substantial sender-level heterogeneity not captured by the fixed effects. (With only five actors here, the variance component is estimated from only five actors ('groups'), which is generally too low for accurate estimation of the heterogeneity). Based on the above output, the standard deviation of senders' activity is (only) `0.04886`.
 
 ## 4.2 Receiver frailty
 
@@ -118,6 +118,8 @@ fit_receiver <- remstimate(
 summary(fit_receiver)
 ```
 
+Based on the above output, the standard deviation of receivers' popularity is `0.2092`, which is larger than the heterogeneity of the senders' activity.
+
 ## 4.3 Crossed sender and receiver frailties
 
 Both can be included simultaneously as crossed random effects. This is the standard frailty-REM specification, and `remfrailty()` builds it for you: for a directed tie model it uses `(1 | actor1) + (1 | actor2)`.
@@ -127,7 +129,7 @@ fit_crossed <- remfrailty(reh = reh, stats = stats)
 summary(fit_crossed)
 ```
 
-The model estimates separate variance components for sender and receiver heterogeneity, and the fixed-effect coefficients are adjusted for both sources of unobserved variation. (An explicit `remstimate(..., random = ~ (1 | actor1) + (1 | actor2))` gives the same fit.)
+The model estimates separate variance components for sender and receiver heterogeneity, and the fixed-effect coefficients are adjusted for both sources of unobserved variation. (An explicit `remstimate(..., random = ~ (1 | actor1) + (1 | actor2))` gives the same fit.) Again we see a considerable larger heterogeneity in the receivers' (`actor1`) popularity than in the heterogeneity of the senders' (`actor2`) activity.
 
 ---
 
@@ -150,7 +152,7 @@ fit_slope <- remstimate(
 summary(fit_slope)
 ```
 
-The random effects now include a variance for the intercept, a variance for the inertia slope, and their correlation. A positive correlation would mean that actors with a high baseline sending rate also have a stronger inertia effect. Random slopes substantially increase model complexity; with small datasets the model may struggle to converge, which the `summary()` output will indicate.
+The random effects now include a variance for the intercept, a variance for the inertia slope, and their correlation. A positive correlation would mean that actors with a high baseline sending rate also have a stronger inertia effect. Random slopes substantially increase model complexity; with small datasets the model may struggle to converge, which the `summary()` output would indicate.
 
 ---
 
@@ -160,13 +162,22 @@ We can compare models using information criteria:
 
 ```{r comparison, eval=run_glmm}
 cat("Fixed-effects only: AIC =", AIC(fit_fixed),    "\n")
-cat("Sender frailty:     AIC =", AIC(fit_sender),   "\n")
-cat("Receiver frailty:   AIC =", AIC(fit_receiver), "\n")
-cat("Crossed frailties:  AIC =", AIC(fit_crossed),  "\n")
+cat("Sender frailty:     AIC =", AIC(fit_sender$backend_fit),   "\n")
+cat("Receiver frailty:   AIC =", AIC(fit_receiver$backend_fit), "\n")
+cat("Crossed frailties:  AIC =", AIC(fit_crossed$backend_fit),  "\n")
 ```
 
 A lower AIC indicates a better trade-off between fit and complexity. If a frailty model improves AIC substantially, actor-level heterogeneity is an important feature of the data.
 
+Alternatively, the BIC, which has a stronger penalty for more complex models, thus, preferring simpler models, could also be used:
+
+```{r comparison, eval=run_glmm}
+cat("Fixed-effects only: BIC =", BIC(fit_fixed),    "\n")
+cat("Sender frailty:     BIC =", BIC(fit_sender$backend_fit),   "\n")
+cat("Receiver frailty:   BIC =", BIC(fit_receiver$backend_fit), "\n")
+cat("Crossed frailties:  BIC =", BIC(fit_crossed$backend_fit),  "\n")
+```
+Both models have a preference towards the `Receiver frailty` model.
 ---
 
 # 7 Diagnostics

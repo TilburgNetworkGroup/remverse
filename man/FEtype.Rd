@@ -3,6 +3,9 @@
 \name{FEtype}
 \alias{FEtype}
 \title{FEtype}
+\usage{
+FEtype()
+}
 \description{
 See \code{\link[remstats]{FEtype}}.
 }

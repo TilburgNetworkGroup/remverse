@@ -3,6 +3,9 @@
 \name{is.remify_durem}
 \alias{is.remify_durem}
 \title{is.remify_durem}
+\usage{
+is.remify_durem(x)
+}
 \description{
 See \code{\link[remify]{is.remify_durem}}.
 }

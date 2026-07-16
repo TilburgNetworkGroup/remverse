@@ -3,6 +3,21 @@
 \name{remwindow}
 \alias{remwindow}
 \title{remwindow}
+\usage{
+remwindow(
+  reh,
+  stats,
+  n.windows = 5L,
+  window.width = NULL,
+  step.size.window = NULL,
+  start.point = 1L,
+  min.events = 50L,
+  approach = c("frequentist", "Bayesian"),
+  parallel = FALSE,
+  ncores.window = 1L,
+  ...
+)
+}
 \description{
 See \code{\link[remstimate]{remwindow}}.
 }

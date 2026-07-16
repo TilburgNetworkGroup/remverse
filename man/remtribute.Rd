@@ -3,6 +3,19 @@
 \name{remtribute}
 \alias{remtribute}
 \title{remtribute}
+\usage{
+remtribute(
+  reh,
+  stats = NULL,
+  effects = NULL,
+  attribute = "type",
+  attribute_type = c("nominal", "ordinal", "numeric"),
+  attr_actors = NULL,
+  memory = "full",
+  memory_value = Inf,
+  ...
+)
+}
 \description{
 See \code{\link[remstimate]{remtribute}}.
 }

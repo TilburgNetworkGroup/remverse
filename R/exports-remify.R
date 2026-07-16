@@ -5,7 +5,7 @@
 #' @name remify
 #' @importFrom remify remify
 #' @export remify
-NULL
+remify::remify
 
 #' is.remify_durem
 #'
@@ -13,4 +13,4 @@ NULL
 #' @name is.remify_durem
 #' @importFrom remify is.remify_durem
 #' @export is.remify_durem
-NULL
+remify::is.remify_durem

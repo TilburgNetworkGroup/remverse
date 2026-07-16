@@ -3,6 +3,18 @@
 \name{rempenalty}
 \alias{rempenalty}
 \title{rempenalty}
+\usage{
+rempenalty(
+  reh,
+  stats,
+  approach = c("frequentist", "Bayesian"),
+  alpha = 1,
+  prior = "horseshoe",
+  nfolds = 10L,
+  lambda_select = c("1se", "min"),
+  ...
+)
+}
 \description{
 See \code{\link[remstimate]{rempenalty}}.
 }

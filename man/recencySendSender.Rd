@@ -3,6 +3,9 @@
 \name{recencySendSender}
 \alias{recencySendSender}
 \title{recencySendSender}
+\usage{
+recencySendSender(consider_type = "ignore")
+}
 \description{
 See \code{\link[remstats]{recencySendSender}}.
 }

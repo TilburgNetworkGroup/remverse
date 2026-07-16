@@ -3,6 +3,9 @@
 \name{activeSharedPartners}
 \alias{activeSharedPartners}
 \title{activeSharedPartners}
+\usage{
+activeSharedPartners(scaling = c("none", "std"), consider_type = "ignore")
+}
 \description{
 See \code{\link[remstats]{activeSharedPartners}}.
 }

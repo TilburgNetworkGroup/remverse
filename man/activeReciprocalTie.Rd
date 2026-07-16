@@ -3,6 +3,9 @@
 \name{activeReciprocalTie}
 \alias{activeReciprocalTie}
 \title{activeReciprocalTie}
+\usage{
+activeReciprocalTie(scaling = c("none", "std"), consider_type = "ignore")
+}
 \description{
 See \code{\link[remstats]{activeReciprocalTie}}.
 }

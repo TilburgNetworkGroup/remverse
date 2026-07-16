@@ -3,6 +3,9 @@
 \name{minimum}
 \alias{minimum}
 \title{minimum}
+\usage{
+minimum(variable, attr_actors = NULL, scaling = c("none", "std"), attr_data)
+}
 \description{
 See \code{\link[remstats]{minimum}}.
 }

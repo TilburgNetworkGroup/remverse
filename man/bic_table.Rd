@@ -3,6 +3,9 @@
 \name{bic_table}
 \alias{bic_table}
 \title{bic_table}
+\usage{
+bic_table(x, ...)
+}
 \description{
 See \code{\link[remstimate]{bic_table}}.
 }

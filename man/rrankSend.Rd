@@ -3,6 +3,9 @@
 \name{rrankSend}
 \alias{rrankSend}
 \title{rrankSend}
+\usage{
+rrankSend(consider_type = "ignore")
+}
 \description{
 See \code{\link[remstats]{rrankSend}}.
 }

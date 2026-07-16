@@ -3,6 +3,9 @@
 \name{inertia}
 \alias{inertia}
 \title{inertia}
+\usage{
+inertia(scaling = c("none", "prop", "std"), consider_type = "ignore")
+}
 \description{
 See \code{\link[remstats]{inertia}}.
 }

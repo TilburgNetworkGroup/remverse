@@ -3,6 +3,9 @@
 \name{sp}
 \alias{sp}
 \title{sp}
+\usage{
+sp(unique = FALSE, scaling = c("none", "std"), consider_type = "ignore")
+}
 \description{
 See \code{\link[remstats]{sp}}.
 }

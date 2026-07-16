@@ -3,6 +3,15 @@
 \name{difference}
 \alias{difference}
 \title{difference}
+\usage{
+difference(
+  variable,
+  attr_actors = NULL,
+  scaling = c("none", "std"),
+  absolute = TRUE,
+  attr_data
+)
+}
 \description{
 See \code{\link[remstats]{difference}}.
 }

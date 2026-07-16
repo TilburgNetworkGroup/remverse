@@ -3,6 +3,9 @@
 \name{send}
 \alias{send}
 \title{send}
+\usage{
+send(variable, attr_actors = NULL, scaling = c("none", "std"), attr_data)
+}
 \description{
 See \code{\link[remstats]{send}}.
 }

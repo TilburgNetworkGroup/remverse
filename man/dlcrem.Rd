@@ -3,6 +3,9 @@
 \name{dlcrem}
 \alias{dlcrem}
 \title{dlcrem}
+\usage{
+dlcrem(reh, stats, k = 2L, nrep = 3L, ...)
+}
 \description{
 See \code{\link[remstimate]{dlcrem}}.
 }

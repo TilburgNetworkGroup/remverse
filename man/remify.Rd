@@ -3,6 +3,31 @@
 \name{remify}
 \alias{remify}
 \title{remify}
+\usage{
+remify(
+  edgelist,
+  directed = TRUE,
+  ordinal = FALSE,
+  model = c("tie", "actor"),
+  actors = NULL,
+  riskset = c("full", "active", "active_saturated", "manual"),
+  manual_riskset = NULL,
+  extend_riskset_by_type = FALSE,
+  event_type = NULL,
+  event_weight = NULL,
+  origin = NULL,
+  time_units = c("auto", "secs", "mins", "hours", "days", "weeks", "months", "years"),
+  aggregate_time = 1,
+  attach_riskset = TRUE,
+  riskset_decode = c("labels", "ids", "none"),
+  riskset_max_decode = 200000L,
+  event_attributes = NULL,
+  ncores = 1L,
+  duration = FALSE,
+  dur_directed_end = FALSE,
+  dur_type_exclusive = FALSE
+)
+}
 \description{
 See \code{\link[remify]{remify}}.
 }

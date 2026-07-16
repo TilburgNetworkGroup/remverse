@@ -3,6 +3,9 @@
 \name{degreeMax}
 \alias{degreeMax}
 \title{degreeMax}
+\usage{
+degreeMax(scaling = c("none", "prop", "std"), consider_type = "ignore")
+}
 \description{
 See \code{\link[remstats]{degreeMax}}.
 }

@@ -3,6 +3,9 @@
 \name{isp}
 \alias{isp}
 \title{isp}
+\usage{
+isp(unique = FALSE, scaling = c("none", "std"), consider_type = "ignore")
+}
 \description{
 See \code{\link[remstats]{isp}}.
 }

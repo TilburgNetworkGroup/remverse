@@ -3,6 +3,9 @@
 \name{activeOutdegreeSender}
 \alias{activeOutdegreeSender}
 \title{activeOutdegreeSender}
+\usage{
+activeOutdegreeSender(scaling = c("none", "std"), consider_type = "ignore")
+}
 \description{
 See \code{\link[remstats]{activeOutdegreeSender}}.
 }

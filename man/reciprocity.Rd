@@ -3,6 +3,9 @@
 \name{reciprocity}
 \alias{reciprocity}
 \title{reciprocity}
+\usage{
+reciprocity(scaling = c("none", "prop", "std"), consider_type = "ignore")
+}
 \description{
 See \code{\link[remstats]{reciprocity}}.
 }

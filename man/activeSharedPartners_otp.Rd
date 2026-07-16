@@ -3,6 +3,9 @@
 \name{activeSharedPartners_otp}
 \alias{activeSharedPartners_otp}
 \title{activeSharedPartners_otp}
+\usage{
+activeSharedPartners_otp(scaling = c("none", "std"), consider_type = "ignore")
+}
 \description{
 See \code{\link[remstats]{activeSharedPartners_otp}}.
 }

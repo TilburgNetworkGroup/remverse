@@ -3,6 +3,9 @@
 \name{psABX}
 \alias{psABX}
 \title{psABX}
+\usage{
+psABX()
+}
 \description{
 See \code{\link[remstats]{psABX}}.
 }

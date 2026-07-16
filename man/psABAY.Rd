@@ -3,6 +3,9 @@
 \name{psABAY}
 \alias{psABAY}
 \title{psABAY}
+\usage{
+psABAY(consider_type = "ignore")
+}
 \description{
 See \code{\link[remstats]{psABAY}}.
 }

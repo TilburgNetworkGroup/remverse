@@ -3,6 +3,16 @@
 \name{select_stats}
 \alias{select_stats}
 \title{select_stats}
+\usage{
+select_stats(
+  object,
+  tie_effects = NULL,
+  sender_effects = NULL,
+  receiver_effects = NULL,
+  start_effects = NULL,
+  end_effects = NULL
+)
+}
 \description{
 See \code{\link[remstats]{select_stats}}.
 }

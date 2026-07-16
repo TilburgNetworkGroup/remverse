@@ -3,6 +3,9 @@
 \name{event}
 \alias{event}
 \title{event}
+\usage{
+event(variable, event_attr)
+}
 \description{
 See \code{\link[remstats]{event}}.
 }

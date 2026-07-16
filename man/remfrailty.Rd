@@ -3,6 +3,15 @@
 \name{remfrailty}
 \alias{remfrailty}
 \title{remfrailty}
+\usage{
+remfrailty(
+  reh,
+  stats,
+  approach = c("frequentist", "Bayesian"),
+  engine = "auto",
+  ...
+)
+}
 \description{
 See \code{\link[remstimate]{remfrailty}}.
 }

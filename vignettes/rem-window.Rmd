@@ -1,7 +1,7 @@
 ---
 title: "Moving-Window Relational Event Models"
 subtitle: "<i>Detecting temporal drift in tie- and actor-oriented parameters</i>"
-author: "Joris Mulder"
+author: "remverse Team"
 date: ""
 output:
   rmarkdown::html_document:

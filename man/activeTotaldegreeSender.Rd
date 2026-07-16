@@ -3,6 +3,9 @@
 \name{activeTotaldegreeSender}
 \alias{activeTotaldegreeSender}
 \title{activeTotaldegreeSender}
+\usage{
+activeTotaldegreeSender(scaling = c("none", "std"), consider_type = "ignore")
+}
 \description{
 See \code{\link[remstats]{activeTotaldegreeSender}}.
 }

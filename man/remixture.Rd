@@ -3,6 +3,9 @@
 \name{remixture}
 \alias{remixture}
 \title{remixture}
+\usage{
+remixture(reh, stats, random, k = 2L, concomitant = NULL, nrep = 3L, ...)
+}
 \description{
 See \code{\link[remstimate]{remixture}}.
 }

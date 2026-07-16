@@ -3,6 +3,9 @@
 \name{average}
 \alias{average}
 \title{average}
+\usage{
+average(variable, attr_actors = NULL, scaling = c("none", "std"), attr_data)
+}
 \description{
 See \code{\link[remstats]{average}}.
 }

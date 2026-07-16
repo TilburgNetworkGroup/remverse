@@ -3,6 +3,9 @@
 \name{activeIndegreeReceiver}
 \alias{activeIndegreeReceiver}
 \title{activeIndegreeReceiver}
+\usage{
+activeIndegreeReceiver(scaling = c("none", "std"), consider_type = "ignore")
+}
 \description{
 See \code{\link[remstats]{activeIndegreeReceiver}}.
 }

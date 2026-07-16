@@ -3,6 +3,9 @@
 \name{psABBY}
 \alias{psABBY}
 \title{psABBY}
+\usage{
+psABBY(consider_type = "ignore")
+}
 \description{
 See \code{\link[remstats]{psABBY}}.
 }

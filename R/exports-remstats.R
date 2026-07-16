@@ -4,7 +4,7 @@
 #' @name actor_effects
 #' @importFrom remstats actor_effects
 #' @export actor_effects
-NULL
+remstats::actor_effects
 
 #' aomstats
 #'
@@ -12,7 +12,7 @@ NULL
 #' @name aomstats
 #' @importFrom remstats aomstats
 #' @export aomstats
-NULL
+remstats::aomstats
 
 #' average
 #'
@@ -20,7 +20,7 @@ NULL
 #' @name average
 #' @importFrom remstats average
 #' @export average
-NULL
+remstats::average
 
 #' bind_remstats
 #'
@@ -28,7 +28,7 @@ NULL
 #' @name bind_remstats
 #' @importFrom remstats bind_remstats
 #' @export bind_remstats
-NULL
+remstats::bind_remstats
 
 #' degreeDiff
 #'
@@ -36,7 +36,7 @@ NULL
 #' @name degreeDiff
 #' @importFrom remstats degreeDiff
 #' @export degreeDiff
-NULL
+remstats::degreeDiff
 
 #' degreeMax
 #'
@@ -44,7 +44,7 @@ NULL
 #' @name degreeMax
 #' @importFrom remstats degreeMax
 #' @export degreeMax
-NULL
+remstats::degreeMax
 
 #' degreeMin
 #'
@@ -52,7 +52,7 @@ NULL
 #' @name degreeMin
 #' @importFrom remstats degreeMin
 #' @export degreeMin
-NULL
+remstats::degreeMin
 
 #' difference
 #'
@@ -60,7 +60,7 @@ NULL
 #' @name difference
 #' @importFrom remstats difference
 #' @export difference
-NULL
+remstats::difference
 
 #' event
 #'
@@ -68,7 +68,7 @@ NULL
 #' @name event
 #' @importFrom remstats event
 #' @export event
-NULL
+remstats::event
 
 #' FEtype
 #'
@@ -76,7 +76,7 @@ NULL
 #' @name FEtype
 #' @importFrom remstats FEtype
 #' @export FEtype
-NULL
+remstats::FEtype
 
 #' indegreeReceiver
 #'
@@ -84,7 +84,7 @@ NULL
 #' @name indegreeReceiver
 #' @importFrom remstats indegreeReceiver
 #' @export indegreeReceiver
-NULL
+remstats::indegreeReceiver
 
 #' indegreeSender
 #'
@@ -92,7 +92,7 @@ NULL
 #' @name indegreeSender
 #' @importFrom remstats indegreeSender
 #' @export indegreeSender
-NULL
+remstats::indegreeSender
 
 #' inertia
 #'
@@ -100,7 +100,7 @@ NULL
 #' @name inertia
 #' @importFrom remstats inertia
 #' @export inertia
-NULL
+remstats::inertia
 
 #' isp
 #'
@@ -108,7 +108,7 @@ NULL
 #' @name isp
 #' @importFrom remstats isp
 #' @export isp
-NULL
+remstats::isp
 
 #' itp
 #'
@@ -116,7 +116,7 @@ NULL
 #' @name itp
 #' @importFrom remstats itp
 #' @export itp
-NULL
+remstats::itp
 
 #' maximum
 #'
@@ -124,7 +124,7 @@ NULL
 #' @name maximum
 #' @importFrom remstats maximum
 #' @export maximum
-NULL
+remstats::maximum
 
 #' minimum
 #'
@@ -132,7 +132,7 @@ NULL
 #' @name minimum
 #' @importFrom remstats minimum
 #' @export minimum
-NULL
+remstats::minimum
 
 #' osp
 #'
@@ -140,7 +140,7 @@ NULL
 #' @name osp
 #' @importFrom remstats osp
 #' @export osp
-NULL
+remstats::osp
 
 #' otp
 #'
@@ -148,7 +148,7 @@ NULL
 #' @name otp
 #' @importFrom remstats otp
 #' @export otp
-NULL
+remstats::otp
 
 #' outdegreeReceiver
 #'
@@ -156,7 +156,7 @@ NULL
 #' @name outdegreeReceiver
 #' @importFrom remstats outdegreeReceiver
 #' @export outdegreeReceiver
-NULL
+remstats::outdegreeReceiver
 
 #' outdegreeSender
 #'
@@ -164,7 +164,7 @@ NULL
 #' @name outdegreeSender
 #' @importFrom remstats outdegreeSender
 #' @export outdegreeSender
-NULL
+remstats::outdegreeSender
 
 #' psABAB
 #'
@@ -172,7 +172,7 @@ NULL
 #' @name psABAB
 #' @importFrom remstats psABAB
 #' @export psABAB
-NULL
+remstats::psABAB
 
 #' psABAY
 #'
@@ -180,7 +180,7 @@ NULL
 #' @name psABAY
 #' @importFrom remstats psABAY
 #' @export psABAY
-NULL
+remstats::psABAY
 
 #' psABBA
 #'
@@ -188,7 +188,7 @@ NULL
 #' @name psABBA
 #' @importFrom remstats psABBA
 #' @export psABBA
-NULL
+remstats::psABBA
 
 #' psABBY
 #'
@@ -196,7 +196,7 @@ NULL
 #' @name psABBY
 #' @importFrom remstats psABBY
 #' @export psABBY
-NULL
+remstats::psABBY
 
 #' psABXA
 #'
@@ -204,7 +204,7 @@ NULL
 #' @name psABXA
 #' @importFrom remstats psABXA
 #' @export psABXA
-NULL
+remstats::psABXA
 
 #' psABXB
 #'
@@ -212,7 +212,7 @@ NULL
 #' @name psABXB
 #' @importFrom remstats psABXB
 #' @export psABXB
-NULL
+remstats::psABXB
 
 #' psABXY
 #'
@@ -220,7 +220,7 @@ NULL
 #' @name psABXY
 #' @importFrom remstats psABXY
 #' @export psABXY
-NULL
+remstats::psABXY
 
 #' psABA
 #'
@@ -228,7 +228,7 @@ NULL
 #' @name psABA
 #' @importFrom remstats psABA
 #' @export psABA
-NULL
+remstats::psABA
 
 #' psABB
 #'
@@ -236,7 +236,7 @@ NULL
 #' @name psABB
 #' @importFrom remstats psABB
 #' @export psABB
-NULL
+remstats::psABB
 
 #' psABX
 #'
@@ -244,7 +244,7 @@ NULL
 #' @name psABX
 #' @importFrom remstats psABX
 #' @export psABX
-NULL
+remstats::psABX
 
 #' dyad
 #'
@@ -252,7 +252,7 @@ NULL
 #' @name dyad
 #' @importFrom remstats dyad
 #' @export dyad
-NULL
+remstats::dyad
 
 #' stack_stats
 #'
@@ -260,7 +260,7 @@ NULL
 #' @name stack_stats
 #' @importFrom remstats stack_stats
 #' @export stack_stats
-NULL
+remstats::stack_stats
 
 #' receive
 #'
@@ -268,7 +268,7 @@ NULL
 #' @name receive
 #' @importFrom remstats receive
 #' @export receive
-NULL
+remstats::receive
 
 #' recencyContinue
 #'
@@ -276,7 +276,7 @@ NULL
 #' @name recencyContinue
 #' @importFrom remstats recencyContinue
 #' @export recencyContinue
-NULL
+remstats::recencyContinue
 
 #' recencyReceiveReceiver
 #'
@@ -284,7 +284,7 @@ NULL
 #' @name recencyReceiveReceiver
 #' @importFrom remstats recencyReceiveReceiver
 #' @export recencyReceiveReceiver
-NULL
+remstats::recencyReceiveReceiver
 
 #' recencyReceiveSender
 #'
@@ -292,7 +292,7 @@ NULL
 #' @name recencyReceiveSender
 #' @importFrom remstats recencyReceiveSender
 #' @export recencyReceiveSender
-NULL
+remstats::recencyReceiveSender
 
 #' recencySendReceiver
 #'
@@ -300,7 +300,7 @@ NULL
 #' @name recencySendReceiver
 #' @importFrom remstats recencySendReceiver
 #' @export recencySendReceiver
-NULL
+remstats::recencySendReceiver
 
 #' recencySendSender
 #'
@@ -308,7 +308,7 @@ NULL
 #' @name recencySendSender
 #' @importFrom remstats recencySendSender
 #' @export recencySendSender
-NULL
+remstats::recencySendSender
 
 #' reciprocity
 #'
@@ -316,7 +316,7 @@ NULL
 #' @name reciprocity
 #' @importFrom remstats reciprocity
 #' @export reciprocity
-NULL
+remstats::reciprocity
 
 #' remstats
 #'
@@ -324,7 +324,7 @@ NULL
 #' @name remstats
 #' @importFrom remstats remstats
 #' @export remstats
-NULL
+remstats::remstats
 
 #' rrankReceive
 #'
@@ -332,7 +332,7 @@ NULL
 #' @name rrankReceive
 #' @importFrom remstats rrankReceive
 #' @export rrankReceive
-NULL
+remstats::rrankReceive
 
 #' rrankSend
 #'
@@ -340,7 +340,7 @@ NULL
 #' @name rrankSend
 #' @importFrom remstats rrankSend
 #' @export rrankSend
-NULL
+remstats::rrankSend
 
 #' same
 #'
@@ -348,7 +348,7 @@ NULL
 #' @name same
 #' @importFrom remstats same
 #' @export same
-NULL
+remstats::same
 
 #' send
 #'
@@ -356,7 +356,7 @@ NULL
 #' @name send
 #' @importFrom remstats send
 #' @export send
-NULL
+remstats::send
 
 #' sp
 #'
@@ -364,7 +364,7 @@ NULL
 #' @name sp
 #' @importFrom remstats sp
 #' @export sp
-NULL
+remstats::sp
 
 #' spUnique
 #'
@@ -372,7 +372,7 @@ NULL
 #' @name spUnique
 #' @importFrom remstats spUnique
 #' @export spUnique
-NULL
+remstats::spUnique
 
 #' tie
 #'
@@ -380,7 +380,7 @@ NULL
 #' @name tie
 #' @importFrom remstats tie
 #' @export tie
-NULL
+remstats::tie
 
 #' tie_effects
 #'
@@ -388,7 +388,7 @@ NULL
 #' @name tie_effects
 #' @importFrom remstats tie_effects
 #' @export tie_effects
-NULL
+remstats::tie_effects
 
 #' tomstats
 #'
@@ -396,7 +396,7 @@ NULL
 #' @name tomstats
 #' @importFrom remstats tomstats
 #' @export tomstats
-NULL
+remstats::tomstats
 
 #' totaldegreeDyad
 #'
@@ -404,7 +404,7 @@ NULL
 #' @name totaldegreeDyad
 #' @importFrom remstats totaldegreeDyad
 #' @export totaldegreeDyad
-NULL
+remstats::totaldegreeDyad
 
 #' totaldegreeReceiver
 #'
@@ -412,7 +412,7 @@ NULL
 #' @name totaldegreeReceiver
 #' @importFrom remstats totaldegreeReceiver
 #' @export totaldegreeReceiver
-NULL
+remstats::totaldegreeReceiver
 
 #' totaldegreeSender
 #'
@@ -420,7 +420,7 @@ NULL
 #' @name totaldegreeSender
 #' @importFrom remstats totaldegreeSender
 #' @export totaldegreeSender
-NULL
+remstats::totaldegreeSender
 
 #' userStat
 #'
@@ -428,7 +428,7 @@ NULL
 #' @name userStat
 #' @importFrom remstats userStat
 #' @export userStat
-NULL
+remstats::userStat
 
 #' activeDegreeDyad
 #'
@@ -436,7 +436,7 @@ NULL
 #' @name activeDegreeDyad
 #' @importFrom remstats activeDegreeDyad
 #' @export activeDegreeDyad
-NULL
+remstats::activeDegreeDyad
 
 #' activeDegreeMax
 #'
@@ -444,7 +444,7 @@ NULL
 #' @name activeDegreeMax
 #' @importFrom remstats activeDegreeMax
 #' @export activeDegreeMax
-NULL
+remstats::activeDegreeMax
 
 #' activeDegreeMin
 #'
@@ -452,7 +452,7 @@ NULL
 #' @name activeDegreeMin
 #' @importFrom remstats activeDegreeMin
 #' @export activeDegreeMin
-NULL
+remstats::activeDegreeMin
 
 #' activeIndegreeReceiver
 #'
@@ -460,7 +460,7 @@ NULL
 #' @name activeIndegreeReceiver
 #' @importFrom remstats activeIndegreeReceiver
 #' @export activeIndegreeReceiver
-NULL
+remstats::activeIndegreeReceiver
 
 #' activeOutdegreeSender
 #'
@@ -468,7 +468,7 @@ NULL
 #' @name activeOutdegreeSender
 #' @importFrom remstats activeOutdegreeSender
 #' @export activeOutdegreeSender
-NULL
+remstats::activeOutdegreeSender
 
 #' activeReciprocalTie
 #'
@@ -476,7 +476,7 @@ NULL
 #' @name activeReciprocalTie
 #' @importFrom remstats activeReciprocalTie
 #' @export activeReciprocalTie
-NULL
+remstats::activeReciprocalTie
 
 #' activeSharedPartners
 #'
@@ -484,7 +484,7 @@ NULL
 #' @name activeSharedPartners
 #' @importFrom remstats activeSharedPartners
 #' @export activeSharedPartners
-NULL
+remstats::activeSharedPartners
 
 #' activeSharedPartners_isp
 #'
@@ -492,7 +492,7 @@ NULL
 #' @name activeSharedPartners_isp
 #' @importFrom remstats activeSharedPartners_isp
 #' @export activeSharedPartners_isp
-NULL
+remstats::activeSharedPartners_isp
 
 #' activeSharedPartners_itp
 #'
@@ -500,7 +500,7 @@ NULL
 #' @name activeSharedPartners_itp
 #' @importFrom remstats activeSharedPartners_itp
 #' @export activeSharedPartners_itp
-NULL
+remstats::activeSharedPartners_itp
 
 #' activeSharedPartners_osp
 #'
@@ -508,7 +508,7 @@ NULL
 #' @name activeSharedPartners_osp
 #' @importFrom remstats activeSharedPartners_osp
 #' @export activeSharedPartners_osp
-NULL
+remstats::activeSharedPartners_osp
 
 #' activeSharedPartners_otp
 #'
@@ -516,7 +516,7 @@ NULL
 #' @name activeSharedPartners_otp
 #' @importFrom remstats activeSharedPartners_otp
 #' @export activeSharedPartners_otp
-NULL
+remstats::activeSharedPartners_otp
 
 #' activeTie
 #'
@@ -524,7 +524,7 @@ NULL
 #' @name activeTie
 #' @importFrom remstats activeTie
 #' @export activeTie
-NULL
+remstats::activeTie
 
 #' activeTotaldegreeDyad
 #'
@@ -532,7 +532,7 @@ NULL
 #' @name activeTotaldegreeDyad
 #' @importFrom remstats activeTotaldegreeDyad
 #' @export activeTotaldegreeDyad
-NULL
+remstats::activeTotaldegreeDyad
 
 #' activeTotaldegreeReceiver
 #'
@@ -540,7 +540,7 @@ NULL
 #' @name activeTotaldegreeReceiver
 #' @importFrom remstats activeTotaldegreeReceiver
 #' @export activeTotaldegreeReceiver
-NULL
+remstats::activeTotaldegreeReceiver
 
 #' activeTotaldegreeSender
 #'
@@ -548,7 +548,7 @@ NULL
 #' @name activeTotaldegreeSender
 #' @importFrom remstats activeTotaldegreeSender
 #' @export activeTotaldegreeSender
-NULL
+remstats::activeTotaldegreeSender
 
 #' select_stats
 #'
@@ -556,7 +556,7 @@ NULL
 #' @name select_stats
 #' @importFrom remstats select_stats
 #' @export select_stats
-NULL
+remstats::select_stats
 
 #' is.remstats_durem
 #'
@@ -564,5 +564,5 @@ NULL
 #' @name is.remstats_durem
 #' @importFrom remstats is.remstats_durem
 #' @export is.remstats_durem
-NULL
+remstats::is.remstats_durem
 

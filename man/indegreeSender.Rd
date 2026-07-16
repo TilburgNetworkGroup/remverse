@@ -3,6 +3,9 @@
 \name{indegreeSender}
 \alias{indegreeSender}
 \title{indegreeSender}
+\usage{
+indegreeSender(scaling = c("none", "prop", "std"), consider_type = "ignore")
+}
 \description{
 See \code{\link[remstats]{indegreeSender}}.
 }

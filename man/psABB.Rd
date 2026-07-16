@@ -3,6 +3,9 @@
 \name{psABB}
 \alias{psABB}
 \title{psABB}
+\usage{
+psABB()
+}
 \description{
 See \code{\link[remstats]{psABB}}.
 }

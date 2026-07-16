@@ -3,6 +3,9 @@
 \name{actor_effects}
 \alias{actor_effects}
 \title{actor_effects}
+\usage{
+actor_effects(step = NULL)
+}
 \description{
 See \code{\link[remstats]{actor_effects}}.
 }

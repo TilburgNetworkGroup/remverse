@@ -3,6 +3,9 @@
 \name{diagnostics}
 \alias{diagnostics}
 \title{diagnostics}
+\usage{
+diagnostics(object, reh, stats, ...)
+}
 \description{
 See \code{\link[remstimate]{diagnostics}}.
 }

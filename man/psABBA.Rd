@@ -3,6 +3,9 @@
 \name{psABBA}
 \alias{psABBA}
 \title{psABBA}
+\usage{
+psABBA(consider_type = "ignore")
+}
 \description{
 See \code{\link[remstats]{psABBA}}.
 }

@@ -3,6 +3,9 @@
 \name{psABA}
 \alias{psABA}
 \title{psABA}
+\usage{
+psABA()
+}
 \description{
 See \code{\link[remstats]{psABA}}.
 }

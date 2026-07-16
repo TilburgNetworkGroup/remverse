@@ -3,6 +3,22 @@
 \name{tomstats}
 \alias{tomstats}
 \title{tomstats}
+\usage{
+tomstats(
+  tie_effects,
+  reh,
+  memory = c("full", "window", "decay", "interval"),
+  memory_value = NA,
+  first = 2,
+  last = Inf,
+  display_progress = FALSE,
+  sampling = FALSE,
+  samp_num = 10L,
+  seed = NULL,
+  attr_actors = NULL,
+  attr_dyads = NULL
+)
+}
 \description{
 See \code{\link[remstats]{tomstats}}.
 }

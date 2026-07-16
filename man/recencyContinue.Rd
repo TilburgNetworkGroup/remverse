@@ -3,6 +3,9 @@
 \name{recencyContinue}
 \alias{recencyContinue}
 \title{recencyContinue}
+\usage{
+recencyContinue(consider_type = "ignore")
+}
 \description{
 See \code{\link[remstats]{recencyContinue}}.
 }

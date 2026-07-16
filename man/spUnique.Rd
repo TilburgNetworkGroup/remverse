@@ -3,6 +3,9 @@
 \name{spUnique}
 \alias{spUnique}
 \title{spUnique}
+\usage{
+spUnique()
+}
 \description{
 See \code{\link[remstats]{spUnique}}.
 }

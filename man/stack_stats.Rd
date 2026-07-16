@@ -3,6 +3,9 @@
 \name{stack_stats}
 \alias{stack_stats}
 \title{stack_stats}
+\usage{
+stack_stats(stats, reh, add_actors = TRUE)
+}
 \description{
 See \code{\link[remstats]{stack_stats}}.
 }

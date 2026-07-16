@@ -3,6 +3,9 @@
 \name{WAIC}
 \alias{WAIC}
 \title{WAIC}
+\usage{
+WAIC(object, ...)
+}
 \description{
 See \code{\link[remstimate]{WAIC}}.
 }

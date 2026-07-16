@@ -3,6 +3,9 @@
 \name{rrankReceive}
 \alias{rrankReceive}
 \title{rrankReceive}
+\usage{
+rrankReceive(consider_type = "ignore")
+}
 \description{
 See \code{\link[remstats]{rrankReceive}}.
 }

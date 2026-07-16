@@ -3,6 +3,28 @@
 \name{remstats}
 \alias{remstats}
 \title{remstats}
+\usage{
+remstats(
+  reh,
+  tie_effects = NULL,
+  sender_effects = NULL,
+  receiver_effects = NULL,
+  start_effects = NULL,
+  end_effects = NULL,
+  memory = c("full", "window", "decay", "interval"),
+  memory_value = NA,
+  psi_start = 1,
+  psi_end = 1,
+  first = 2,
+  last = Inf,
+  display_progress = FALSE,
+  sampling = FALSE,
+  samp_num = 10L,
+  seed = NULL,
+  attr_actors = NULL,
+  attr_dyads = NULL
+)
+}
 \description{
 See \code{\link[remstats]{remstats}}.
 }

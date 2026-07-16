@@ -3,6 +3,9 @@
 \name{frailty_rem}
 \alias{frailty_rem}
 \title{frailty_rem}
+\usage{
+frailty_rem(reh, stats, ...)
+}
 \description{
 See \code{\link[remstimate]{frailty_rem}}.
 }

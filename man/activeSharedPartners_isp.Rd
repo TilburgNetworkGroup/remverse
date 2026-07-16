@@ -3,6 +3,9 @@
 \name{activeSharedPartners_isp}
 \alias{activeSharedPartners_isp}
 \title{activeSharedPartners_isp}
+\usage{
+activeSharedPartners_isp(scaling = c("none", "std"), consider_type = "ignore")
+}
 \description{
 See \code{\link[remstats]{activeSharedPartners_isp}}.
 }

@@ -3,6 +3,9 @@
 \name{degreeMin}
 \alias{degreeMin}
 \title{degreeMin}
+\usage{
+degreeMin(scaling = c("none", "prop", "std"), consider_type = "ignore")
+}
 \description{
 See \code{\link[remstats]{degreeMin}}.
 }

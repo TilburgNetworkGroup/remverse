@@ -3,6 +3,9 @@
 \name{itp}
 \alias{itp}
 \title{itp}
+\usage{
+itp(unique = FALSE, scaling = c("none", "std"), consider_type = "ignore")
+}
 \description{
 See \code{\link[remstats]{itp}}.
 }

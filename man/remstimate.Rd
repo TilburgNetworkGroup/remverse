@@ -3,6 +3,23 @@
 \name{remstimate}
 \alias{remstimate}
 \title{remstimate}
+\usage{
+remstimate(
+  reh,
+  stats,
+  approach = c("frequentist", "Bayesian"),
+  random = NULL,
+  penalty = NULL,
+  mixture = NULL,
+  engine = "auto",
+  bayes = list(),
+  seed = NULL,
+  ncores = 1L,
+  WAIC = FALSE,
+  method = NULL,
+  ...
+)
+}
 \description{
 See \code{\link[remstimate]{remstimate}}.
 }

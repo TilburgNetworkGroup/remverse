@@ -3,6 +3,9 @@
 \name{same}
 \alias{same}
 \title{same}
+\usage{
+same(variable, attr_actors = NULL, attr_data)
+}
 \description{
 See \code{\link[remstats]{same}}.
 }

@@ -3,6 +3,9 @@
 \name{dyad}
 \alias{dyad}
 \title{dyad}
+\usage{
+dyad(variable, attr_dyads = NULL, scaling = c("none", "std"), x, variableName)
+}
 \description{
 See \code{\link[remstats]{dyad}}.
 }

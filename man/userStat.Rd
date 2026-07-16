@@ -3,6 +3,9 @@
 \name{userStat}
 \alias{userStat}
 \title{userStat}
+\usage{
+userStat(x, variableName = NULL)
+}
 \description{
 See \code{\link[remstats]{userStat}}.
 }

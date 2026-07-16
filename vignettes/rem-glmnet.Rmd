@@ -35,7 +35,7 @@ When building relational event models, researchers often face a choice between i
 `remverse` supports two flavours of penalized estimation, both requested through the `penalty` argument of `remstimate()` or the convenience wrapper `rempenalty()`:
 
 - **Frequentist** (`approach = "frequentist"`, the default): an elastic-net penalty via `glmnet`, with cross-validated selection of the penalty strength.
-- **Bayesian** (`approach = "Bayesian"`): shrinkage priors (default horseshoe) via `shrinkem`. This tends to be fast and to produce a parsimonious set of non-zero effects, and is our recommended route for penalized REMs.
+- **Bayesian** (`approach = "Bayesian"`): shrinkage priors (default horseshoe) via `shrinkem`. This tends to produce parsimonious set of non-zero effects (via the posterior mode), and has been validated in REMs (Karimova et al., 2023, 2025).
 
 ```{r load}
 library(remverse)
