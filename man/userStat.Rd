@@ -6,6 +6,13 @@
 \usage{
 userStat(x, variableName = NULL)
 }
+\arguments{
+\item{x}{Matrix with number of rows equal to the number of events and number
+of columns equal to the number of dyads in the network (tie-oriented model) 
+or the number of actors in the network (actor-oriented model)}
+
+\item{variableName}{Optionally, a string with the name of the statistic.}
+}
 \description{
 See \code{\link[remstats]{userStat}}.
 }

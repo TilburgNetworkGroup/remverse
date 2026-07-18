@@ -6,6 +6,19 @@
 \usage{
 stack_stats(stats, reh, add_actors = TRUE)
 }
+\arguments{
+\item{stats}{A \code{tomstats} object (output of \code{remstats()} or
+\code{tomstats()}).}
+
+\item{reh}{A \code{remify} object (output of \code{remify::remify()}).}
+
+\item{add_actors}{Logical (default \code{TRUE}). When \code{TRUE}, two
+extra columns \code{actor1} (sender label) and \code{actor2} (receiver
+label) are appended by looking up \code{reh$index$dyad_map_active} (or
+\code{reh$riskset_info$included} as a fallback).  Set to \code{FALSE} to
+suppress this lookup, e.g. when the riskset has not yet been resolved or
+for performance reasons.}
+}
 \description{
 See \code{\link[remstats]{stack_stats}}.
 }

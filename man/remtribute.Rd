@@ -16,6 +16,43 @@ remtribute(
   ...
 )
 }
+\arguments{
+\item{reh}{A \code{remify} object whose \code{$edgelist} contains the
+attribute column (carried through via \code{event_type} or
+\code{event_attributes} in \code{\link[remify]{remify}}).
+Accepted for both \code{model = "tie"} and \code{model = "actor"}.}
+
+\item{stats}{A \code{tomstats} object (M x D x p), or \code{NULL}.
+When provided, statistics are subsetted internally to the observed
+dyad at each event. Ignored when \code{effects} is supplied.}
+
+\item{effects}{A one-sided formula with tie-model effects, e.g.
+\code{~ inertia() + reciprocity()}. When provided, \code{tomstats}
+is called internally to compute the statistics. This is the
+recommended interface when \code{reh} uses an actor-oriented model,
+because it avoids the need for a separate tie-oriented \code{reh}.}
+
+\item{attribute}{Character string: column name in
+\code{reh$edgelist} that contains the event attribute to model.
+Default \code{"type"}.}
+
+\item{attribute_type}{The type of the attribute:
+\code{"nominal"} (unordered categories, multinomial logit),
+\code{"ordinal"} (ordered categories, cumulative link model), or
+\code{"numeric"} (continuous, linear regression).}
+
+\item{attr_actors}{Optional data frame of actor-level covariates,
+passed to \code{tomstats} when \code{effects} is used.}
+
+\item{memory}{Memory type for statistics computation. Passed to
+\code{tomstats} when \code{effects} is used. Default \code{"full"}.}
+
+\item{memory_value}{Memory parameter value. Passed to
+\code{tomstats} when \code{effects} is used.}
+
+\item{...}{Additional arguments passed to the fitting backend
+(\code{nnet::multinom}, \code{MASS::polr}, or \code{stats::glm}).}
+}
 \description{
 See \code{\link[remstimate]{remtribute}}.
 }

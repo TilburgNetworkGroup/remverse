@@ -6,6 +6,17 @@
 \usage{
 tie(variable, attr_dyads = NULL, scaling = c("none", "std"), x, variableName)
 }
+\arguments{
+\item{variable}{A string specifying the attribute to compute the statistic. If \code{attr_dyads} is a \code{data.frame}, this refers to the column name in \code{attr_actors}. If \code{attr_dyads} is a \code{matrix}, this corresponds to the name of the exogenous attribute, used to label the statistic in the resulting \code{remstats} object.}
+
+\item{attr_dyads}{A \code{data.frame} or \code{matrix} containing attribute information for dyads. If \code{attr_dyads} is a \code{data.frame}, the first two columns should represent "actor1" and "actor2" (for directed events, "actor1" corresponds to the sender, and "actor2" corresponds to the receiver). Additional columns can represent dyads' exogenous attributes. If attributes vary over time, include a column named "time". If \code{attr_dyads} is a \code{matrix}, the rows correspond to "actor1", columns to "actor2", and cells contain dyads' exogenous attributes.}
+
+\item{scaling}{The method for scaling the statistic. The default is no scaling. Alternatively, standardization of the statistic per time point can be requested with "std".}
+
+\item{x}{Deprecated argument. Please use 'attr_dyads' instead.}
+
+\item{variableName}{Deprecated argument. Please use 'variable' instead.}
+}
 \description{
 See \code{\link[remstats]{tie}}.
 }

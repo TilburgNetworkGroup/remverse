@@ -6,6 +6,15 @@
 \usage{
 diagnostics(object, reh, stats, ...)
 }
+\arguments{
+\item{object}{is a \code{remstimate} object.}
+
+\item{reh}{is a \code{remify} object, the same used for the 'remstimate' object.}
+
+\item{stats}{is a \code{remstats} object, the same used for the 'remstimate' object.}
+
+\item{...}{further arguments to be passed to the 'diagnostics' method.}
+}
 \description{
 See \code{\link[remstimate]{diagnostics}}.
 }

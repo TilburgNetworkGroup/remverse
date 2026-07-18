@@ -6,6 +6,22 @@
 \usage{
 remixture(reh, stats, random, k = 2L, concomitant = NULL, nrep = 3L, ...)
 }
+\arguments{
+\item{reh}{A \code{remify} object.}
+
+\item{stats}{A \code{remstats} object.}
+
+\item{random}{Clustering formula, e.g. \code{~ (1 | dyad)} or
+\code{~ (1 + inertia | dyad)}.}
+
+\item{k}{Number of latent classes (default 2).}
+
+\item{concomitant}{Optional concomitant formula for class probabilities.}
+
+\item{nrep}{Number of random restarts (default 3).}
+
+\item{...}{Additional arguments passed to \code{\link[remstimate]{remstimate}}.}
+}
 \description{
 See \code{\link[remstimate]{remixture}}.
 }

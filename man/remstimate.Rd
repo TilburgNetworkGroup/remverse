@@ -20,6 +20,78 @@ remstimate(
   ...
 )
 }
+\arguments{
+\item{reh}{A \code{remify} or \code{remify_durem} object.}
+
+\item{stats}{A \code{tomstats}, \code{tomstats_sampled},
+\code{aomstats}, or \code{remstats_durem} object.}
+
+\item{approach}{\code{"frequentist"} (default) or \code{"Bayesian"}.}
+
+\item{random}{One-sided formula for random effects, e.g.
+\code{~ (1 | actor1) + (1 | actor2)}. Fits a GLMM (lme4/glmmTMB, or
+coxme for ordinal models).}
+
+\item{penalty}{List of penalisation settings. Frequentist uses glmnet;
+Bayesian uses shrinkem. Recognised elements:
+\code{alpha} (elastic-net mixing, \code{1} = lasso (default),
+\code{0} = ridge), \code{nfolds} (CV folds, default \code{10}),
+\code{lambda_select} (\code{"1se"} (default) or \code{"min"}),
+\code{unpenalized} / \code{penalized} (see below), and \code{prior}
+(shrinkem prior, default \code{"horseshoe"}).
+By default the intercept / baseline structure is left unpenalised: any
+statistic that is an indicator (all values in \{0,1\}) is exempt, which
+covers the overall \code{baseline}, the duration start/end process
+intercepts (\code{baseline.start} / \code{baseline.end}) and fixed-effect
+type dummies (e.g. \code{FEtype_*}); count and continuous effect statistics
+are penalised. Adjust this default with two additive controls (both
+character vectors of statistic names): \code{unpenalized} \emph{adds}
+names to the exemption, and \code{penalized} \emph{removes} names from it,
+i.e. forces them back into the penalty even though they are 0/1 indicators
+(e.g. a p-shift dummy such as \code{psABAB.end} that is a genuine effect,
+not an intercept). \code{penalized} takes precedence when a name is given
+in both. Names must match the model statistics exactly (as printed by the
+remstats object, e.g. \code{"psABAB.end"}, not \code{"psABAB"}); a name that
+matches nothing is ignored with a warning.}
+
+\item{mixture}{List of finite-mixture settings (flexmix). Recognised
+elements: \code{k} (components, default \code{2}), \code{random}
+(clustering formula, e.g. \code{~ (1 | dyad)}), \code{concomitant}
+(optional concomitant formula), \code{nrep} (random restarts, default
+\code{3}). E.g. \code{list(k = 2, random = ~ (1 | dyad))} fits the dyadic
+latent class model (Lakdawala et al., 2026).}
+
+\item{engine}{GLMM backend: \code{"glmmTMB"} or \code{"lme4"}; ordinal
+models automatically use \code{coxme}. The default \code{"auto"} selects
+\code{"glmmTMB"} when installed (more robust on the stacked tie-oriented
+design), otherwise falls back to \code{"lme4"}.}
+
+\item{bayes}{List of Bayesian (C++ HMC) controls for basic tie/actor
+models. Recognised elements: \code{nsim} (post-burnin iterations, default
+\code{2000}), \code{nchains} (default \code{2}), \code{burnin} (default
+\code{1000}), \code{thin} (default \code{1}), \code{init} (initial values,
+default MLE estimates), \code{L} (leapfrog steps, default \code{50}),
+\code{epsilon} (leapfrog step size, default \code{0.002}), \code{prior}
+(list with \code{mean} and \code{vcov}), and \code{nsimWAIC} (WAIC draws,
+default \code{100}).}
+
+\item{seed}{Random seed.}
+
+\item{ncores}{Number of threads (C++ backends). Default \code{1L}.}
+
+\item{WAIC}{Compute WAIC? Default \code{FALSE}.}
+
+\item{method}{[\emph{Deprecated}] Legacy argument for backward
+compatibility. Use \code{approach} instead. Accepts \code{"MLE"} or
+\code{"HMC"} for basic models.}
+
+\item{...}{Further arguments passed to the backend. The former
+top-level knobs (\code{alpha}, \code{nfolds}, \code{lambda_select},
+\code{k}, \code{concomitant}, \code{nrep}, \code{nsim}, \code{nchains},
+\code{burnin}, \code{thin}, \code{init}, \code{L}, \code{epsilon},
+\code{prior}, \code{nsimWAIC}) are \emph{deprecated} but still accepted
+here and routed into \code{penalty} / \code{mixture} / \code{bayes}.}
+}
 \description{
 See \code{\link[remstimate]{remstimate}}.
 }

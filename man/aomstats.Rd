@@ -17,6 +17,45 @@ aomstats(
   attr_dyads = NULL
 )
 }
+\arguments{
+\item{reh}{an object of class \code{"\link[remify]{remify}"} characterizing
+the relational event history. May also be a \code{remify_durem} object for
+duration relational event models.}
+
+\item{sender_effects}{an object of class \code{"\link[stats]{formula}"} (or
+one that can be coerced to that class): a symbolic description of the
+effects in the sender activity rate step of the actor-oriented model for
+which statistics are computed, see `Details'}
+
+\item{receiver_effects}{an object of class \code{"\link[stats]{formula}"}
+(or one that can be coerced to that class): a symbolic description of the
+effects in the receiver choice step of model for which statistics are
+computed, see `Details'}
+
+\item{memory}{The memory to be used. See `Details'.}
+
+\item{memory_value}{Numeric value indicating the memory parameter. Default
+is \code{NA}, which is only valid for \code{memory = "full"} (no memory
+parameter required). See `Details'.}
+
+\item{first}{an optional integer value, specifying the index of the first
+unique time point event in the relational event history for which statistics must be 
+computed (see 'Details'). Default is \code{2}: the first event has no history and is used only to initialize statistics, not to fit the model.}
+
+\item{last}{an optional integer value, specifying the index of the last
+unique time point in the relational event history for which statistics must be 
+computed (see 'Details')}
+
+\item{display_progress}{should a progress bar for the computation of the
+endogenous statistics be shown (TRUE) or not (FALSE)?}
+
+\item{attr_actors}{optionally, an object of class
+\code{"\link[base]{data.frame}"} that contains exogenous attributes for
+actors (see Details).}
+
+\item{attr_dyads}{optionally, an object of class \code{data.frame} or
+\code{matrix} containing attribute information for dyads (see Details).}
+}
 \description{
 See \code{\link[remstats]{aomstats}}.
 }

@@ -6,6 +6,11 @@
 \usage{
 event(variable, event_attr)
 }
+\arguments{
+\item{variable}{string with the name of the column in the event_attr object for which the statistic has to be computed.}
+
+\item{event_attr}{an object of class data.frame that contains the attribute}
+}
 \description{
 See \code{\link[remstats]{event}}.
 }

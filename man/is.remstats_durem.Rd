@@ -6,6 +6,9 @@
 \usage{
 is.remstats_durem(x)
 }
+\arguments{
+\item{x}{Any R object.}
+}
 \description{
 See \code{\link[remstats]{is.remstats_durem}}.
 }

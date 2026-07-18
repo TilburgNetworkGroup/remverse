@@ -6,6 +6,26 @@
 \usage{
 sp(unique = FALSE, scaling = c("none", "std"), consider_type = "ignore")
 }
+\arguments{
+\item{unique}{A logical value indicating whether to sum the minimum of
+events with third actors (FALSE, default) or the number of third actors that
+create a new, unique shared partner (TRUE). See details for more information.}
+
+\item{scaling}{the method for scaling the triad statistic. Default is to not
+scale the statistic but keep the raw 'counts'. Alternatively,
+standardization of the raw counts per time point can be requested
+with 'std'.}
+
+\item{consider_type}{character. Controls how event types are handled:
+\code{"ignore"} (default): aggregate over all event types (one statistic);
+\code{"separate"}: compute C type-specific statistics, where the type-c
+statistic for a dyad reflects past type-c events on that actor pair
+;
+\code{"interact"}: compute C^2 statistics capturing past-event-type x
+dyad-type interactions (only meaningful with \code{extend_riskset_by_type=TRUE} in remify object).
+Also accepts \code{FALSE} (-> \code{"ignore"}) and \code{TRUE}
+(-> \code{"separate"}) for backward compatibility.}
+}
 \description{
 See \code{\link[remstats]{sp}}.
 }

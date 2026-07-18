@@ -6,6 +6,15 @@
 \usage{
 tie_effects(directed = NULL, endogenous = NULL)
 }
+\arguments{
+\item{directed}{logical value. The function outputs all statistics in the 
+tie-oriented model for directed events if true, or all statistics in the 
+tie-oriented model for undirected events if false.}
+
+\item{endogenous}{logical value. The function outputs all endogenous 
+statistics in the tie-oriented model if true, or all exogenous statistics if 
+false}
+}
 \description{
 See \code{\link[remstats]{tie_effects}}.
 }

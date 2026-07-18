@@ -6,6 +6,11 @@
 \usage{
 WAIC(object, ...)
 }
+\arguments{
+\item{object}{is a \code{remstimate} object.}
+
+\item{...}{further arguments to be passed to the 'WAIC' method.}
+}
 \description{
 See \code{\link[remstimate]{WAIC}}.
 }

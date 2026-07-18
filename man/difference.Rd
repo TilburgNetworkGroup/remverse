@@ -12,6 +12,23 @@ difference(
   attr_data
 )
 }
+\arguments{
+\item{variable}{string with the name of the column in the
+\code{attr_actors} object for which the statistic has to be computed.}
+
+\item{attr_actors}{optionally, an object of class
+\code{\link[base]{data.frame}} that contains the attribute, see
+'Details.'}
+
+\item{scaling}{the method for scaling the statistic. Default is to not scale
+the statistic. Alternatively, standardization of the
+statistic per time point can be requested with "std".}
+
+\item{absolute}{Logical value indicating whether the difference values
+should be converted to the absolute difference (default is TRUE).}
+
+\item{attr_data}{Deprecated argument. Please use 'attr_actors' instead.}
+}
 \description{
 See \code{\link[remstats]{difference}}.
 }

@@ -171,7 +171,7 @@ A lower AIC indicates a better trade-off between fit and complexity. If a frailt
 
 Alternatively, the BIC, which has a stronger penalty for more complex models, thus, preferring simpler models, could also be used:
 
-```{r comparison, eval=run_glmm}
+```{r comparison-bic, eval=run_glmm}
 cat("Fixed-effects only: BIC =", BIC(fit_fixed),    "\n")
 cat("Sender frailty:     BIC =", BIC(fit_sender$backend_fit),   "\n")
 cat("Receiver frailty:   BIC =", BIC(fit_receiver$backend_fit), "\n")

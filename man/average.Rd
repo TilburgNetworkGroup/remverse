@@ -6,6 +6,20 @@
 \usage{
 average(variable, attr_actors = NULL, scaling = c("none", "std"), attr_data)
 }
+\arguments{
+\item{variable}{string with the name of the column in the
+\code{attr_actors} object for which the statistic has to be computed.}
+
+\item{attr_actors}{optionally, an object of class
+\code{\link[base]{data.frame}} that contains the attribute, see
+'Details.'}
+
+\item{scaling}{the method for scaling the statistic. Default is to not scale
+the statistic. Alternatively, standardization of the
+statistic per time point can be requested with "std".}
+
+\item{attr_data}{Deprecated argument. Please use 'attr_actors' instead.}
+}
 \description{
 See \code{\link[remstats]{average}}.
 }

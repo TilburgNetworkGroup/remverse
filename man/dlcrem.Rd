@@ -6,6 +6,17 @@
 \usage{
 dlcrem(reh, stats, k = 2L, nrep = 3L, ...)
 }
+\arguments{
+\item{reh}{A \code{remify} object.}
+
+\item{stats}{A \code{remstats} object.}
+
+\item{k}{Number of latent classes (default 2).}
+
+\item{nrep}{Number of random restarts (default 3).}
+
+\item{...}{Additional arguments passed to \code{\link[remstimate]{remstimate}}.}
+}
 \description{
 See \code{\link[remstimate]{dlcrem}}.
 }

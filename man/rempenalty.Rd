@@ -15,6 +15,27 @@ rempenalty(
   ...
 )
 }
+\arguments{
+\item{reh}{A \code{remify} or \code{remify_durem} object.}
+
+\item{stats}{A \code{remstats} object.}
+
+\item{approach}{\code{"frequentist"} (glmnet) or \code{"Bayesian"}
+(shrinkem).}
+
+\item{alpha}{Elastic-net mixing for the frequentist fit: \code{1} = lasso
+(default), \code{0} = ridge.}
+
+\item{prior}{Shrinkage prior for the Bayesian fit (default
+\code{"horseshoe"}).}
+
+\item{nfolds}{Cross-validation folds (frequentist). Default \code{10}.}
+
+\item{lambda_select}{Which lambda (frequentist): \code{"1se"} (default) or
+\code{"min"}.}
+
+\item{...}{Additional arguments passed to \code{\link[remstimate]{remstimate}}.}
+}
 \description{
 See \code{\link[remstimate]{rempenalty}}.
 }

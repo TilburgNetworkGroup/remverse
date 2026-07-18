@@ -28,6 +28,135 @@ remify(
   dur_type_exclusive = FALSE
 )
 }
+\arguments{
+\item{edgelist}{the relational event history. An object of class \code{\link[base]{data.frame}} with first three columns corresponding to time, and actors forming the dyad. The first three columns will be re-named "time", "actor1", "actor2" (where, for directed networks, "actor1" corresponds to the sender and "actor2" to the receiver of the relational event). Optional columns that can be supplied are: `type` and `weight`. If one or both exist in \code{edgelist}, they have to be named accordingly.}
+
+\item{directed}{logical value indicating whether events are directed (\code{TRUE}) or undirected (\code{FALSE}). (default value is \code{TRUE})}
+
+\item{ordinal}{logical value indicating whether only the order of events matters in the model (\code{TRUE}) or also the exact timing must be considered in the model (\code{FALSE}). (default value is \code{FALSE}). If \code{TRUE}, then the column "time" of \code{edgelist} is still used to extract the order.}
+
+\item{model}{either \code{"tie"} (default) or \code{"actor"} oriented modeling. For \code{"tie"}, the riskset is at the dyad level. For \code{"actor"}, the model has two sub-processes: a sender rate model (who sends next?) and a receiver choice model (who does the sender choose?). Actor-oriented modeling requires \code{directed=TRUE}. The returned object includes \code{sender_riskset}, \code{receiver_riskset}, and \code{activeN} (see \code{@return}).}
+
+\item{actors}{[\emph{optional}] character vector of actors' names that may be observed interacting in the network. If \code{NULL} (default), actors' names will be taken from the input edgelist.}
+
+\item{riskset}{[\emph{optional}] character value indicating the type of risk set to process: \code{riskset = "full"} (default) consists of all the possible dyadic events given the number of actors (and the number of event types) and it mantains the same structure over time. \code{riskset = "active"} considers at risk only the observed dyads and it mantains the same structure over time. \code{riskset = "manual"}, allows the risk set to have a structure that is user-defined, and it is based on the instructions supplied via the argument \code{manual_riskset}. \code{riskset = "active_saturated"} extends the active riskset by adding the reverse direction for each observed dyad (if A->B is observed, B->A is also at risk) and includes all event types for each observed actor pair (type column is ignored). This reflects the assumption that observing any interaction between two actors implies both directions and all types are possible.}
+
+\item{manual_riskset}{[\emph{optional}] When \code{riskset = "manual"}, this argument of class \code{\link[base]{data.frame}} specifies which dyadic riskset to consider through the entire sequence. If observed dyads from the \code{edgelist} are missing, they will be automatically be added.}
+
+\item{extend_riskset_by_type}{logical. \code{FALSE} (default). When event types are present (via
+\code{event_type}), controls whether the risk set is expanded over types.
+If \code{TRUE} (default when types are present), each actor pair is
+duplicated for each event type, so the risk set has size
+\eqn{D = N(N-1) \times C} (directed) or \eqn{D = N(N-1)/2 \times C}
+(undirected), and the \code{type} column appears in the decoded risk set.
+If \code{FALSE}, event type is treated as a mark on events only and does
+not expand the risk set: \eqn{D = N(N-1)} (directed) or
+\eqn{D = N(N-1)/2} (undirected), and no \code{type} column appears in the
+decoded risk set. This argument is ignored when no event types are present.}
+
+\item{event_type}{Optional. Either \code{NULL} (default) or a single character
+  string giving the name of the column in \code{edgelist} that contains event
+  types (marks).
+
+  If \code{event_type} is \code{NULL}, \code{remify()} uses \code{edgelist$type}
+  if it exists; otherwise events are treated as untyped.
+
+  If \code{event_type} is a column name, that column is used as the event-type
+  mark. If a column named \code{type} already exists and \code{event_type != "type"},
+  the existing \code{edgelist$type} is overridden (with a warning).
+
+  When event types are present (via \code{edgelist$type} or \code{event_type}),
+  the dyadic risk set is extended over types, i.e., each dyad is duplicated for
+  each event type (dyad \eqn{\times} type).}
+
+\item{event_weight}{Optional. Either \code{NULL} (default) or a single character
+  string giving the name of the column in \code{edgelist} that contains event
+  weights.
+
+  If \code{event_weight} is \code{NULL}, \code{remify()} uses
+  \code{edgelist$weight} if it exists; otherwise events are treated as
+  unweighted (uniform weight = 1).
+
+  If \code{event_weight} is a column name, that column is used as the event
+  weight. If a column named \code{weight} already exists and
+  \code{event_weight != "weight"}, the existing \code{edgelist$weight} is
+  overridden (with a warning). This argument behaves analogously to
+  \code{event_type} and applies to both standard and duration
+  (\code{duration = TRUE}) models.}
+
+\item{origin}{[\emph{optional}] starting time point of the observation period (default is \code{NULL}). If it is supplied, it must have the same class of the `time` column in the input \code{edgelist}. If unsupplied, the origin
+is set to the average waiting time in the sequence subtracted from the time of the first event.}
+
+\item{time_units}{Character string specifying the time unit for converting time values when `edgelist$time` is of class Date or POSIXct; ignored for numeric or integer time. Default is "secs".}
+
+\item{aggregate_time}{Integer >= 1. Event-time aggregated based on unique time points.
+Keeps every \code{aggregate_time}-th unique event time (after time translation) and
+maps each event time to the next kept time point (i.e., ceiling to the kept grid).
+This reduces the number of unique time points (and thus memory/computation in later steps).}
+
+\item{attach_riskset}{Logical. If \code{TRUE}, attaches a list \code{riskset_info}
+to the returned \code{remify} object. The list contains the effective risk set
+representation used for estimation (e.g., \code{riskset_idx}, \code{dyadIDactive},
+dictionaries, and basic risk set metadata). This is intended to make the
+returned object self-describing and easier to inspect/debug.}
+
+\item{riskset_decode}{Character. Controls how (and whether) the included risk set
+dyads are decoded and attached in \code{riskset_info$included}.
+\describe{
+  \item{\code{"labels"}}{Attach a decoded dyad table including actor (and type)
+    labels (e.g., \code{actor1}, \code{actor2}, and optional \code{type}).}
+  \item{\code{"ids"}}{Attach a decoded dyad table with integer IDs only
+    (e.g., \code{actor1ID}, \code{actor2ID}, optional \code{typeID}, and \code{dyadID}).}
+  \item{\code{"none"}}{Do not attach a decoded dyad table.}
+}}
+
+\item{riskset_max_decode}{Integer. Maximum number of included dyads (i.e.,
+\code{length(riskset_idx)} / \code{D_active}) for which \code{riskset_decode="labels"}
+is allowed. If the included risk set exceeds this threshold, decoding to labels
+is skipped (typically falling back to \code{"ids"} with a warning) to avoid large
+memory usage.}
+
+\item{event_attributes}{Optional character vector of column names in
+  \code{edgelist} to retain as additional event-level variables in the
+  returned \code{reh} object.
+
+  These columns are stored as \code{reh$event_attributes} together with the
+  corresponding \code{time}, \code{actor1}, and \code{actor2} columns (and an
+  internal \code{.event_id}). This is useful when downstream functions (e.g.,
+  in \pkg{remstats}) need access to event-level marks/attributes/covariates that are not
+  part of the core \code{reh$edgelist} produced by \code{remify()}.
+
+  Note: \code{event_attributes} does not affect risk set construction or type
+  handling in \code{remify()}; it only preserves additional columns for later
+  use. Currently there is no further support yet when event_attributes
+  have been added.}
+
+\item{ncores}{[\emph{optional}] number of cores used in the parallelization of the processing functions. (default is \code{1}).}
+
+\item{duration}{Logical. If \code{TRUE}, the edgelist is treated as a
+duration edgelist (each event has both a start time and an end time) and a
+\code{remify_durem} object is returned instead of a standard
+\code{remify} object. The edgelist must contain an \code{end} column (or
+\code{end_time} / \code{duration} as alternatives; see
+\code{.durem_normalize_edgelist}). Default \code{FALSE}.}
+
+\item{dur_directed_end}{Logical. Only used when \code{duration = TRUE}. If
+\code{FALSE} (default), the end process is undirected: either actor can
+terminate the event and only a combined dyad-level end rate is modelled. If
+\code{TRUE}, the end process is directed: a \code{who_ended} column in the
+edgelist (\code{"actor1"} / \code{"actor2"} / \code{NA}) records which
+actor terminated each event, enabling actor-level end-rate models. When
+\code{who_ended} is absent and \code{dur_directed_end = TRUE}, actor1 is
+assumed to terminate all events and a message is issued.}
+
+\item{dur_type_exclusive}{Logical. Only used when \code{duration = TRUE}, when typed events
+are present and when \code{extend_riskset_by_type = TRUE}. If \code{TRUE}, an active event of
+any type is a hard block on starting events of all other types for the same
+dyad (e.g. two actors cannot start a text conversation while already in a
+face-to-face conversation). If \code{FALSE} (default), types are treated as
+independent processes and a dyad can be simultaneously active in events of
+different types. Has no effect when \code{extend_riskset_by_type = FALSE}.}
+}
 \description{
 See \code{\link[remify]{remify}}.
 }

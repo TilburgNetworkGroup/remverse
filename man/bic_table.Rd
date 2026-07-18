@@ -6,6 +6,12 @@
 \usage{
 bic_table(x, ...)
 }
+\arguments{
+\item{x}{A \code{remstimate_mixrem_list} returned when \code{k} is a
+vector in \code{remstimate(..., method = "MIXREM")}.}
+
+\item{...}{Unused.}
+}
 \description{
 See \code{\link[remstimate]{bic_table}}.
 }

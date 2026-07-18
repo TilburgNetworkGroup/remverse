@@ -12,6 +12,22 @@ remfrailty(
   ...
 )
 }
+\arguments{
+\item{reh}{A \code{remify} or \code{remify_durem} object.}
+
+\item{stats}{A \code{remstats} object (\code{tomstats}, \code{aomstats},
+or \code{remstats_durem}).}
+
+\item{approach}{Either \code{"frequentist"} or \code{"Bayesian"}. Bayesian
+frailty is not offered in this version.}
+
+\item{engine}{For \code{frequentist}, the interval-model backend:
+\code{"glmmTMB"} or \code{"lme4"}. The default \code{"auto"} uses
+\code{glmmTMB} when installed, otherwise \code{lme4}. Ignored for ordinal
+models, which always use \code{coxme}.}
+
+\item{...}{Additional arguments passed to \code{\link[remstimate]{remstimate}}.}
+}
 \description{
 See \code{\link[remstimate]{remfrailty}}.
 }

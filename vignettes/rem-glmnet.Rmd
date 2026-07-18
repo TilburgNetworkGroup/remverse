@@ -190,7 +190,7 @@ plot(diag_glmnet)
 
 In-sample recall may be slightly lower for the regularized model — it trades a little in-sample fit for better generalization. In this case, the recall is equal approximately across models while the regularized solutions `coefs_bayes` and `coefs_glmnet` and much more parsimonious than the unregularized solution `coefs_mle`:
 
-```{r compare-coefs, eval=has_glmnet}
+```{r show-comparison, eval=has_glmnet}
 comparison
 ```
 

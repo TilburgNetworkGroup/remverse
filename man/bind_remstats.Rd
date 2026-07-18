@@ -6,6 +6,12 @@
 \usage{
 bind_remstats(...)
 }
+\arguments{
+\item{...}{Any number of \code{\link[remstats]{remstats}} objects. All the
+\code{remstats} objects must have matching dimensions, except for the third
+dimension. Note that duplicated statistics in the combined object are 
+removed based on their name.}
+}
 \description{
 See \code{\link[remstats]{bind_remstats}}.
 }

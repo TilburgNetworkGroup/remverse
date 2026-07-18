@@ -6,6 +6,14 @@
 \usage{
 frailty_rem(reh, stats, ...)
 }
+\arguments{
+\item{reh}{A \code{remify} or \code{remify_durem} object.}
+
+\item{stats}{A \code{remstats} object (\code{tomstats}, \code{aomstats},
+or \code{remstats_durem}).}
+
+\item{...}{Additional arguments passed to \code{\link[remstimate]{remstimate}}.}
+}
 \description{
 See \code{\link[remstimate]{frailty_rem}}.
 }

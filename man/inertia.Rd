@@ -6,6 +6,23 @@
 \usage{
 inertia(scaling = c("none", "prop", "std"), consider_type = "ignore")
 }
+\arguments{
+\item{scaling}{the method for scaling the inertia statistic. Default is to
+not scale the statistic (scaling = "none"). Alternatively, the
+statistics can be scaled by specifying 'prop', in which raw counts are
+divided by the outdegree of the sender at time t (see 'details') or
+standardization of the raw counts per time point can be requested with 'std'.}
+
+\item{consider_type}{character. Controls how event types are handled:
+\code{"ignore"} (default): aggregate over all event types (one statistic);
+\code{"separate"}: compute C type-specific statistics, where the type-c
+statistic for a dyad reflects past type-c events on that actor pair
+;
+\code{"interact"}: compute C^2 statistics capturing past-event-type x
+dyad-type interactions (only meaningful with \code{extend_riskset_by_type=TRUE} in remify object).
+Also accepts \code{FALSE} (-> \code{"ignore"}) and \code{TRUE}
+(-> \code{"separate"}) for backward compatibility.}
+}
 \description{
 See \code{\link[remstats]{inertia}}.
 }

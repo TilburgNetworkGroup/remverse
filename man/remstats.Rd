@@ -25,6 +25,83 @@ remstats(
   attr_dyads = NULL
 )
 }
+\arguments{
+\item{reh}{an object of class \code{"\link[remify]{remify}"} characterizing
+the relational event history. May also be a \code{remify_durem} object for
+duration relational event models.}
+
+\item{tie_effects}{an object of class \code{"\link[stats]{formula}"} (or one
+that can be coerced to that class): a symbolic description of the effects in
+the tie-oriented model for which statistics are computed, see 'Details' for
+the available effects and their corresponding statistics}
+
+\item{sender_effects}{an object of class \code{"\link[stats]{formula}"} (or
+one that can be coerced to that class): a symbolic description of the
+effects in the sender activity rate step of the actor-oriented model for
+which statistics are computed, see `Details'}
+
+\item{receiver_effects}{an object of class \code{"\link[stats]{formula}"}
+(or one that can be coerced to that class): a symbolic description of the
+effects in the receiver choice step of model for which statistics are
+computed, see `Details'}
+
+\item{start_effects}{Formula for the start sub-model statistics. Only used
+when \code{reh} is a \code{remify_durem} object (i.e. when
+\code{remify(..., duration = TRUE)} was called). Equivalent to
+\code{tie_effects} but applied to the start process. Only supported for the
+tie-oriented model.}
+
+\item{end_effects}{Formula for the end sub-model statistics. Only used when
+\code{reh} is a \code{remify_durem} object. Only supported for the
+tie-oriented model.}
+
+\item{memory}{The memory to be used. See `Details'.}
+
+\item{memory_value}{Numeric value indicating the memory parameter. Default
+is \code{NA}, which is only valid for \code{memory = "full"} (no memory
+parameter required). See `Details'.}
+
+\item{psi_start}{Numeric. Duration exponent for start-model history
+weighting. The weight of each past event in the start statistics is
+\code{event_weight * (end - time + 1)^psi_start}. Default \code{1}.
+Only used when \code{reh} is a \code{remify_durem} object.}
+
+\item{psi_end}{Numeric. Duration exponent for end-model history weighting.
+The weight of each past event in the end statistics is
+\code{event_weight * (end - time + 1)^psi_end}. Default \code{1}.
+Only used when \code{reh} is a \code{remify_durem} object.}
+
+\item{first}{an optional integer value, specifying the index of the first
+unique time point event in the relational event history for which statistics must be 
+computed (see 'Details'). Default is \code{2}: the first event has no history and is used only to initialize statistics, not to fit the model.}
+
+\item{last}{an optional integer value, specifying the index of the last
+unique time point in the relational event history for which statistics must be 
+computed (see 'Details')}
+
+\item{display_progress}{should a progress bar for the computation of the
+endogenous statistics be shown (TRUE) or not (FALSE)?}
+
+\item{sampling}{Logical. If \code{TRUE}, statistics are computed using
+case–control (dyad) sampling rather than the full risk set. Default \code{FALSE}.
+Only supported for a \code{tie} model.}
+
+\item{samp_num}{Integer. Number of dyads to include per event when
+\code{sampling = TRUE}. Must be smaller than or equal to the size of the
+active risk set. Ignored when \code{sampling = FALSE}.
+Only supported for a \code{tie} model.}
+
+\item{seed}{Optional integer. Random seed used for dyad sampling. Setting
+this ensures reproducible sampling across calls. If \code{NULL}, the
+current RNG state is used.}
+
+\item{attr_actors}{optionally, an object of class
+\code{"\link[base]{data.frame}"} that contains exogenous attributes for
+actors (see Details).}
+
+\item{attr_dyads}{optionally, an object of class \code{data.frame} or
+\code{matrix} containing attribute information for dyads (see Details).}
+}
 \description{
 See \code{\link[remstats]{remstats}}.
 }

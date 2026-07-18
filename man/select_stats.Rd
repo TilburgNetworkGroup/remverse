@@ -13,6 +13,20 @@ select_stats(
   end_effects = NULL
 )
 }
+\arguments{
+\item{object}{a \code{remstats} object (of class \code{tomstats},
+\code{aomstats}, or \code{remstats_durem})}
+
+\item{tie_effects}{character vector of statistic names to keep (tomstats only)}
+
+\item{sender_effects}{character vector of statistic names to keep (aomstats only)}
+
+\item{receiver_effects}{character vector of statistic names to keep (aomstats only)}
+
+\item{start_effects}{character vector of statistic names to keep (remstats_durem only)}
+
+\item{end_effects}{character vector of statistic names to keep (remstats_durem only)}
+}
 \description{
 See \code{\link[remstats]{select_stats}}.
 }

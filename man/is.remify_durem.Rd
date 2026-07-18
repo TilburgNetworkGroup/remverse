@@ -6,6 +6,9 @@
 \usage{
 is.remify_durem(x)
 }
+\arguments{
+\item{x}{Any R object.}
+}
 \description{
 See \code{\link[remify]{is.remify_durem}}.
 }

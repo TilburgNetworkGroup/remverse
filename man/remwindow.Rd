@@ -18,6 +18,33 @@ remwindow(
   ...
 )
 }
+\arguments{
+\item{reh}{A \code{remify} object.}
+
+\item{stats}{A \code{tomstats}, \code{tomstats_sampled}, or \code{aomstats}
+object built on the full \code{reh}.}
+
+\item{n.windows}{Target number of windows in auto mode. Default 5.}
+
+\item{window.width}{Fixed number of events per window (manual mode).}
+
+\item{step.size.window}{Events to advance between windows (manual mode
+only). Default equals \code{window.width}.}
+
+\item{start.point}{First array row to start windowing from. Default 1L.}
+
+\item{min.events}{Floor on window width (auto and manual).}
+
+\item{approach}{\code{"frequentist"} (default) or \code{"Bayesian"},
+forwarded to \code{remstimate}.}
+
+\item{parallel}{Fit windows in parallel? Default \code{FALSE}.}
+
+\item{ncores.window}{Parallel workers across windows (Unix/macOS only;
+falls back to sequential with a message on Windows).}
+
+\item{...}{Further arguments passed to \code{remstimate} for every window.}
+}
 \description{
 See \code{\link[remstimate]{remwindow}}.
 }

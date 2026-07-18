@@ -7,3 +7,4 @@
 ^randomREH3\.rda$
 \.DS_Store$
 ^\.Rhistory$
+^\.github$

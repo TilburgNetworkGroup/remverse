@@ -6,6 +6,29 @@
 \usage{
 activeOutdegreeSender(scaling = c("none", "std"), consider_type = "ignore")
 }
+\arguments{
+\item{scaling}{Scaling applied to the raw statistic before returning:
+\describe{
+  \item{\code{"none"}}{Raw counts (default).}
+  \item{\code{"std"}}{Per-time-point standardisation:
+    \eqn{(x - \bar{x}) / \mathrm{sd}(x)}, computed over the \eqn{D}
+    dyads in the fixed risk set.}
+}}
+
+\item{consider_type}{Character (or logical). How event types are handled:
+\describe{
+  \item{\code{"ignore"} or \code{FALSE}}{Aggregate over all event types
+    (default). Counts all currently active events regardless of type.}
+  \item{\code{"separate"} or \code{TRUE}}{Compute one statistic per event
+    type. Only active events of that type contribute. Output effect names
+    are suffixed with the type label, e.g.
+    \code{activeOutdegreeSender.X.start}.}
+  \item{\code{"interact"}}{Compute one statistic per (past-event type x
+    dyad type) combination (\eqn{C^2} slices). Requires
+    \code{extend_riskset_by_type = TRUE} in the \code{remify} call;
+    otherwise silently coerced to \code{"separate"}.}
+}}
+}
 \description{
 See \code{\link[remstats]{activeOutdegreeSender}}.
 }

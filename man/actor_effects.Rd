@@ -6,6 +6,10 @@
 \usage{
 actor_effects(step = NULL)
 }
+\arguments{
+\item{step}{outputs all statistics in the sender activity step (if `step =
+sender`) or receiver choice step (if `step = receiver`).}
+}
 \description{
 See \code{\link[remstats]{actor_effects}}.
 }
