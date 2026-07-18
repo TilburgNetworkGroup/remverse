@@ -90,7 +90,7 @@ With four estimated parameters (`baseline`, `inertia`, `reciprocity`, `send_age`
 summary(mw_tie_auto)
 ```
 
-The **Fit** block reports one row per window: its time range, event count, convergence status, and log-likelihood/AIC/BIC. The **Stability** block collapses across windows per effect: mean, standard deviation, and range of the estimate, together with `sd_over_se` — the ratio of across-window spread to the average within-window standard error. Values well above 1 suggest genuine drift; values near or below 1 are consistent with a single stable coefficient.
+The **Fit** block reports one column per window: its time range, event count, convergence status, and log-likelihood/AIC/BIC. The **Stability** block collapses across windows per effect: mean, standard deviation, and range of the estimate, together with `sd_over_se` — the ratio of across-window spread to the average within-window standard error. Values well above 1 suggest genuine drift; values near or below 1 are consistent with a single stable coefficient.
 
 ```{r tie-auto-plot, out.width="70%", dev=c("jpeg"), dev.args = list(bg = "white")}
 plot(mw_tie_auto)
@@ -194,7 +194,7 @@ Only the receiver (choice) model appears — there is no sender block, and no er
 
 # 5 Diagnostics across windows
 
-Because windows can overlap (Section 3.2), assigning each event to a single window for recall-based diagnostics is not well defined at the boundary. Instead, `diagnostics()` on a `remstimate_window` object builds, for every event, a coefficient vector obtained by **clamped linear interpolation between window midpoints in event-time**:
+Because windows can overlap (Section 3.2), assigning each event to a single window for recall-based diagnostics is not well defined at the boundary. Instead, `diagnostics()` on a `remstimate_window` object builds, for every event, a coefficient vector obtained by linear interpolation between window midpoints in event-time:
 
 $$\hat{\boldsymbol\beta}(t) = \hat{\boldsymbol\beta}(t_w) + \frac{t - t_w}{t_{w+1} - t_w}\Big(\hat{\boldsymbol\beta}(t_{w+1}) - \hat{\boldsymbol\beta}(t_w)\Big), \qquad t_w \le t < t_{w+1}$$
 
@@ -246,7 +246,7 @@ When parallelizing across windows, it is usually best to leave the within-fit `n
 
 - **Duration models (`durem`) are not yet supported.** `remwindow()` accepts `tomstats`/`aomstats` objects for tie- and actor-oriented models only; a duration-model `remstats` object raises an informative error. Windowing an active-state, interval-based process raises separate design questions (an interval can straddle a window boundary in a way a point event cannot) and is on the roadmap.
 - **Case-control sampled statistics (`tomstats_sampled`) are not yet supported.**
-- The stability table's separation flag (`k = 10`) is a heuristic, not a formal test. Always cross-check a flagged effect's excluded windows against their event counts and convergence status.
+- The stability table's separation flag (`k = 10`) is a heuristic, not a formal test.
 
 ---
 

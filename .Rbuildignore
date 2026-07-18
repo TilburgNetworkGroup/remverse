@@ -5,3 +5,5 @@
 ^cran-comments\.md$
 ^info3\.rda$
 ^randomREH3\.rda$
+\.DS_Store$
+^\.Rhistory$

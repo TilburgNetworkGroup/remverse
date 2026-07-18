@@ -45,7 +45,7 @@ Authors@R:
             email = "d.karimova@tilburguniversity.edu")
     )
 Description: A unified interface for relational event history analysis.
-    Remverse re-exports key functions from ‘remify’, ‘remstats’, and ‘remstimate’ to support a
+    Remverse re-exports key functions from 'remify', 'remstats', and 'remstimate' to support a
     streamlined workflow from data processing to model estimation and diagnosis.
 License: MIT + file LICENSE
 BugReports: https://github.com/TilburgNetworkGroup/remverse/issues
@@ -70,9 +70,6 @@ Suggests:
     glmnet,
     flexmix,
     shrinkem (>= 0.4.0)
-Remotes:
-    TilburgNetworkGroup/remstats,
-    TilburgNetworkGroup/remstimate
 LazyData: true
 VignetteBuilder: knitr
 LazyDataCompression: gzip
