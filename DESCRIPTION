@@ -45,7 +45,7 @@ Authors@R:
             email = "d.karimova@tilburguniversity.edu")
     )
 Description: A unified interface for relational event history analysis.
-    Remverse re-exports key functions from 'remify', 'remstats', and 'remstimate' to support a
+    The package re-exports key functions from 'remify', 'remstats', and 'remstimate' to support a
     streamlined workflow from data processing to model estimation and diagnosis.
 License: MIT + file LICENSE
 BugReports: https://github.com/TilburgNetworkGroup/remverse/issues

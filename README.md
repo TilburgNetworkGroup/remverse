@@ -48,7 +48,7 @@ library(remverse)
 ```
 
 ### NEWS
-See [NEWS](NEWS.md) file for the most up to date changes.
+See the [NEWS](https://github.com/TilburgNetworkGroup/remverse/blob/master/NEWS.md) file for the most up to date changes.
 
 
 
